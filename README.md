@@ -1,4 +1,4 @@
-# BCI-UBC
+#BCI-UBC
  Brain Computer Interface Capstone team 2021-2022.
 
 to add changes:
@@ -9,5 +9,4 @@ make changes
 
 commit to main
 
-push changes to main
-
+push changes to main.
