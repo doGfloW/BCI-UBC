@@ -16,50 +16,50 @@ SIMULATE = 0
 FILE = 1
 LIVESTREAM = 2
 
-class MainWindow(QWidget):
+class mibaseline_win(QWidget):
     def __init__(self, hardware=None, model=None, sim_type=None, \
                  data_type=None, csv_name=None, parent=None,
                  arduino_port=None, serial_port=None):
         super().__init__()
-        # self.parent = parent
-        # self.sim_type = sim_type
-        # self.hardware = hardware
-        # self.model = model
-        # timestamp = str(int(time.time()))
-        # self.csv_name = csv_name[:-4] + '_' + timestamp + ".csv"
-        #
-        # # Brainflow Initialization
-        # self.params = BrainFlowInputParams()
-        # self.params.serial_port = serial_port
-        # # self.params.serial_port = 'COM15'
-        #
-        # self.data = []
-        #
-        # # BoardShim.enable_dev_board_logger()
-        #
-        # # MANUALLY SPECIFY COM PORT IF USING CYTON OR CYTON DAISY
-        # # if not specified, will use first available port
-        # # should be a string representing the COM port that the Cyton Dongle is connected to.
-        # # e.g for Windows users 'COM3', for MacOS or Linux users '/dev/ttyUSB1
-        # self.com_port = None
-        #
-        # if data_type == 'Task live':
-        #     self.data_type = LIVESTREAM
-        # elif data_type == 'Task simulate':
-        #     self.data_type = SIMULATE
-        # else:
-        #     raise Exception('Unknown data type: {} Try "Task live" or "Task simulate"'.format(data_type))
-        #
-        # if self.data_type == LIVESTREAM:
-        #     if self.hardware == 'openBCI':
-        #         if self.model == 'Ganglion':
-        #             self.board_id = 1
-        #         elif self.model == 'Cyton':
-        #             self.board_id = 0
-        #         elif self.model == 'Cyton-Daisy':
-        #             self.board_id = 2
-        # elif self.data_type == SIMULATE:
-        #     self.board_id = -1
+        self.parent = parent
+        self.sim_type = sim_type
+        self.hardware = hardware
+        self.model = model
+        timestamp = str(int(time.time()))
+        self.csv_name = csv_name[:-4] + '_' + timestamp + ".txt"
+
+        # Brainflow Initialization
+        self.params = BrainFlowInputParams()
+        self.params.serial_port = serial_port
+        # self.params.serial_port = 'COM15'
+
+        self.data = []
+
+        # BoardShim.enable_dev_board_logger()
+
+        # MANUALLY SPECIFY COM PORT IF USING CYTON OR CYTON DAISY
+        # if not specified, will use first available port
+        # should be a string representing the COM port that the Cyton Dongle is connected to.
+        # e.g for Windows users 'COM3', for MacOS or Linux users '/dev/ttyUSB1
+        self.com_port = None
+
+        if data_type == 'Task live':
+            self.data_type = LIVESTREAM
+        elif data_type == 'Task simulate':
+            self.data_type = SIMULATE
+        else:
+            raise Exception('Unknown data type: {} Try "Task live" or "Task simulate"'.format(data_type))
+
+        if self.data_type == LIVESTREAM:
+            if self.hardware == 'openBCI':
+                if self.model == 'Ganglion':
+                    self.board_id = 1
+                elif self.model == 'Cyton':
+                    self.board_id = 0
+                elif self.model == 'Cyton-Daisy':
+                    self.board_id = 2
+        elif self.data_type == SIMULATE:
+            self.board_id = -1
 
         self.resize(500, 500)
 
@@ -123,11 +123,11 @@ class MainWindow(QWidget):
         self.is_end = False
 
         # Setting up the board
-        # self.board = BoardShim(self.board_id, self.params)
-        # self.board.prepare_session()
-        # print('init hardware is running with hardware', self.hardware, 'model', self.model)
-        # self.board.start_stream()
-        # self.hardware_connected = True
+        self.board = BoardShim(self.board_id, self.params)
+        self.board.prepare_session()
+        print('init hardware is running with hardware', self.hardware, 'model', self.model)
+        self.board.start_stream()
+        self.hardware_connected = True
 
 
         # displaying the instructions
@@ -176,7 +176,7 @@ class MainWindow(QWidget):
             # changing the value of count
             self.count = second
             #inserting marker into data
-            #self.board.insert_marker(int(self.stim_code))
+            self.board.insert_marker(int(self.stim_code))
             print("marker: " + str(int(self.stim_code)))
 
             # setting text to the label
@@ -238,7 +238,7 @@ class MainWindow(QWidget):
         print('ending stimulation')
         self.responding_time = False
         self.show_stim = False
-        #self.board.insert_marker(self.end_trig)
+        self.board.insert_marker(self.end_trig)
         print("End marker: " +str(self.end_trig))
         # self.data = self.board.get_board_data()
         self.update()
@@ -276,8 +276,6 @@ class MainWindow(QWidget):
 
     def on_end(self):
         # called by end timer
-        # self.stop_data_stream()
-        # if self.is_end == False:
         print('stop eeg stream ran')
 
         self.data = self.board.get_board_data()
@@ -286,6 +284,7 @@ class MainWindow(QWidget):
         self.board.release_session()
 
         DataFilter.write_file(self.data, self.csv_name, 'w')
+        print('EEG data saved')
         # self.is_end = True
 
         # let's initialize electrode to display
@@ -367,6 +366,6 @@ class MainWindow(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    main = MainWindow()
+    main = mibaseline_win()
     main.show()
     sys.exit(app.exec())
