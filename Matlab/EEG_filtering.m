@@ -100,8 +100,8 @@ bar(r)
 xlabel('event')
 ylabel('|R|')
 %% write bandpower into file
-wfilename="bandpower_"+file;
-writematrix(bp,wfilename,'Delimiter',',')  
+wfilename="MotorImergyDataset.dat";
+dlmwrite(wfilename,bp,'-append')   
 
 %% Consentration
 %f = fs*(0:(10000/2))/10000;
