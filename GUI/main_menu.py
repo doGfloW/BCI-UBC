@@ -12,7 +12,7 @@ from PyQt5.QtOpenGL import *
 from PyQt5 import QtCore, Qt
 from PyQt5.QtWidgets import *
 
-#import matplotlib
+import matplotlib
 
 import numpy as np
 import random
