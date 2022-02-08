@@ -148,20 +148,20 @@ class MenuWindow(QMainWindow):
         self.openbci_port.setPlaceholderText("Enter Port # (Integers Only)") 
         self.openbci_port.textEdited.connect(self.handle_bci_port)
 
-        ### ARDUINO ###
-        self.arduino_label = QLabel("Arduino Settings")
-        self.arduino_dropdown = QComboBox()
-        self.arduino_dropdown.setPlaceholderText('Select connection to arduino')
-        self.arduino_dropdown.addItems(['Wired','NeuroStimDuino','Wireless','Debug'])
-        self.arduino_dropdown.activated.connect(self.handle_arduino_dropdown)
-        self.arduino_port = QLineEdit()
-        self.arduino_port.setEnabled(False)
-        self.arduino_port.setPlaceholderText("Enter Port # (Integers Only)") 
-        self.arduino_port.textEdited.connect(self.handle_arduino_port)
-        self.arduino_layout.addWidget(self.arduino_label)
-        self.arduino_layout.addWidget(self.arduino_dropdown)
-        self.arduino_layout.addWidget(self.arduino_port)
-        # self.arduino_process = None
+        # ### ARDUINO ###
+        # self.arduino_label = QLabel("Arduino Settings")
+        # self.arduino_dropdown = QComboBox()
+        # self.arduino_dropdown.setPlaceholderText('Select connection to arduino')
+        # self.arduino_dropdown.addItems(['Wired','NeuroStimDuino','Wireless','Debug'])
+        # self.arduino_dropdown.activated.connect(self.handle_arduino_dropdown)
+        # self.arduino_port = QLineEdit()
+        # self.arduino_port.setEnabled(False)
+        # self.arduino_port.setPlaceholderText("Enter Port # (Integers Only)") 
+        # self.arduino_port.textEdited.connect(self.handle_arduino_port)
+        # self.arduino_layout.addWidget(self.arduino_label)
+        # self.arduino_layout.addWidget(self.arduino_dropdown)
+        # self.arduino_layout.addWidget(self.arduino_port)
+        # # self.arduino_process = None
 
         ### LIMB ###
         self.limb_sub_layout = QHBoxLayout()
