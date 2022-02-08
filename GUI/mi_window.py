@@ -26,7 +26,7 @@ class mibaseline_win(QWidget):
         self.hardware = hardware
         self.model = model
         timestamp = str(int(time.time()))
-        self.csv_name = csv_name[:-4] + '_' + timestamp + ".txt"
+        self.csv_name = csv_name[:-4] + '_' + timestamp + ".csv"
 
         # Brainflow Initialization
         self.params = BrainFlowInputParams()
@@ -107,7 +107,7 @@ class mibaseline_win(QWidget):
         self.total_trials = 10
         move_trials = self.total_trials // 2
         no_move_trials = self.total_trials - move_trials
-        # temp varicalbe to help setup array
+        # temp variable to help setup array
         a=np.empty((10,))
         a[::2] =[self.movement['move']] * move_trials
         a[1::2] = [self.movement['still']] * no_move_trials

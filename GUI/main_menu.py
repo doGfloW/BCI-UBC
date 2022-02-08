@@ -12,12 +12,14 @@ from PyQt5.QtOpenGL import *
 from PyQt5 import QtCore, Qt
 from PyQt5.QtWidgets import *
 
-import matplotlib
+#import matplotlib
 
 import numpy as np
 import random
 import time
 import os
+
+from mi_window import mibaseline_win
 
 class MenuWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -212,6 +214,12 @@ class MenuWindow(QMainWindow):
         self.layout.addWidget(self.impedance_window_button,5,0, 1, 1, QtCore.Qt.AlignHCenter)
         self.impedance_window_button.clicked.connect(self.open_impedance_window)
 
+        # here is a button to actually start a motor imagery test window
+        self.mi_window_button = QPushButton('Motor Imagery Test')
+        self.mi_window_button.setEnabled(False)
+        self.layout.addWidget(self.mi_window_button,6,0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.mi_window_button.clicked.connect(self.open_mi_window)
+
         # # here is a button to start the arduino window
         # self.arduino_window_button = QPushButton('Turn on Arduino')
         # self.arduino_window_button.setEnabled(False)
@@ -257,6 +265,9 @@ class MenuWindow(QMainWindow):
 
         # this is a variable to show whether we have a impedance window open
         self.impedance_window_open = False
+
+        # this is a variable to show whether we have a motor imagery test window open
+        self.mi_window_open = False
 
         # init variable for saving temp csv name
         self.csv_name = None
@@ -336,7 +347,8 @@ class MenuWindow(QMainWindow):
         elif self.data_type == 'Task simulate':
             self.baseline_window_button.setEnabled(True)
             self.impedance_window_button.setEnabled(True)
-            self.title.setText('Check Impedance or Start Baseline')
+            self.mi_window_button.setEnabled(True)
+            self.title.setText('Check Impedance, Start Baseline or Motor Imagery Test')
         
     def handle_bci_port(self):
         # check for correct value entering and enable type dropdown menu
@@ -346,6 +358,7 @@ class MenuWindow(QMainWindow):
             if self.data_type == 'Task live':
                 self.baseline_window_button.setEnabled(True)
                 self.impedance_window_button.setEnabled(True)
+                self.mi_window_button.setEnabled(True)
             self.title.setText('Check Impedance or Start Baseline')
         else:
             # print("Error: OpenBCI port # must be an integer.")
@@ -402,6 +415,17 @@ class MenuWindow(QMainWindow):
     #         self.data_window.show()
     #         self.data_window.show()
     #         self.is_data_window_open = True
+    
+    def open_mi_window(self):
+        self.mi_window = mibaseline_win(
+        parent = self,
+        hardware = self.hardware, 
+        model = self.model, 
+        data_type = self.data_type, 
+        serial_port = self.bci_serial_port,
+        )   
+        self.mi_window.show()
+        self.is_mi_window_open = True
     
     def open_impedance_window(self):
         self.impedance_window = impedance_win(
