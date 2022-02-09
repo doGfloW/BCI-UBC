@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget
 from PyQt5.QtGui import QFont
 import time
 import winsound
+import os.path
 import numpy as np
 DURATION_INT = 40
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
@@ -25,9 +26,10 @@ class mibaseline_win(QWidget):
         self.sim_type = sim_type
         self.hardware = hardware
         self.model = model
-        timestamp = str(int(time.time()))
-        self.csv_name = csv_name[:-4] + '_' + timestamp + ".csv"
-
+        self.file_path= os.getcwd()+"\\GUI\\Baseline_test"
+        #print('save path: '+ self.file_path)
+        timestamp = time.strftime("%Y%m%d-%H%M")
+        self.csv_name =os.path.join( self.file_path ,csv_name[:-4] + '_' + timestamp + ".txt")
         # Brainflow Initialization
         self.params = BrainFlowInputParams()
         self.params.serial_port = serial_port
