@@ -38,7 +38,7 @@ class mibaseline_win(QWidget):
         self.data = []
 
         # BoardShim.enable_dev_board_logger()
-
+        # add more jabronis
         # MANUALLY SPECIFY COM PORT IF USING CYTON OR CYTON DAISY
         # if not specified, will use first available port
         # should be a string representing the COM port that the Cyton Dongle is connected to.
@@ -171,7 +171,7 @@ class mibaseline_win(QWidget):
         self.start = False
 
         # getting seconds and flag
-        second=15
+        second=3
         done=True
         # if flag is true
         if done:
