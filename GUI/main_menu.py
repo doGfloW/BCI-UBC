@@ -215,7 +215,7 @@ class MenuWindow(QMainWindow):
         self.impedance_window_button.clicked.connect(self.open_impedance_window)
 
         # here is a button to actually start a motor imagery test window
-        self.mi_window_button = QPushButton('Motor Imagery Test')
+        self.mi_window_button = QPushButton('Motor Imagery Baseline')
         self.mi_window_button.setEnabled(False)
         self.layout.addWidget(self.mi_window_button,6,0, 1, 1, QtCore.Qt.AlignHCenter)
         self.mi_window_button.clicked.connect(self.open_mi_window)
