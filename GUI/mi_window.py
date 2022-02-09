@@ -26,7 +26,7 @@ class mibaseline_win(QWidget):
         self.hardware = hardware
         self.model = model
         timestamp = str(int(time.time()))
-        self.csv_name = csv_name[:-1] + '_' + timestamp + ".csv"
+        self.csv_name = csv_name[:-1] + '_' + timestamp + ".txt"
 
         # Brainflow Initialization
         self.params = BrainFlowInputParams()
@@ -36,7 +36,7 @@ class mibaseline_win(QWidget):
         self.data = []
 
         # BoardShim.enable_dev_board_logger()
-        # I ama the jabroni king
+
         # MANUALLY SPECIFY COM PORT IF USING CYTON OR CYTON DAISY
         # if not specified, will use first available port
         # should be a string representing the COM port that the Cyton Dongle is connected to.
