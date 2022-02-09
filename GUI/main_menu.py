@@ -34,12 +34,12 @@ class MenuWindow(QMainWindow):
         |                  TITLE                    |
         |       HARDWARE              TYPE          |
         |       MODEL                 PORT          |
-        |       CSV                   ARDUINO       |
-        |                                           |
+        |       CSV/TXT                             |
+        |                   LIMB                    |
         |------------------ACTIONS------------------|
         |                                           |
         |    IMPED       BASELINE        SESSION    |
-        |    ARDUINO     MODEL           RESULTS    |
+        |    MI TEST     MODEL           RESULTS    |
         |                GRAPH                      |
         |                                           |
         |-------------------------------------------|
@@ -87,8 +87,8 @@ class MenuWindow(QMainWindow):
         |                                           |
         |       HARDWARE              TYPE          |
         |       MODEL                 PORT          |
-        |       CSV                   ARDUINO       |
-        |                   LIMB*                   |
+        |       CSV/TXT                             |
+        |                   LIMB                    |
         |                                           |
         |-------------------------------------------|
         '''
@@ -120,9 +120,9 @@ class MenuWindow(QMainWindow):
         self.model_layout.addWidget(self.model_dropdown)
 
         ### CSV ###
-        self.csv_name_edit = QLineEdit('eeg_log_file.csv')
+        self.csv_name_edit = QLineEdit('eeg_log_file')
         self.csv_name_edit.returnPressed.connect(self.csv_name_changed)
-        self.csv_name = 'eeg_log_file.csv'
+        self.csv_name = 'eeg_log_file'
         self.csv_label = QLabel('CSV name to save to')
         self.csv_layout.addWidget(self.csv_label)
         self.csv_layout.addWidget(self.csv_name_edit)
@@ -211,7 +211,7 @@ class MenuWindow(QMainWindow):
         # here is a button to actually start a impedance window
         self.impedance_window_button = QPushButton('Impedance Check')
         self.impedance_window_button.setEnabled(False)
-        self.layout.addWidget(self.impedance_window_button,5,0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.impedance_window_button,5,0, 1, -1, QtCore.Qt.AlignHCenter)
         self.impedance_window_button.clicked.connect(self.open_impedance_window)
 
         # here is a button to actually start a motor imagery test window
@@ -227,9 +227,9 @@ class MenuWindow(QMainWindow):
         # self.arduino_window_button.clicked.connect(self.open_arduino_window) # IMPLEMENT THIS FUNCTION
 
         # here is a button to actually start a data window
-        self.baseline_window_button = QPushButton('Start Baseline')
+        self.baseline_window_button = QPushButton('Oddball Baseline')
         self.baseline_window_button.setEnabled(False)
-        self.layout.addWidget(self.baseline_window_button,5,0, 1, -1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.baseline_window_button,5,0, 1, 1, QtCore.Qt.AlignHCenter)
         self.baseline_window_button.clicked.connect(self.open_baseline_window)
 
         # here is a button to train the model
@@ -285,7 +285,7 @@ class MenuWindow(QMainWindow):
             self.targ_limb = 1
             #self.arduino_con = 'Debug'
             #self.arduino_serial_port = 'COM1'
-            self.csv_name = 'eeg_log_file_1639676920'
+            self.csv_name = 'eeg_log_file_'
             #self.ml_model = tf.keras.models.load_model('saved_models/{}_model'.format(self.csv_name))
             # self.ml_model = tf.keras.models.load_model('saved_model/my_model')
 
@@ -310,10 +310,10 @@ class MenuWindow(QMainWindow):
         self.model_dropdown.clear()
         if self.hardware_dropdown.currentText() == 'openBCI':
             self.model_dropdown.addItems(['Ganglion','Cyton','Cyton-Daisy'])
-        elif self.hardware_dropdown.currentText() == 'Muse':
-            self.model_dropdown.addItems(['Muse 2','Muse S'])
-        elif self.hardware_dropdown.currentText() == 'Blueberry':
-            self.model_dropdown.addItem('Prototype')
+        # elif self.hardware_dropdown.currentText() == 'Muse':
+        #     self.model_dropdown.addItems(['Muse 2','Muse S'])
+        # elif self.hardware_dropdown.currentText() == 'Blueberry':
+        #     self.model_dropdown.addItem('Prototype')
     
     def handle_model_choice(self):
         # handle the choice of model by opening up data type selection
@@ -332,8 +332,9 @@ class MenuWindow(QMainWindow):
             # add .csv ending if absent
             self.csv_name_edit.setText(self.csv_name_edit.text() + '.csv')
         print('csv name after adding ending {}'.format(self.csv_name_edit.text()))
+        
         if os.path.isfile(self.csv_name_edit.text()):
-            # chop off .csv ending, add number, readd .csv
+            # chop off .csv ending, add number, read .csv
             self.csv_name = self.csv_name_edit.text()[:-4] + '_1.csv'
         else:
             self.csv_name = self.csv_name_edit.text()
@@ -421,7 +422,8 @@ class MenuWindow(QMainWindow):
         parent = self,
         hardware = self.hardware, 
         model = self.model, 
-        data_type = self.data_type, 
+        data_type = self.data_type,
+        csv_name = self.csv_name, 
         serial_port = self.bci_serial_port,
         )   
         self.mi_window.show()

@@ -26,7 +26,7 @@ class mibaseline_win(QWidget):
         self.hardware = hardware
         self.model = model
         timestamp = str(int(time.time()))
-        self.csv_name = csv_name[:-4] + '_' + timestamp + ".csv"
+        self.csv_name = csv_name[:-1] + '_' + timestamp + ".csv"
 
         # Brainflow Initialization
         self.params = BrainFlowInputParams()
@@ -169,7 +169,7 @@ class mibaseline_win(QWidget):
         self.start = False
 
         # getting seconds and flag
-        second=15
+        second=3
         done=True
         # if flag is true
         if done:
