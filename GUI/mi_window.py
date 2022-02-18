@@ -106,7 +106,7 @@ class mibaseline_win(QWidget):
 
 
         # Innitilize number of trials
-        self.total_trials = 2
+        self.total_trials = 10
         move_trials = self.total_trials // 2
         no_move_trials = self.total_trials - move_trials
         # temp variable to help setup array
@@ -171,7 +171,7 @@ class mibaseline_win(QWidget):
         self.start = False
 
         # getting seconds and flag
-        second=3
+        second=15
         done=True
         # if flag is true
         if done:
@@ -259,21 +259,21 @@ class mibaseline_win(QWidget):
             loop = QEventLoop()
             QTimer.singleShot(3000, loop.quit)
             loop.exec_()
-            self.lbltext.setText('move your right hand\nuntill timer stops')
+            self.lbltext.setText('Imagine Right Hand Moving \n Move Arm Up and Down')
             self.setStyleSheet("background-color: green;")
         if  self.running_trial==True and a==1:
-            self.lbl.setText("Stop!!\nKeep arm still")
+            self.lbl.setText("Relax \n Keep arm still")
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
-            self.lbltext.setText('Keep arm still\nuntill timer stops')
+            self.lbltext.setText('Keep arm still \n until timer stops')
             self.setStyleSheet("background-color: red;")
         if  self.running_trial==True and a==2:
-            self.lbl.setText("Begin moving!!\nDont stop moving arm")
+            self.lbl.setText("Think of Moving Right Arm \n Move Arm Up and Down")
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
-            self.lbltext.setText('move your right hand\nuntill timer stops')
+            self.lbltext.setText('move your right hand \n until timer stops')
             self.setStyleSheet("background-color: green;")
 
     def on_end(self):
