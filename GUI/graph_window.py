@@ -66,7 +66,7 @@ class Window(QDialog):
 		self.canvas.draw()
 
 # driver code
-if __name__ == '__graph_window__':
+if __name__ == '__main__':
 	
 	# creating apyqt5 application
 	app = QApplication(sys.argv)
