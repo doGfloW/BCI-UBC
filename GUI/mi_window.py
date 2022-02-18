@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget
 from PyQt5.QtGui import QFont
 import time
 import winsound
+import os.path
 import numpy as np
 DURATION_INT = 40
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
@@ -25,9 +26,10 @@ class mibaseline_win(QWidget):
         self.sim_type = sim_type
         self.hardware = hardware
         self.model = model
-        timestamp = str(int(time.time()))
-        self.csv_name = csv_name[:-1] + '_' + timestamp + ".txt"
-
+        self.file_path= os.getcwd()+"\\Baseline_tests"
+        #print('save path: '+ self.file_path)
+        timestamp = time.strftime("%Y%m%d-%H%M")
+        self.csv_name =os.path.join( self.file_path ,csv_name + '_' + timestamp + ".txt")
         # Brainflow Initialization
         self.params = BrainFlowInputParams()
         self.params.serial_port = serial_port
@@ -104,7 +106,7 @@ class mibaseline_win(QWidget):
 
 
         # Innitilize number of trials
-        self.total_trials = 10
+        self.total_trials = 2
         move_trials = self.total_trials // 2
         no_move_trials = self.total_trials - move_trials
         # temp variable to help setup array
@@ -265,7 +267,7 @@ class mibaseline_win(QWidget):
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
             self.lbltext.setText('Keep arm still\nuntill timer stops')
-            self.setStyleSheet("background-color: cyan;")
+            self.setStyleSheet("background-color: red;")
         if  self.running_trial==True and a==2:
             self.lbl.setText("Begin moving!!\nDont stop moving arm")
             loop = QEventLoop()
