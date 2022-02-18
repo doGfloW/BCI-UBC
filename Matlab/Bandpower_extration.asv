@@ -71,16 +71,16 @@ for k = 1:length(myFiles)
         temp=r_channel;
         r_channel=[temp,r];   
     end
-    bp=[r_channel,event];
+    bp=[r_channel,event]
     dataset_folder=cd;
-    dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
+    dataset_folder=fullfile(dataset_folder,"BCI-UBC","Matlab");
     wfilename="MotorImergyDataset_saif.xlsx";
     dataset_folder=fullfile(dataset_folder,wfilename);
     if isfile(dataset_folder)
      fprintf("Dataset Found now adding to data set %s\n",dataset_folder)
     else
-     %cols_name={}
-     xlswrite(dataset_folder,{1,2,3,4,5})
+      headi
+     xlswrite(dataset_folder,(1,2,3,4,5))
      fprintf('Created new dataset called %s\n',dataset_folder)
     end
     read_data=table2array(readtable(dataset_folder));
