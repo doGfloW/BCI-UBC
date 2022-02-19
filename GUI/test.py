@@ -1,113 +1,65 @@
-import argparse
-import logging
 
+from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
-from pyqtgraph.Qt import QtGui, QtCore
+import sys  # We need sys so that we can pass argv to QApplication
+import os
+from random import randint
+from PyQt5 import QtGui
+from PyQt5.QtOpenGL import *
+from PyQt5 import QtCore, Qt
+from PyQt5.QtWidgets import *
+from PyQt5 import QtWidgets
+       
 
-from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
-from brainflow.data_filter import DataFilter, FilterTypes, DetrendOperations
+class MainWindow(QMainWindow):
+
+    def __init__(self, *args, **kwargs):
+        super(MainWindow, self).__init__(*args, **kwargs)
+
+        
+        self.layout0 = QVBoxLayout()
+        self.widget = QWidget()
+        self.graphWidget = pg.PlotWidget()
+        self.setCentralWidget(self.graphWidget)
+        self.graphWidget.setLayout(self.layout0)
+        self.button1 = QPushButton("Channel 1")
+        self.button2 = QPushButton("Channel 2")
+        self.button3 = QPushButton( "Channel 3")
+        self.button4 = QPushButton( "Channel 4")
+        self.layout0.addWidget(self.button1)
+
+    
+        self.x = list(range(100))  # 100 time points
+        self.y = [randint(0,100) for _ in range(100)]  # 100 data points
+
+        self.graphWidget.setBackground('w')
+
+        pen = pg.mkPen(color=(255, 0, 0))
+        self.data_line =  self.graphWidget.plot(self.x, self.y, pen=pen)
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(50)
+        self.timer.timeout.connect(self.update_plot_data)
+        self.timer.start()
 
 
-class Graph:
-    def __init__(self, board_shim):
-        self.board_id = board_shim.get_board_id()
-        self.board_shim = board_shim
-        self.exg_channels = BoardShim.get_exg_channels(self.board_id)
-        self.sampling_rate = BoardShim.get_sampling_rate(self.board_id)
-        self.update_speed_ms = 50
-        self.window_size = 4
-        self.num_points = self.window_size * self.sampling_rate
-
-        self.app = QtGui.QApplication([])
-        self.win = pg.GraphicsWindow(title='BrainFlow Plot',size=(800, 600))
-
-        self._init_timeseries()
-
-        timer = QtCore.QTimer()
-        timer.timeout.connect(self.update)
-        timer.start(self.update_speed_ms)
-        QtGui.QApplication.instance().exec_()
+       
 
 
-    def _init_timeseries(self):
-        self.plots = list()
-        self.curves = list()
-        for i in range(len(self.exg_channels)):
-            p = self.win.addPlot(row=i,col=0)
-            p.showAxis('left', False)
-            p.setMenuEnabled('left', False)
-            p.showAxis('bottom', False)
-            p.setMenuEnabled('bottom', False)
-            if i == 0:
-                p.setTitle('TimeSeries Plot')
-            self.plots.append(p)
-            curve = p.plot()
-            self.curves.append(curve)
+    def update_plot_data(self):
 
-    def update(self):
-        data = self.board_shim.get_current_board_data(self.num_points)
-        for count, channel in enumerate(self.exg_channels):
-            # plot timeseries
-            DataFilter.detrend(data[channel], DetrendOperations.CONSTANT.value)
-            DataFilter.perform_bandpass(data[channel], self.sampling_rate, 51.0, 100.0, 2,
-                                        FilterTypes.BUTTERWORTH.value, 0)
-            DataFilter.perform_bandpass(data[channel], self.sampling_rate, 51.0, 100.0, 2,
-                                        FilterTypes.BUTTERWORTH.value, 0)
-            DataFilter.perform_bandstop(data[channel], self.sampling_rate, 50.0, 4.0, 2,
-                                        FilterTypes.BUTTERWORTH.value, 0)
-            DataFilter.perform_bandstop(data[channel], self.sampling_rate, 60.0, 4.0, 2,
-                                        FilterTypes.BUTTERWORTH.value, 0)
-            self.curves[count].setData(data[channel].tolist())
+        self.x = self.x[1:]  # Remove the first y element.
+        self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
 
-        self.app.processEvents()
+        self.y = self.y[1:]  # Remove the first
+        self.y.append( randint(0,100))  # Add a new random value.
 
+        self.data_line.setData(self.x, self.y)  # Update the data.
 
 def main():
-    BoardShim.enable_dev_board_logger()
-    logging.basicConfig(level=logging.DEBUG)
-
-    parser = argparse.ArgumentParser()
-    # use docs to check which parameters are required for specific board, e.g. for Cyton - set serial port
-    parser.add_argument('--timeout', type=int, help='timeout for device discovery or connection', required=False,
-                        default=0)
-    parser.add_argument('--ip-port', type=int, help='ip port', required=False, default=0)
-    parser.add_argument('--ip-protocol', type=int, help='ip protocol, check IpProtocolType enum', required=False,
-                        default=0)
-    parser.add_argument('--ip-address', type=str, help='ip address', required=False, default='')
-    parser.add_argument('--serial-port', type=str, help='serial port', required=False, default='')
-    parser.add_argument('--mac-address', type=str, help='mac address', required=False, default='')
-    parser.add_argument('--other-info', type=str, help='other info', required=False, default='')
-    parser.add_argument('--streamer-params', type=str, help='streamer params', required=False, default='')
-    parser.add_argument('--serial-number', type=str, help='serial number', required=False, default='')
-    parser.add_argument('--board-id', type=int, help='board id, check docs to get a list of supported boards',
-                        required=False, default=BoardIds.SYNTHETIC_BOARD)
-    parser.add_argument('--file', type=str, help='file', required=False, default='')
-    args = parser.parse_args()
-
-    params = BrainFlowInputParams()
-    params.ip_port = args.ip_port
-    params.serial_port = args.serial_port
-    params.mac_address = args.mac_address
-    params.other_info = args.other_info
-    params.serial_number = args.serial_number
-    params.ip_address = args.ip_address
-    params.ip_protocol = args.ip_protocol
-    params.timeout = args.timeout
-    params.file = args.file
-
-    try:
-        board_shim = BoardShim(args.board_id, params)
-        board_shim.prepare_session()
-        board_shim.start_stream(450000, args.streamer_params)
-        Graph(board_shim)
-    except BaseException:
-        logging.warning('Exception', exc_info=True)
-    finally:
-        logging.info('End')
-        if board_shim.is_prepared():
-            logging.info('Releasing session')
-            board_shim.release_session()
-
+    app = QtWidgets.QApplication(sys.argv)
+    main = MainWindow()
+    main.show()
+    sys.exit(app.exec_())
 
 if __name__ == '__main__':
     main()
