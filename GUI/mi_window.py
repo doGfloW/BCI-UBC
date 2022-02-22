@@ -193,7 +193,7 @@ class mibaseline_win(QWidget):
         self.start = False
 
         # getting seconds and flag
-        second = 5
+        second = 2
         done=True
 
         # if flag is true
