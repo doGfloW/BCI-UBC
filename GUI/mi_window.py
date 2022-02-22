@@ -91,7 +91,6 @@ class mibaseline_win(QWidget):
         self.lbltext.setFont(QFont('Open Sans', 40, QFont.Bold))
         layout.addWidget(self.lbl)
         layout.addWidget(self.lbltext)
-        self.lbltext = QLabel()
         self.lbltext.setAlignment(Qt.AlignCenter)
         self.setLayout(layout)
 
@@ -236,7 +235,8 @@ class mibaseline_win(QWidget):
     def instructions(self):
         self.lbltext.setFont(QFont('Open Sans', 40, QFont.Bold))
         self.lbltext.setText("Instructions: \n Move your hand when it says \n Press Enter to start")
-
+        self.lbltext.setVisible(True)
+        
     def start_trial(self):
         # starts trial - starts timers.
         print('starting trial')
