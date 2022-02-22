@@ -6,9 +6,10 @@ import csv
 import random
 
 #PyQT5 GUI Imports
+#from PyQt5 import QtCore, Qt
 from PyQt5.QtCore import QTimer, QTime, Qt, QEventLoop
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QPainter, QBrush
 
 
 #Computation Imports
@@ -138,8 +139,10 @@ class mibaseline_win(QWidget):
         # this is whether or not we've gone through all our trials yet
         self.finished = False
         self.show_stim = False
+        
         # now we display the instructions
         self.running_trial = False
+        
         # To ensure we dont try to close the object a second time
         self.is_end = False
 
@@ -262,7 +265,7 @@ class mibaseline_win(QWidget):
         self.responding_time = False
         self.show_stim = False
         self.board.insert_marker(self.end_trig)
-        print("End marker: " +str(self.end_trig))
+        print("End marker: " + str(self.end_trig))
         self.update()
         # self.data = self.board.get_board_data()
         # time.sleep(1)
@@ -276,6 +279,7 @@ class mibaseline_win(QWidget):
 
         if self.curr_trial==0:
             self.lbl.setText("Starting in 3,2,1")
+            #self.show_stim = False
             loop = QEventLoop()
             QTimer.singleShot(3000, loop.quit)
             loop.exec_()
@@ -284,6 +288,7 @@ class mibaseline_win(QWidget):
         
         if  self.running_trial==True and a==1:
             self.lbl.setText("Relax \n Keep arm still")
+            #self.show_stim = False
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
@@ -292,11 +297,41 @@ class mibaseline_win(QWidget):
         
         if  self.running_trial==True and a==2:
             self.lbl.setText("Think of Moving Right Arm \n Move Arm Up and Down")
+            #self.show_stim = True
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
             self.lbltext.setText('Move arm left to right \n until timer stops')
             self.setStyleSheet("background-color: green;")
+
+
+    # def paintEvent(self, event):
+    #     # here is where we draw stuff on the screen
+    #     # you give drawing instructions in pixels - here I'm getting pixel values based on window size
+    #     print('paint event runs')
+    #     painter = QPainter(self)
+    #     if self.show_stim and a==2:
+    #         print('painting stim')
+    #         center = self.geometry().width()//2
+    #         textWidth=200
+    #         textHeight=100
+    #         font = QFont()
+    #         font.setFamily("Tahoma")
+    #         font.setPixelSize(32)
+    #         font.setBold(True)
+    #         painter.setFont(font)
+    #         painter.drawText(center-textWidth//2,center-textHeight//2, textWidth,textHeight, QtCore.Qt.AlignCenter, self.stim_str[self.stim_code-1])
+
+    #     elif self.running_trial and not self.finished:
+    #         painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
+    #         cross_width = 100
+    #         line_width = 20
+    #         center = self.geometry().width()//2
+    #         painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
+    #         painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
+    #     elif self.finished:
+    #         # no need to paint anything specifically
+    #         pass
 
     def on_end(self):
         # called by end timer
