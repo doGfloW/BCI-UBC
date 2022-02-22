@@ -1,22 +1,33 @@
 #This is our Motor Imagery Test - Version 1
+
+#Functionality Imports
 import sys
 import csv
 import random
+
+#PyQT5 GUI Imports
 from PyQt5.QtCore import QTimer, QTime, Qt, QEventLoop
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget
 from PyQt5.QtGui import QFont
+
+
+#Computation Imports
 import time
 import winsound
 import os.path
 import numpy as np
-DURATION_INT = 40
+
+#Brainflow Imports
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
 from brainflow.data_filter import DataFilter, FilterTypes
 
+#Program Constants
+DURATION_INT = 40
 SIMULATE = 0
 FILE = 1
 LIVESTREAM = 2
 
+#Class: Motor Imagery Window
 class mibaseline_win(QWidget):
     def __init__(self, hardware=None, model=None, sim_type=None, \
                  data_type=None, csv_name=None, parent=None,
@@ -26,10 +37,12 @@ class mibaseline_win(QWidget):
         self.sim_type = sim_type
         self.hardware = hardware
         self.model = model
+        
         self.file_path= os.getcwd()+"\\Baseline_tests"
         #print('save path: '+ self.file_path)
         timestamp = time.strftime("%Y%m%d-%H%M")
         self.csv_name =os.path.join( self.file_path ,csv_name + '_' + timestamp + ".txt")
+        
         # Brainflow Initialization
         self.params = BrainFlowInputParams()
         self.params.serial_port = serial_port
@@ -38,7 +51,6 @@ class mibaseline_win(QWidget):
         self.data = []
 
         # BoardShim.enable_dev_board_logger()
-        # add more jabronis
         # MANUALLY SPECIFY COM PORT IF USING CYTON OR CYTON DAISY
         # if not specified, will use first available port
         # should be a string representing the COM port that the Cyton Dongle is connected to.
@@ -63,45 +75,50 @@ class mibaseline_win(QWidget):
         elif self.data_type == SIMULATE:
             self.board_id = -1
 
+
         self.resize(500, 500)
 
+        #PyQT Window Basic Layout
         layout = QVBoxLayout()
-        self.setWindowTitle('Motor imergy baseline Test')
         fnt = QFont('Open Sans', 40, QFont.Bold)
+        
+        self.setWindowTitle('Motor imergy baseline Test')
         self.lbl = QLabel()
         self.lbltext=QLabel()
         self.lbl.setAlignment(Qt.AlignCenter)
         self.lbl.setFont(fnt)
         self.lbltext.setFont(QFont('Open Sans', 40, QFont.Bold))
         layout.addWidget(self.lbl)
-
-        self.lbltext = QLabel()
         layout.addWidget(self.lbltext)
+        self.lbltext = QLabel()
         self.lbltext.setAlignment(Qt.AlignCenter)
         self.setLayout(layout)
+
+        self.start = False
         self.count=0
         self.stim_code=0
-        self.start = False
         timer = QTimer(self)
         timer.timeout.connect(self.showTime)
         timer.start(1000)
         self.show()
 
-        self.stim_timer = QTimer()
         # making it a precision timer
+        self.stim_timer = QTimer()
         self.stim_timer.setTimerType(0)
         self.stim_timer.setSingleShot(True)
+        
         # setting the function to call when it times out
-        # IMPORTANT: to change the function it calls, must first use timer.disconnect() to remove the previous one
+        # IMPORTANT: to change the function it calls, 
+        # must first use timer.disconnect() to remove the previous one
         # otherwise will call both new and old fucntions
         self.stim_timer.timeout.connect(self.end_stim)
-        self.end_trig=11
+        
+        self.end_trig = 11  #End of Period Marker Value
         self.frequency = 1000  # Set Frequency To 2500 Hertz
         self.duration = 500  # Set Duration To 1000 ms == 1 second
 
 
-        # defining what each trial is
-
+        # Action Periods per Trial
         self.movement={'move': (1), 'still': (2)}
 
 
@@ -109,6 +126,7 @@ class mibaseline_win(QWidget):
         self.total_trials = 10
         move_trials = self.total_trials // 2
         no_move_trials = self.total_trials - move_trials
+
         # temp variable to help setup array
         a=np.empty((10,))
         a[::2] =[self.movement['move']] * move_trials
@@ -116,6 +134,7 @@ class mibaseline_win(QWidget):
         self.trials=a
         print(self.trials)
         self.curr_trial = 0
+
         # this is whether or not we've gone through all our trials yet
         self.finished = False
         self.show_stim = False
@@ -139,7 +158,7 @@ class mibaseline_win(QWidget):
     def showTime(self):
         # checking if flag is true
         if self.start:
-            # incrementing the counter
+            # Countdow Timer: incrementing the counter
             self.count -= 1
 
             # timer is completed
@@ -171,12 +190,14 @@ class mibaseline_win(QWidget):
         self.start = False
 
         # getting seconds and flag
-        second=15
+        second = 5
         done=True
+
         # if flag is true
         if done:
             # changing the value of count
             self.count = second
+
             #inserting marker into data
             self.board.insert_marker(int(self.stim_code))
             print("marker: " + str(int(self.stim_code)))
@@ -197,8 +218,6 @@ class mibaseline_win(QWidget):
         self.update()
 
 
-
-
 # method for Key event
     def keyPressEvent(self, event):
             if self.start == False and event.key() == Qt.Key_Return:
@@ -213,19 +232,21 @@ class mibaseline_win(QWidget):
 # instructions to displace at the start
     def instructions(self):
         self.lbltext.setFont(QFont('Open Sans', 40, QFont.Bold))
-        self.lbltext.setText("Instructiuons\nMove your hand when it says\nPress Enter to start")
+        self.lbltext.setText("Instructions: \n Move your hand when it says \n Press Enter to start")
 
     def start_trial(self):
         # starts trial - starts timers.
         print('starting trial')
         self.stimulation()
         self.running_trial = True
+
         # setting stim code based on value for current trial
         print(self.curr_trial)
         self.stim_code = self.trials[self.curr_trial]
         print(self.stim_code)
         #time.sleep(0.5)
         print("curr: " + str(self.curr_trial) + " < " + str(self.total_trials))
+
         if self.curr_trial < self.total_trials - 1:
             self.curr_trial += 1
             self.start_action()
@@ -242,13 +263,12 @@ class mibaseline_win(QWidget):
         self.show_stim = False
         self.board.insert_marker(self.end_trig)
         print("End marker: " +str(self.end_trig))
-        # self.data = self.board.get_board_data()
         self.update()
+        # self.data = self.board.get_board_data()
         # time.sleep(1)
 
         self.stim_timer.timeout.disconnect()
         self.stim_timer.timeout.connect(self.start_trial)
-
         self.stim_timer.start(1000)
 
     def stimulation(self):
@@ -261,6 +281,7 @@ class mibaseline_win(QWidget):
             loop.exec_()
             self.lbltext.setText('Imagine Right Hand Moving \n Move Arm Up and Down')
             self.setStyleSheet("background-color: green;")
+        
         if  self.running_trial==True and a==1:
             self.lbl.setText("Relax \n Keep arm still")
             loop = QEventLoop()
@@ -268,12 +289,13 @@ class mibaseline_win(QWidget):
             loop.exec_()
             self.lbltext.setText('Keep arm still \n until timer stops')
             self.setStyleSheet("background-color: red;")
+        
         if  self.running_trial==True and a==2:
             self.lbl.setText("Think of Moving Right Arm \n Move Arm Up and Down")
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
-            self.lbltext.setText('move your right hand \n until timer stops')
+            self.lbltext.setText('Move arm left to right \n until timer stops')
             self.setStyleSheet("background-color: green;")
 
     def on_end(self):
@@ -290,7 +312,7 @@ class mibaseline_win(QWidget):
         # self.is_end = True
 
         # let's initialize electrode to display
-        self.curr_electrode = 0
+        # self.curr_electrode = 0
         # and now start up erp graphing!
 
         # erp graphing is unused
