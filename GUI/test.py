@@ -24,10 +24,9 @@ class MainWindow(QMainWindow):
         self.gridLayout = QGridLayout()
         self.vLayout.addLayout(self.hLayout)
         self.vLayout.addLayout(self.gridLayout)
-
         self.vLayout.setContentsMargins(10, 10, 10, 10)
-        self.vLayout.setSpacing(10)
         self.hLayout.setContentsMargins(10, 10, 10, 10)
+        self.vLayout.setSpacing(10)
         self.hLayout.setSpacing(10)
 
         self.widget = QWidget()
@@ -42,7 +41,6 @@ class MainWindow(QMainWindow):
         self.button2.setFixedSize(80, 30)
         self.button3.setFixedSize(80, 30)
         self.button4.setFixedSize(80, 30)
-
         self.button1.setCheckable(True)
         self.button2.setCheckable(True)
         self.button3.setCheckable(True)
