@@ -16,7 +16,7 @@ for k = 1:length(myFiles)
     markers=data(:,end)*1E-5;
     [data_row,data_col]=size(data);
     for channel=2:(data_col-2)
-        EEG = data(:,channel);
+        EEG = data(:,channel)*1E-6;
         if sum(EEG)==0
             continue
         end
@@ -72,21 +72,21 @@ for k = 1:length(myFiles)
         r_channel=[temp,r];
     end
     bp=[r_channel,event];
-%     
+%     dataset_folder=cd
+%     dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
+%     wfilename="test.xlsx";
+%     dataset_folder=fullfile(dataset_folder,wfilename);
+%     if isfile(dataset_folder)
+%      fprintf("Dataset Found now adding to data set %s\n",dataset_folder)
+%     else
+%      %cols_name={}
+%      xlswrite(dataset_folder,{1,2,3,4,5})
+%      fprintf('Created new dataset called %s\n',dataset_folder)
+%     end
+%     read_data=table2array(readtable(dataset_folder));
+%     write_data=[read_data; bp];
+%     writematrix(write_data,dataset_folder);
 alldata=[alldata;bp];
+r_cof=corr
 end
-dataset_folder=cd
-dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
-wfilename="test.xlsx";
-dataset_folder=fullfile(dataset_folder,wfilename);
-if isfile(dataset_folder)
- fprintf("Dataset Found now adding to data set %s\n",dataset_folder)
-else
- %cols_name={}
- xlswrite(dataset_folder,{1,2,3,4,5})
- fprintf('Created new dataset called %s\n',dataset_folder)
-end
-read_data=table2array(readtable(dataset_folder));
-write_data=[read_data; alldata];
-writematrix(write_data,dataset_folder);
 fprintf('done')
