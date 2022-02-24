@@ -77,7 +77,7 @@ alldata=[alldata;bp];
 end
 dataset_folder=cd
 dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
-wfilename="test.xlsx";
+wfilename="RMS_Mateo_5sec.xlsx";
 dataset_folder=fullfile(dataset_folder,wfilename);
 if isfile(dataset_folder)
  fprintf("Dataset Found now adding to data set %s\n",dataset_folder)
