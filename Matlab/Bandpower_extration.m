@@ -74,7 +74,7 @@ for k = 1:length(myFiles)
     bp=[r_channel,event];
     dataset_folder=cd;
     dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
-    wfilename="MotorImergyDataset_saif.xlsx";
+    wfilename="MotorImergyDataset_Mateo_2sec.xlsx";
     dataset_folder=fullfile(dataset_folder,wfilename);
     if isfile(dataset_folder)
      fprintf("Dataset Found now adding to data set %s\n",dataset_folder)
