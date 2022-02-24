@@ -47,14 +47,10 @@ class MainWindow(QMainWindow):
         self.button2.setCheckable(True)
         self.button3.setCheckable(True)
         self.button4.setCheckable(True)
-        self.button1.clicked.connect(self.change_colour)
-        self.button2.clicked.connect(self.change_colour)
-        self.button3.clicked.connect(self.change_colour)
-        self.button4.clicked.connect(self.change_colour)
-        # self.button1.clicked.connect(self.update_plot_data)
-        # self.button2.clicked.connect(self.update_plot_data)
-        # self.button3.clicked.connect(self.update_plot_data)
-        # self.button4.clicked.connect(self.update_plot_data)
+        self.button1.clicked.connect(self.update_plot_data)
+        self.button2.clicked.connect(self.update_plot_data)
+        self.button3.clicked.connect(self.update_plot_data)
+        self.button4.clicked.connect(self.update_plot_data)
         self.button1.setStyleSheet("background-color : lightgrey")
         self.button2.setStyleSheet("background-color : lightgrey")
         self.button3.setStyleSheet("background-color : lightgrey")
@@ -93,7 +89,7 @@ class MainWindow(QMainWindow):
         self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
 
         pen = pg.mkPen(color=(255, 0, 0))
-        self.data_line = self.graphWidget.plot(self.x, self.y, pen=pen)
+        self.data_line1 = self.graphWidget.plot(self.x, self.y, pen=pen)
         self.data_line2 = self.graphWidget2.plot(self.x, self.y, pen=pen)
         self.data_line3 = self.graphWidget3.plot(self.x, self.y, pen=pen)
         self.data_line4 = self.graphWidget4.plot(self.x, self.y, pen=pen)
@@ -104,21 +100,33 @@ class MainWindow(QMainWindow):
         self.timer.start()
 
     def update_plot_data(self):
-        self.x = self.x[1:]  # Remove the first y element.
-        self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
-        self.y = self.y[1:]  # Remove the first
-        self.y.append(randint(0, 100))  # Add a new random value.
-
-        self.data_line.setData(self.x, self.y)  # Update the data.
-        self.data_line2.setData(self.x, self.y)  # Update the data.
-        self.data_line3.setData(self.x, self.y)  # Update the data.
-        self.data_line4.setData(self.x, self.y)  # Update the data.
-
-    def change_colour(self):
-        if self.button.isChecked():
-            self.button.setStyleSheet("background-color : lightblue")
-        else:
-            self.button.setStyleSheet("background-color : lightgrey")
+        if self.button1.isChecked():
+            self.x = self.x[1:]  # Remove the first y element.
+            self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
+            self.y = self.y[1:]  # Remove the first
+            self.y.append(randint(0, 100))  # Add a new random value.
+            self.data_line1.setData(self.x, self.y)  # Update the data.
+            
+        if self.button2.isChecked():
+            self.x = self.x[1:]  # Remove the first y element.
+            self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
+            self.y = self.y[1:]  # Remove the first
+            self.y.append(randint(0, 100))  # Add a new random value.
+            self.data_line2.setData(self.x, self.y)  # Update the data.
+            
+        if self.button3.isChecked():
+            self.x = self.x[1:]  # Remove the first y element.
+            self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
+            self.y = self.y[1:]  # Remove the first
+            self.y.append(randint(0, 100))  # Add a new random value.
+            self.data_line3.setData(self.x, self.y)  # Update the data.
+            
+        if self.button4.isChecked():
+            self.x = self.x[1:]  # Remove the first y element.
+            self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
+            self.y = self.y[1:]  # Remove the first
+            self.y.append(randint(0, 100))  # Add a new random value.
+            self.data_line4.setData(self.x, self.y)  # Update the data.
 
 
 def main():
