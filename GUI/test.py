@@ -7,6 +7,8 @@ from random import randint
 from PyQt5 import QtGui
 from PyQt5.QtOpenGL import *
 from PyQt5 import QtCore, Qt
+from PyQt5.QtCore import Qt
+
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
        
@@ -23,6 +25,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.graphWidget)
         self.graphWidget.setLayout(self.layout0)
         self.button1 = QPushButton("Channel 1")
+        self.button1.setFixedSize(120, 30) 
         self.button2 = QPushButton("Channel 2")
         self.button3 = QPushButton( "Channel 3")
         self.button4 = QPushButton( "Channel 4")
@@ -40,6 +43,10 @@ class MainWindow(QMainWindow):
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.update_plot_data)
         self.timer.start()
+
+        styles = {'color':'r', 'font-size':'20px'}
+        self.graphWidget.setLabel('left', 'Amplitude', **styles)
+        self.graphWidget.setLabel('bottom', 'x', **styles)
 
 
        
@@ -63,3 +70,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
