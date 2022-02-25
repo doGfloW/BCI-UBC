@@ -6,7 +6,7 @@ import csv
 import random
 
 #PyQT5 GUI Imports
-#from PyQt5 import QtCore, Qt
+from PyQt5 import QtCore, Qt
 from PyQt5.QtCore import QTimer, QTime, Qt, QEventLoop
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget
 from PyQt5.QtGui import QFont, QPainter, QBrush
@@ -86,12 +86,12 @@ class mibaseline_win(QWidget):
         self.setWindowTitle('Motor imergy baseline Test')
         self.lbl = QLabel()
         self.lbltext=QLabel()
-        self.lbl.setAlignment(Qt.AlignCenter)
+        self.lbl.move(20,20)
         self.lbl.setFont(fnt)
         self.lbltext.setFont(QFont('Open Sans', 40, QFont.Bold))
         layout.addWidget(self.lbl)
         layout.addWidget(self.lbltext)
-        self.lbltext.setAlignment(Qt.AlignCenter)
+        self.lbltext.move(200,200)
         self.setLayout(layout)
 
         self.start = False
@@ -169,7 +169,6 @@ class mibaseline_win(QWidget):
                 self.start = False
 
                 # setting text to the label
-                self.arm_move=False
                 self.stimulation()
                 self.responding_time = True
                 self.stim_timer.timeout.disconnect()
@@ -192,7 +191,7 @@ class mibaseline_win(QWidget):
         self.start = False
 
         # getting seconds and flag
-        second = 2
+        second = 10
         done=True
 
         # if flag is true
@@ -252,6 +251,7 @@ class mibaseline_win(QWidget):
 
         if self.curr_trial < self.total_trials - 1:
             self.curr_trial += 1
+            self.show_stim=True
             self.start_action()
             winsound.Beep(self.frequency, self.duration)
         else:
@@ -279,7 +279,7 @@ class mibaseline_win(QWidget):
 
         if self.curr_trial==0:
             self.lbl.setText("Starting in 3,2,1")
-            #self.show_stim = False
+            self.show_stim = False
             loop = QEventLoop()
             QTimer.singleShot(3000, loop.quit)
             loop.exec_()
@@ -288,7 +288,7 @@ class mibaseline_win(QWidget):
         
         if  self.running_trial==True and a==1:
             self.lbl.setText("Relax \n Keep arm still")
-            #self.show_stim = False
+            self.show_stim = True
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
@@ -297,7 +297,7 @@ class mibaseline_win(QWidget):
         
         if  self.running_trial==True and a==2:
             self.lbl.setText("Think of Moving Right Arm \n Move Arm Up and Down")
-            #self.show_stim = True
+            self.show_stim = True
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
@@ -305,33 +305,33 @@ class mibaseline_win(QWidget):
             self.setStyleSheet("background-color: green;")
 
 
-    # def paintEvent(self, event):
-    #     # here is where we draw stuff on the screen
-    #     # you give drawing instructions in pixels - here I'm getting pixel values based on window size
-    #     print('paint event runs')
-    #     painter = QPainter(self)
-    #     if self.show_stim and a==2:
-    #         print('painting stim')
-    #         center = self.geometry().width()//2
-    #         textWidth=200
-    #         textHeight=100
-    #         font = QFont()
-    #         font.setFamily("Tahoma")
-    #         font.setPixelSize(32)
-    #         font.setBold(True)
-    #         painter.setFont(font)
-    #         painter.drawText(center-textWidth//2,center-textHeight//2, textWidth,textHeight, QtCore.Qt.AlignCenter, self.stim_str[self.stim_code-1])
+    def paintEvent(self, event):
+        # here is where we draw stuff on the screen
+        # you give drawing instructions in pixels - here I'm getting pixel values based on window size
+        print('paint event runs')
+        painter = QPainter(self)
+        print("painer showing stim "+ str(self.show_stim))
+        if self.show_stim:
+            print('painting stim')
+            painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
+            cross_width = 100
+            line_width = 20
+            center = self.geometry().width()//2
+            painter.drawRect(100,100,90,60)
+            painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
+     
 
-    #     elif self.running_trial and not self.finished:
-    #         painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
-    #         cross_width = 100
-    #         line_width = 20
-    #         center = self.geometry().width()//2
-    #         painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
-    #         painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
-    #     elif self.finished:
-    #         # no need to paint anything specifically
-    #         pass
+        elif self.running_trial and not self.finished:
+            print('paint event 1st elseif')
+            # painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
+            # cross_width = 100
+            # line_width = 20
+            # center = self.geometry().width()//2
+            # painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
+            # painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
+        elif self.finished:
+            # no need to paint anything specifically
+            pass
 
     def on_end(self):
         # called by end timer
