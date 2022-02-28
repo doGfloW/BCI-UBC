@@ -124,7 +124,6 @@ class MainWindow(QMainWindow):
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.update_plot_data)
         self.timer.start()
-        #endregion
 
     def update(self):
         data = self.board_shim.get_current_board_data(self.num_points)
