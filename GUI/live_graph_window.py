@@ -18,9 +18,9 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 import matplotlib.pyplot as plt
 
 
-class MainWindow(QMainWindow):
+class graph_win(QMainWindow):
     def __init__(self, board_shim, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+        super(graph_win, self).__init__(*args, **kwargs)
         self.board_id = board_shim.get_board_id()
         self.board_shim = board_shim
         self.eeg_channels = BoardShim.get_eeg_channels(self.board_id)
@@ -125,7 +125,7 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(self.update_plot_data)
         self.timer.start()
 
-    def update(self):
+    def update_plot_data(self):
         data = self.board_shim.get_current_board_data(self.num_points)
 
         if self.button1.isChecked():
@@ -170,8 +170,55 @@ class MainWindow(QMainWindow):
 
 
 def main():
-    app = QtWidgets.QApplication(sys.argv)
-    main = MainWindow()
+    BoardShim.enable_dev_board_logger()
+    logging.basicConfig(level=logging.DEBUG)
+
+    parser = argparse.ArgumentParser()
+    # use docs to check which parameters are required for specific board, e.g. for Cyton - set serial port
+    parser.add_argument('--timeout', type=int, help='timeout for device discovery or connection', required=False,
+                        default=0)
+    parser.add_argument('--ip-port', type=int, help='ip port', required=False, default=0)
+    parser.add_argument('--ip-protocol', type=int, help='ip protocol, check IpProtocolType enum', required=False,
+                        default=0)
+    parser.add_argument('--ip-address', type=str, help='ip address', required=False, default='')
+    parser.add_argument('--serial-port', type=str, help='serial port', required=False, default='')
+    parser.add_argument('--mac-address', type=str, help='mac address', required=False, default='')
+    parser.add_argument('--other-info', type=str, help='other info', required=False, default='')
+    parser.add_argument('--streamer-params', type=str, help='streamer params', required=False, default='')
+    parser.add_argument('--serial-number', type=str, help='serial number', required=False, default='')
+    parser.add_argument('--board-id', type=int, help='board id, check docs to get a list of supported boards',
+                        required=False, default=BoardIds.SYNTHETIC_BOARD)
+    parser.add_argument('--file', type=str, help='file', required=False, default='')
+    args = parser.parse_args()
+
+    params = BrainFlowInputParams()
+    params.ip_port = args.ip_port
+    params.serial_port = args.serial_port
+    params.mac_address = args.mac_address
+    params.other_info = args.other_info
+    params.serial_number = args.serial_number
+    params.ip_address = args.ip_address
+    params.ip_protocol = args.ip_protocol
+    params.timeout = args.timeout
+    params.file = args.file
+
+    try:
+        board_shim = BoardShim(args.board_id, params)
+        board_shim.prepare_session()
+        board_shim.start_stream(450000, args.streamer_params)
+        app = QtWidgets.QApplication(sys.argv)
+        main = graph_win(board_shim)
+        main.show()
+        sys.exit(app.exec())
+    except BaseException:
+        logging.warning('Exception', exc_info=True)
+    finally:
+        logging.info('End')
+        if board_shim.is_prepared():
+            logging.info('Releasing session')
+            board_shim.release_session()
+
+    main = graph_win()
     main.show()
     sys.exit(app.exec_())
 
