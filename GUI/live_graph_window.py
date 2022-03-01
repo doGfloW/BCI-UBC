@@ -218,10 +218,6 @@ def main():
             logging.info('Releasing session')
             board_shim.release_session()
 
-    main = graph_win()
-    main.show()
-    sys.exit(app.exec_())
-
 
 if __name__ == '__main__':
     main()
