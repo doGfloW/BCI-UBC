@@ -16,6 +16,7 @@ from brainflow.data_filter import DataFilter, FilterTypes, DetrendOperations
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
+from random import randint
 
 
 class graph_win(QMainWindow):
@@ -121,7 +122,7 @@ class graph_win(QMainWindow):
         self.data_line4 = self.graphWidget4.plot(self.x, self.y, pen=pen)
 
         self.timer = QtCore.QTimer()
-        self.timer.setInterval(50)
+        self.timer.setInterval(100)
         self.timer.timeout.connect(self.update_plot_data)
         self.timer.start()
 
@@ -133,40 +134,39 @@ class graph_win(QMainWindow):
         else:
             # what does this do?
             # DataFilter.detrend(data[0], DetrendOperations.CONSTANT.value)
+            # append for y? and which index is for channel 1?
             self.x = self.x[1:]
             self.x.append(self.x[-1] + 1)
-            # append for y? and which index is for channel 1?
+            # self.y = self.y[1:]
+            # self.y.append(randint(0, 100))
             self.y = data[self.eeg_channels[0]].tolist()
-            self.data_line1.setData(self.x, self.y)
+            self.data_line1.setData(self.y)
 
         if self.button2.isChecked():
             pass
         else:
             self.x = self.x[1:]
             self.x.append(self.x[-1] + 1)
-            # append for y? and which index is for channel 2?
             self.y = data[self.eeg_channels[1]].tolist()
-            self.data_line1.setData(self.x, self.y)
+            self.data_line2.setData(self.y)
 
         if self.button3.isChecked():
             pass
         else:
             self.x = self.x[1:]
             self.x.append(self.x[-1] + 1)
-            # append for y? and which index is for channel 3?
             self.y = data[self.eeg_channels[2]].tolist()
-            self.data_line1.setData(self.x, self.y)
+            self.data_line3.setData(self.y)
 
         if self.button4.isChecked():
             pass
         else:
             self.x = self.x[1:]
             self.x.append(self.x[-1] + 1)
-            # append for y? and which index is for channel 4?
             self.y = data[self.eeg_channels[3]].tolist()
-            self.data_line1.setData(self.x, self.y)
+            self.data_line4.setData(self.y)
 
-        self.app.processEvents()
+        # self.app.processEvents()
 
 
 def main():
@@ -174,20 +174,19 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
 
     parser = argparse.ArgumentParser()
-    # use docs to check which parameters are required for specific board, e.g. for Cyton - set serial port
     parser.add_argument('--timeout', type=int, help='timeout for device discovery or connection', required=False,
                         default=0)
     parser.add_argument('--ip-port', type=int, help='ip port', required=False, default=0)
     parser.add_argument('--ip-protocol', type=int, help='ip protocol, check IpProtocolType enum', required=False,
                         default=0)
-    parser.add_argument('--ip-address', type=str, help='ip address', required=False, default='')
-    parser.add_argument('--serial-port', type=str, help='serial port', required=False, default='')
+    parser.add_argument('--ip-address', type=str, help='ip address', required=False, default='192.168.4.1')
+    parser.add_argument('--serial-port', type=str, help='serial port', required=False, default='COM3')
     parser.add_argument('--mac-address', type=str, help='mac address', required=False, default='')
     parser.add_argument('--other-info', type=str, help='other info', required=False, default='')
     parser.add_argument('--streamer-params', type=str, help='streamer params', required=False, default='')
     parser.add_argument('--serial-number', type=str, help='serial number', required=False, default='')
     parser.add_argument('--board-id', type=int, help='board id, check docs to get a list of supported boards',
-                        required=False, default=BoardIds.SYNTHETIC_BOARD)
+                        required=False, default=BoardIds.GANGLION_BOARD)
     parser.add_argument('--file', type=str, help='file', required=False, default='')
     args = parser.parse_args()
 
@@ -209,6 +208,8 @@ def main():
         app = QtWidgets.QApplication(sys.argv)
         main = graph_win(board_shim)
         main.show()
+        data = board_shim.get_board_data()
+        print(data)
         sys.exit(app.exec())
     except BaseException:
         logging.warning('Exception', exc_info=True)
