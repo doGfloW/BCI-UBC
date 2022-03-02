@@ -179,8 +179,8 @@ def main():
     parser.add_argument('--ip-port', type=int, help='ip port', required=False, default=0)
     parser.add_argument('--ip-protocol', type=int, help='ip protocol, check IpProtocolType enum', required=False,
                         default=0)
-    parser.add_argument('--ip-address', type=str, help='ip address', required=False, default='192.168.4.1')
-    parser.add_argument('--serial-port', type=str, help='serial port', required=False, default='COM3')
+    parser.add_argument('--ip-address', type=str, help='ip address', required=False, default='')
+    parser.add_argument('--serial-port', type=str, help='serial port', required=False, default='COM4')
     parser.add_argument('--mac-address', type=str, help='mac address', required=False, default='')
     parser.add_argument('--other-info', type=str, help='other info', required=False, default='')
     parser.add_argument('--streamer-params', type=str, help='streamer params', required=False, default='')

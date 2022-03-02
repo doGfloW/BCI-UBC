@@ -467,14 +467,14 @@ class MenuWindow(QMainWindow):
         self.is_session_window_open = True
 
     def open_graph_window(self):
-        self.graph_window = graph_win(
+        self.live_graph_window = graph_win(
         parent = self,
         hardware = self.hardware, 
         model = self.model, 
         data_type = self.data_type, 
         serial_port = self.bci_serial_port,
         )   
-        self.graph_window.show()
+        self.live_graph_window.show()
         self.is_graph_window_open = True
 
 if __name__ == '__main__':    
