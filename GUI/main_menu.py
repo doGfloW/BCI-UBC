@@ -19,6 +19,8 @@ import random
 import time
 import os
 
+from live_graph_window import graph_win
+
 class MenuWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__()

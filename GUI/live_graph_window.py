@@ -19,8 +19,8 @@ import matplotlib.pyplot as plt
 
 
 class graph_win(QMainWindow):
-    def __init__(self, board_shim, *args, **kwargs):
-        super(graph_win, self).__init__(*args, **kwargs)
+    def __init__(self, board_shim):
+        super(graph_win, self).__init__()
         self.board_id = board_shim.get_board_id()
         self.board_shim = board_shim
         self.eeg_channels = BoardShim.get_eeg_channels(self.board_id)
