@@ -316,9 +316,19 @@ class mibaseline_win(QWidget):
             painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
             cross_width = 100
             line_width = 20
+            radius=80
             center = self.geometry().width()//2
+            offset=200
+            rand_list=[center + offset,center - offset]
             painter.drawRect(100,100,90,60)
             painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
+            # painting circle random a quadrent
+            #painter.drawEllipse(random.choice(rand_list),random.choice(rand_list),radius,radius)
+
+            painter.drawEllipse(center + offset,center - offset,radius,radius) # 1st quad
+            painter.drawEllipse(center + offset,center + offset,radius,radius) # 2nd quad
+            painter.drawEllipse(center - offset,center + offset,radius,radius) # 3rd quad
+            painter.drawEllipse(center - offset,center - offset,radius,radius) # 4th quad
      
 
         elif self.running_trial and not self.finished:
