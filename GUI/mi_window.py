@@ -284,7 +284,7 @@ class mibaseline_win(QWidget):
             QTimer.singleShot(3000, loop.quit)
             loop.exec_()
             self.lbltext.setText('Imagine Right Hand Moving \n Move Arm Up and Down')
-            self.setStyleSheet("background-color: green;")
+            #self.setStyleSheet("background-color: green;")
         
         if  self.running_trial==True and a==1:
             self.lbl.setText("Relax \n Keep arm still")
@@ -293,7 +293,7 @@ class mibaseline_win(QWidget):
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
             self.lbltext.setText('Keep arm still \n until timer stops')
-            self.setStyleSheet("background-color: red;")
+            #self.setStyleSheet("background-color: red;")
         
         if  self.running_trial==True and a==2:
             self.lbl.setText("Think of Moving Right Arm \n Move Arm Up and Down")
@@ -302,7 +302,7 @@ class mibaseline_win(QWidget):
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
             self.lbltext.setText('Move arm left to right \n until timer stops')
-            self.setStyleSheet("background-color: green;")
+            #self.setStyleSheet("background-color: green;")
 
 
     def paintEvent(self, event):
@@ -320,15 +320,17 @@ class mibaseline_win(QWidget):
             center = self.geometry().width()//2
             offset=200
             rand_list=[center + offset,center - offset]
-            painter.drawRect(100,100,90,60)
-            painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
-            # painting circle random a quadrent
-            #painter.drawEllipse(random.choice(rand_list),random.choice(rand_list),radius,radius)
 
-            painter.drawEllipse(center + offset,center - offset,radius,radius) # 1st quad
-            painter.drawEllipse(center + offset,center + offset,radius,radius) # 2nd quad
-            painter.drawEllipse(center - offset,center + offset,radius,radius) # 3rd quad
-            painter.drawEllipse(center - offset,center - offset,radius,radius) # 4th quad
+            painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
+            painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
+           
+            # painting circle random a quadrent
+            painter.drawEllipse(random.choice(rand_list),random.choice(rand_list),radius,radius)
+
+            #painter.drawEllipse(center + offset,center - offset,radius,radius) # 1st quad
+            #painter.drawEllipse(center + offset,center + offset,radius,radius) # 2nd quad
+            #painter.drawEllipse(center - offset,center + offset,radius,radius) # 3rd quad
+            #painter.drawEllipse(center - offset,center - offset,radius,radius) # 4th quad
      
 
         elif self.running_trial and not self.finished:
