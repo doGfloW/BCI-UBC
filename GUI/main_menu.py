@@ -9,9 +9,8 @@
 import sys
 from PyQt5 import QtGui
 from PyQt5.QtOpenGL import *
-from PyQt5 import QtCore, Qt
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import *
-
 import matplotlib
 
 import numpy as np
@@ -44,11 +43,11 @@ class MenuWindow(QMainWindow):
 
         '''
 
-        self.setMinimumSize(900,900)
+        self.setMinimumSize(700,700)
         
         # self.setStyleSheet("background-color: gray;")
         # setting window title and icon
-        self.setWindowTitle('PyQt5 Menu')
+        self.setWindowTitle('UBC-OpenBCI User Interface')
         #self.setWindowIcon(QtGui.QIcon('utils/logo_icon.jpg')) #change icon once optimized
         
         # init layout
@@ -77,15 +76,15 @@ class MenuWindow(QMainWindow):
         self.type_layout = QVBoxLayout()
         self.port_layout = QVBoxLayout()
         self.csv_layout = QVBoxLayout()
-        #self.arduino_layout = QVBoxLayout()
         self.limb_layout = QVBoxLayout()
+        #self.arduino_layout = QVBoxLayout()
 
         '''
         |------------------INPUTS-------------------|    
         |                                           |
         |       HARDWARE              TYPE          |
         |       MODEL                 PORT          |
-        |       CSV                   ARDUINO       |
+        |       CSV                                 |
         |                   LIMB*                   |
         |                                           |
         |-------------------------------------------|
@@ -477,7 +476,9 @@ class MenuWindow(QMainWindow):
 
 if __name__ == '__main__':    
     app = QApplication(sys.argv)    
-    win = MenuWindow() 
-    win.show() 
+    MainWindow = QtWidgets.QMainWindow()
+    win = MenuWindow()
+    win.setupUi(MainWindow) 
+    MainWindow.show() 
     # print('we got here')  
     sys.exit(app.exec())
