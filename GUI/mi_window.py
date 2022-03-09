@@ -97,11 +97,13 @@ class mibaseline_win(QWidget):
         self.layout1.addStretch(1)
 
         self.mainlayout.addLayout(self.layout1)
-        
 
-        
         self.setLayout(self.mainlayout)
         #self.setLayout(self.layout2)
+
+        self.previous_count = 0
+        self.previous_xchoice = 0
+        self.previous_ychoice = 0
 
         self.start = False
         self.count=0
@@ -171,6 +173,7 @@ class mibaseline_win(QWidget):
         if self.start:
             # Countdow Timer: incrementing the counter
             self.count -= 1
+            self.update()
 
             # timer is completed
             if self.count == 0:
@@ -292,16 +295,16 @@ class mibaseline_win(QWidget):
             QTimer.singleShot(3000, loop.quit)
             loop.exec_()
             self.lbltext.setText('Imagine Right Hand Moving\nMove Arm Up and Down')
-            #self.setStyleSheet("background-color: green;")
+            self.setStyleSheet("background-color: green;")
         
         if  self.running_trial==True and a==1:
             self.lbl.setText("Relax")
-            self.show_stim = True
+            self.show_stim = False
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
             self.lbltext.setText('Keep arm still\nuntil timer stops')
-            #self.setStyleSheet("background-color: red;")
+            self.setStyleSheet("background-color: red;")
         
         if  self.running_trial==True and a==2:
             self.lbl.setText("Think of Moving Right Arm\nMove Arm Up and Down")
@@ -310,7 +313,7 @@ class mibaseline_win(QWidget):
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
             self.lbltext.setText('Move arm left to right\nuntil timer stops')
-            #self.setStyleSheet("background-color: green;")
+            self.setStyleSheet("background-color: green;")
 
 
     def paintEvent(self, event):
@@ -319,26 +322,45 @@ class mibaseline_win(QWidget):
         print('paint event runs')
         painter = QPainter(self)
         print("painer showing stim "+ str(self.show_stim))
+
         if self.show_stim:
             print('painting stim')
             painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
             cross_width = 100
             line_width = 20
-            radius=80
+            radius = 80
             center = self.geometry().width()//2
-            offset=100
-            rand_list=[center + offset,center - offset]
+            offset = 100
 
-            painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
-            painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
-           
-            # painting circle random a quadrent
-            painter.drawEllipse(random.choice(rand_list),random.choice(rand_list),radius,radius)
+            # check if count is zero; this removes the slight overlap when the cross should be gone
+            if self.count != 0:
+                # draw two rectangles for the fixation cross
+                painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
+                painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
 
-            #painter.drawEllipse(center + offset,center - offset,radius,radius) # 1st quad
-            #painter.drawEllipse(center + offset,center + offset,radius,radius) # 2nd quad
-            #painter.drawEllipse(center - offset,center + offset,radius,radius) # 3rd quad
-            #painter.drawEllipse(center - offset,center - offset,radius,radius) # 4th quad
+            # check if the count changed; if so, draw a new circle at a randomized position
+            if (self.count != self.previous_count) & (self.count != 0):
+                # get position values (randomized) for one of four circles
+                rand_list = [center + offset - radius//2, center - offset - radius//2]
+                xchoice = random.choice(rand_list)
+                ychoice = random.choice(rand_list)
+
+                # choices match previous choices so change the x position choice
+                if (xchoice == self.previous_xchoice) & (ychoice == self.previous_ychoice):
+                    xchoice = random.choice([x for x in rand_list if x != self.previous_xchoice])
+
+                # update previous values for the next loop
+                self.previous_count = self.count
+                self.previous_xchoice = xchoice
+                self.previous_ychoice = ychoice
+
+                # painting circle random a quadrent
+                painter.drawEllipse(xchoice, ychoice, radius, radius)
+
+                #painter.drawEllipse(center + offset,center - offset,radius,radius) # 1st quad
+                #painter.drawEllipse(center + offset,center + offset,radius,radius) # 2nd quad
+                #painter.drawEllipse(center - offset,center + offset,radius,radius) # 3rd quad
+                #painter.drawEllipse(center - offset,center - offset,radius,radius) # 4th quad
      
         elif self.finished:
             # no need to paint anything specifically
