@@ -8,7 +8,7 @@ import random
 #PyQT5 GUI Imports
 from PyQt5 import QtCore, Qt
 from PyQt5.QtCore import QTimer, QTime, Qt, QEventLoop
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget
+from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget, QHBoxLayout
 from PyQt5.QtGui import QFont, QPainter, QBrush
 
 
@@ -77,22 +77,31 @@ class mibaseline_win(QWidget):
             self.board_id = -1
 
 
-        self.resize(900, 900)
+        self.setMinimumSize(900, 900)
 
         #PyQT Window Basic Layout
-        layout = QVBoxLayout()
+        self.mainlayout=QVBoxLayout()
+        self.layout1 = QVBoxLayout()
         fnt = QFont('Open Sans', 40, QFont.Bold)
         
         self.setWindowTitle('Motor imergy baseline Test')
         self.lbl = QLabel()
         self.lbltext=QLabel()
-        self.lbl.move(20,20)
+        self.lbl.setAlignment(Qt.AlignHCenter)
+        self.lbltext.setAlignment(Qt.AlignHCenter)
         self.lbl.setFont(fnt)
-        self.lbltext.setFont(QFont('Open Sans', 40, QFont.Bold))
-        layout.addWidget(self.lbl)
-        layout.addWidget(self.lbltext)
-        self.lbltext.setAlignment(Qt.AlignCenter)
-        self.setLayout(layout)
+        self.lbltext.setFont(fnt)
+        
+        self.layout1.addWidget(self.lbl)
+        self.layout1.addWidget(self.lbltext)
+        self.layout1.addStretch(1)
+
+        self.mainlayout.addLayout(self.layout1)
+        
+
+        
+        self.setLayout(self.mainlayout)
+        #self.setLayout(self.layout2)
 
         self.start = False
         self.count=0
@@ -232,9 +241,8 @@ class mibaseline_win(QWidget):
 
 # instructions to displace at the start
     def instructions(self):
-        self.lbltext.setFont(QFont('Open Sans', 40, QFont.Bold))
-        self.lbltext.setText("Instructions: \n Move your hand when it says \n Press Enter to start")
-        self.lbltext.setVisible(True)
+        self.lbltext.setText("Instructions:\nMove your hand when it says\nPress Enter to start")
+        #self.lbltext.setVisible(True)
         
     def start_trial(self):
         # starts trial - starts timers.
@@ -283,25 +291,25 @@ class mibaseline_win(QWidget):
             loop = QEventLoop()
             QTimer.singleShot(3000, loop.quit)
             loop.exec_()
-            self.lbltext.setText('Imagine Right Hand Moving \n Move Arm Up and Down')
+            self.lbltext.setText('Imagine Right Hand Moving\nMove Arm Up and Down')
             #self.setStyleSheet("background-color: green;")
         
         if  self.running_trial==True and a==1:
-            self.lbl.setText("Relax \n Keep arm still")
+            self.lbl.setText("Relax")
             self.show_stim = True
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
-            self.lbltext.setText('Keep arm still \n until timer stops')
+            self.lbltext.setText('Keep arm still\nuntil timer stops')
             #self.setStyleSheet("background-color: red;")
         
         if  self.running_trial==True and a==2:
-            self.lbl.setText("Think of Moving Right Arm \n Move Arm Up and Down")
+            self.lbl.setText("Think of Moving Right Arm\nMove Arm Up and Down")
             self.show_stim = True
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
-            self.lbltext.setText('Move arm left to right \n until timer stops')
+            self.lbltext.setText('Move arm left to right\nuntil timer stops')
             #self.setStyleSheet("background-color: green;")
 
 
@@ -332,15 +340,6 @@ class mibaseline_win(QWidget):
             #painter.drawEllipse(center - offset,center + offset,radius,radius) # 3rd quad
             #painter.drawEllipse(center - offset,center - offset,radius,radius) # 4th quad
      
-
-        elif self.running_trial and not self.finished:
-            print('paint event 1st elseif')
-            # painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
-            # cross_width = 100
-            # line_width = 20
-            # center = self.geometry().width()//2
-            # painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
-            # painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
         elif self.finished:
             # no need to paint anything specifically
             pass
