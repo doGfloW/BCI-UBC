@@ -171,6 +171,7 @@ class mibaseline_win(QWidget):
         if self.start:
             # Countdow Timer: incrementing the counter
             self.count -= 1
+            self.update()
 
             # timer is completed
             if self.count == 0:
@@ -292,16 +293,16 @@ class mibaseline_win(QWidget):
             QTimer.singleShot(3000, loop.quit)
             loop.exec_()
             self.lbltext.setText('Imagine Right Hand Moving\nMove Arm Up and Down')
-            #self.setStyleSheet("background-color: green;")
+            self.setStyleSheet("background-color: green;")
         
         if  self.running_trial==True and a==1:
             self.lbl.setText("Relax")
-            self.show_stim = True
+            self.show_stim = False
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
             self.lbltext.setText('Keep arm still\nuntil timer stops')
-            #self.setStyleSheet("background-color: red;")
+            self.setStyleSheet("background-color: red;")
         
         if  self.running_trial==True and a==2:
             self.lbl.setText("Think of Moving Right Arm\nMove Arm Up and Down")
@@ -310,7 +311,7 @@ class mibaseline_win(QWidget):
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
             self.lbltext.setText('Move arm left to right\nuntil timer stops')
-            #self.setStyleSheet("background-color: green;")
+            self.setStyleSheet("background-color: green;")
 
 
     def paintEvent(self, event):
@@ -327,18 +328,19 @@ class mibaseline_win(QWidget):
             radius=80
             center = self.geometry().width()//2
             offset=100
-            rand_list=[center + offset,center - offset]
+            rand_list=[center + offset - radius//2 ,center - offset - radius//2]
 
             painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
             painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
            
             # painting circle random a quadrent
             painter.drawEllipse(random.choice(rand_list),random.choice(rand_list),radius,radius)
+            print("showing a random circle")
 
-            #painter.drawEllipse(center + offset,center - offset,radius,radius) # 1st quad
-            #painter.drawEllipse(center + offset,center + offset,radius,radius) # 2nd quad
-            #painter.drawEllipse(center - offset,center + offset,radius,radius) # 3rd quad
-            #painter.drawEllipse(center - offset,center - offset,radius,radius) # 4th quad
+            # painter.drawEllipse(center + offset - radius//2,center - offset - radius//2,radius,radius) # 1st quad
+            # painter.drawEllipse(center + offset - radius//2,center + offset - radius//2,radius,radius) # 2nd quad
+            # painter.drawEllipse(center - offset - radius//2,center + offset - radius//2,radius,radius) # 3rd quad
+            # painter.drawEllipse(center - offset - radius//2,center - offset - radius//2,radius,radius) # 4th quad
      
         elif self.finished:
             # no need to paint anything specifically
