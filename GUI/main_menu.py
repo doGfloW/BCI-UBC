@@ -43,7 +43,7 @@ class MenuWindow(QMainWindow):
 
         '''
 
-        self.setMinimumSize(700,700)
+        self.setMinimumSize(900,900)
         
         # self.setStyleSheet("background-color: gray;")
         # setting window title and icon
@@ -476,9 +476,7 @@ class MenuWindow(QMainWindow):
 
 if __name__ == '__main__':    
     app = QApplication(sys.argv)    
-    MainWindow = QtWidgets.QMainWindow()
     win = MenuWindow()
-    win.setupUi(MainWindow) 
-    MainWindow.show() 
+    win.show() 
     # print('we got here')  
     sys.exit(app.exec())
