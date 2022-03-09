@@ -77,7 +77,7 @@ class mibaseline_win(QWidget):
             self.board_id = -1
 
 
-        self.resize(500, 500)
+        self.resize(900, 900)
 
         #PyQT Window Basic Layout
         layout = QVBoxLayout()
@@ -91,7 +91,7 @@ class mibaseline_win(QWidget):
         self.lbltext.setFont(QFont('Open Sans', 40, QFont.Bold))
         layout.addWidget(self.lbl)
         layout.addWidget(self.lbltext)
-        self.lbltext.move(200,200)
+        self.lbltext.setAlignment(Qt.AlignCenter)
         self.setLayout(layout)
 
         self.start = False
@@ -318,7 +318,7 @@ class mibaseline_win(QWidget):
             line_width = 20
             radius=80
             center = self.geometry().width()//2
-            offset=200
+            offset=100
             rand_list=[center + offset,center - offset]
 
             painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
