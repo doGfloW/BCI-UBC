@@ -18,6 +18,11 @@ import random
 import time
 import os
 
+from baseline_window import baseline_win
+from impedance_window import impedance_win
+#from ml_model_window import model_win
+#from graph_window import graph_win
+
 class MenuWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__()

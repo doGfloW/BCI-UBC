@@ -1,6 +1,6 @@
 #test new models
 
-from liblsl import StreamInlet, resolve_stream
+#from liblsl import StreamInlet, resolve_stream
 from pydoc import resolve
 import numpy as np
 import time

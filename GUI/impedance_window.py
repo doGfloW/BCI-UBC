@@ -161,12 +161,12 @@ class impedance_win(QWidget):
         self.hardware_connected = True
 
         # Think Pulse
-        self.board.config_board("x1040010Xx2040010Xx3040010Xx4040010Xx5040010Xx6040010Xx7040010Xx8040010XxQ040010XxW040010XxE040010XxR040010XxT040010XxY040010XxU040010XxI040010X")
+        #self.board.config_board("x1040010Xx2040010Xx3040010Xx4040010Xx5040010Xx6040010Xx7040010Xx8040010XxQ040010XxW040010XxE040010XxR040010XxT040010XxY040010XxU040010XxI040010X")
         # Reinitialize the 15/16 channel for EOG
         # board.config_board("xU060100XxI060100X")
 
-        res = self.board.config_board("z110Zz210Zz310Zz410Zz510Zz610Zz710Zz810Zzq10Zzw10Zze10Zzr10Zzt10Zzy10Zzu10Zzi10Z")
-        print(res)
+        #res = self.board.config_board("z110Zz210Zz310Zz410Zz510Zz610Zz710Zz810Zzq10Zzw10Zze10Zzr10Zzt10Zzy10Zzu10Zzi10Z")
+        #print(res)
 
         self.board.start_stream(45000, None)
         self.impedances = [0] * self.chan_num
