@@ -20,9 +20,12 @@ from io import StringIO
 from scipy import signal
 import numpy as np
 
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Dropout, Activation
-import tensorflow as tf
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
