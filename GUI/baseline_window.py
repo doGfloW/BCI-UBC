@@ -16,7 +16,7 @@ The data is stored with tines leftized (timestamp 0 when stim first displayed, f
 so setting up an ERP graph should be reasonably simple
 Project ideas: any project where the user sees something displayed and interacts with it, while eeg is recorded
 
-Madeleine
+Summary:
 65/66 init param object
 
 110-114 init board object + begin stream
