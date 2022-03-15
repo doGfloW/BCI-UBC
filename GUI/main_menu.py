@@ -133,7 +133,7 @@ class MenuWindow(QMainWindow):
         ### DATATYPE ###
         # drop down menu for simulate or live (previously included file step through)
         self.type_dropdown = QComboBox()
-        #self.type_dropdown.setPlaceholderText('Select data type') -----------
+        #self.type_dropdown.setPlaceholderText('Select data type')  ---------------Place holder text not available for this version of pyqt 5.9.2------------------------------
         self.type_dropdown.addItems(['Task live','Task simulate'])
         self.type_dropdown.activated.connect(self.handle_type_choice)
         self.type_label = QLabel('Select data type')
@@ -212,7 +212,7 @@ class MenuWindow(QMainWindow):
         '''
 
         # here is a button to actually start a impedance window
-        self.impedance_window_button = QPushButton('Impedance Check')
+        self.impedance_window_button = QPushButton('Run Impedance Check')
         self.impedance_window_button.setEnabled(False)
         self.layout.addWidget(self.impedance_window_button,5,0, 1, 1, QtCore.Qt.AlignHCenter)
         self.impedance_window_button.clicked.connect(self.open_impedance_window)
@@ -224,10 +224,19 @@ class MenuWindow(QMainWindow):
         # self.arduino_window_button.clicked.connect(self.open_arduino_window) # IMPLEMENT THIS FUNCTION
 
         # here is a button to actually start a data window
-        self.baseline_window_button = QPushButton('Start Baseline')
+        self.baseline_window_button = QPushButton('Start Focus Baseline')
         self.baseline_window_button.setEnabled(False)
         self.layout.addWidget(self.baseline_window_button,5,0, 1, -1, QtCore.Qt.AlignHCenter)
         self.baseline_window_button.clicked.connect(self.open_baseline_window)
+
+        # Open Recorded Data Set Folder
+        self.directory_button = QPushButton('Saved Recordings')
+        self.directory_button.setEnabled(True)
+        self.layout.addWidget(self.directory_button,6,0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.directory_button.clicked.connect(self.browsefiles)
+        
+        # import os
+        # os.system('explorer.exe "C:\users\%username%\Desktop"')
 
         # here is a button to train the model
         self.model_window_button = QPushButton('Train Model')
@@ -274,7 +283,7 @@ class MenuWindow(QMainWindow):
 
         if self.debug == True:
             self.hardware = 'openBCI' 
-            self.model = 'Cyton-Daisy'
+            self.model = 'Cyton'
             self.data_type = 'Task simulate'
             self.targ_limb = 1
             #self.arduino_con = 'Debug'
@@ -293,6 +302,10 @@ class MenuWindow(QMainWindow):
     #########################################
     ##### Functions for Handling Inputs #####
     #########################################  
+
+    def browsefiles(self):
+        QFileDialog.open(self, 'Open Project Folder', r'C:\Users\Mateo\Documents')
+        #self.os.system
 
     def handle_hardware_choice(self):
         self.hardware = self.hardware_dropdown.currentText()
