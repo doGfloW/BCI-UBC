@@ -102,7 +102,7 @@ class MenuWindow(QMainWindow):
         ### HARDWARE ###
         # drop down menu to decide what hardware
         self.hardware_dropdown = QComboBox()
-        self.hardware_dropdown.setPlaceholderText('Select hardware')
+        #self.hardware_dropdown.setPlaceholderText('Select hardware')
         self.hardware_dropdown.addItems(['openBCI'])
         self.hardware_dropdown.activated.connect(self.handle_hardware_choice)
         self.hardware_label = QLabel('Select hardware')
@@ -112,7 +112,7 @@ class MenuWindow(QMainWindow):
         ### MODEL ###
         # drop down menu for model of hardware
         self.model_dropdown = QComboBox()
-        self.model_dropdown.setPlaceholderText('Select model')
+        #self.model_dropdown.setPlaceholderText('Select model')
         self.model_label = QLabel('Select model')
         self.model_dropdown.setEnabled(False) # starts disabled
         self.model_dropdown.activated.connect(self.handle_model_choice)
@@ -130,7 +130,7 @@ class MenuWindow(QMainWindow):
         ### DATATYPE ###
         # drop down menu for simulate or live (previously included file step through)
         self.type_dropdown = QComboBox()
-        self.type_dropdown.setPlaceholderText('Select data type')
+        #self.type_dropdown.setPlaceholderText('Select data type')
         self.type_dropdown.addItems(['Task live','Task simulate'])
         self.type_dropdown.activated.connect(self.handle_type_choice)
         self.type_label = QLabel('Select data type')
