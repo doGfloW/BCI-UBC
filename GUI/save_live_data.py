@@ -30,10 +30,8 @@ def main():
 
     # demo for data serialization using brainflow API, we recommend to use it instead pandas.to_csv()
     DataFilter.write_file(data, 'eeg_data.txt', 'w')  # use 'a' for append mode
-    restored_data = DataFilter.read_file('eeg_data.txt')
-    restored_df = pd.DataFrame(np.transpose(restored_data))
-    print('Data From the File')
-    print(restored_df.head(10))
+
+  
 
 
 if __name__ == "__main__":
