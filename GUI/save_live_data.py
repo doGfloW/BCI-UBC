@@ -17,6 +17,25 @@ class win(QWidget):
     def __init__(self):
         super().__init__()
         self.setMinimumSize(900, 900)
+        self.mainlayout=QVBoxLayout()
+        self.layout1 = QVBoxLayout()
+        fnt = QFont('Open Sans', 40, QFont.Bold)
+        
+        self.setWindowTitle('Motor imergy baseline Test')
+        self.lbl = QLabel()
+        self.lbltext=QLabel()
+        self.lbl.setAlignment(Qt.AlignHCenter)
+        self.lbltext.setAlignment(Qt.AlignHCenter)
+        self.lbl.setFont(fnt)
+        self.lbltext.setFont(fnt)
+        
+        self.layout1.addWidget(self.lbl)
+        self.layout1.addWidget(self.lbltext)
+        self.layout1.addStretch(1)
+
+        self.mainlayout.addLayout(self.layout1)
+
+        self.setLayout(self.mainlayout)
         BoardShim.enable_dev_board_logger()
 
         # use synthetic board for demo
@@ -30,7 +49,7 @@ class win(QWidget):
         self.board.stop_stream()
         self.board.release_session()
 
-    
+
 
     def savedata (self):
         while self.run==True:
@@ -38,7 +57,6 @@ class win(QWidget):
             time.sleep(1)
             self.data = self.board.get_board_data()
             DataFilter.write_file(self.data, 'eeg_data.txt', 'w')
-            time.sleep(1)
             print("saved data")
             time.sleep(1)
 
