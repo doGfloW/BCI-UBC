@@ -1,38 +1,55 @@
 import argparse
 import time
+from xml.dom.pulldom import default_bufsize
 import numpy as np
 import pandas as pd
+import sys
 
 import brainflow
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, LogLevels, BoardIds
 from brainflow.data_filter import DataFilter, FilterTypes, AggOperations
+from PyQt5 import QtCore, Qt
+from PyQt5.QtCore import QTimer, QTime, Qt, QEventLoop
+from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget, QHBoxLayout
+from PyQt5.QtGui import QFont, QPainter, QBrush
 
+class win(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setMinimumSize(900, 900)
+        BoardShim.enable_dev_board_logger()
 
-def main():
-    BoardShim.enable_dev_board_logger()
+        # use synthetic board for demo
+        params = BrainFlowInputParams()
+        self.board = BoardShim(BoardIds.SYNTHETIC_BOARD.value, params)
+        self.board.prepare_session()
+        self.board.start_stream()
+        self.run=True
+        self.data=[]
+        self.savedata()
+        self.board.stop_stream()
+        self.board.release_session()
 
-    # use synthetic board for demo
-    params = BrainFlowInputParams()
-    board = BoardShim(BoardIds.SYNTHETIC_BOARD.value, params)
-    board.prepare_session()
-    board.start_stream()
-    BoardShim.log_message(LogLevels.LEVEL_INFO.value, 'start sleeping in the main thread')
-    time.sleep(10)
-    data = board.get_board_data()
-    board.stop_stream()
-    board.release_session()
+    
 
-    # demo how to convert it to pandas DF and plot data
-    eeg_channels = BoardShim.get_eeg_channels(BoardIds.SYNTHETIC_BOARD.value)
-    df = pd.DataFrame(np.transpose(data))
-    print('Data From the Board')
-    print(df.head(10))
+    def savedata (self):
+        while self.run==True:
+            self.data=[]
+            time.sleep(1)
+            self.data = self.board.get_board_data()
+            DataFilter.write_file(self.data, 'eeg_data.txt', 'w')
+            time.sleep(1)
+            print("saved data")
+            time.sleep(1)
 
-    # demo for data serialization using brainflow API, we recommend to use it instead pandas.to_csv()
-    DataFilter.write_file(data, 'eeg_data.txt', 'w')  # use 'a' for append mode
-
-  
+    def on_end(self):
+            # called by end timer
+            self.run=False
+            print('stop eeg stream ran')
 
 
 if __name__ == "__main__":
-    main()
+   app = QApplication(sys.argv)
+   main = win()
+   main.show()
+   sys.exit(app.exec())
