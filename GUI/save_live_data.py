@@ -13,7 +13,7 @@ from PyQt5.QtCore import QTimer, QTime, Qt, QEventLoop
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget, QHBoxLayout
 from PyQt5.QtGui import QFont, QPainter, QBrush
 
-class win(QWindow):
+class win(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setMinimumSize(900, 900)
