@@ -22,17 +22,17 @@ function [output] = RMS(data_folder)
         bpass= bandpass(EEG,[13 32], 200);
         alpha_rms=zeros(1,20);
         beta_rms=zeros(1,20);
+
         alpha_rms=rms(apass);
         beta_rms=rms(bpass);
 
+        temp_a=a_channel;
+        temp_b=b_channel;
+
+        a_channel=[temp_a,alpha_rms];
+        b_channel=[temp_b,beta_rms];
      end
     % adds the rms variabel and move to next channel
-    alpha_rms=nonzeros(alpha_rms);
-    beta_rms=nonzeros(beta_rms);
-    temp_a=a_channel;
-    temp_b=b_channel;
-    a_channel=[temp_a,alpha_rms];
-    b_channel=[temp_b,beta_rms];
     bp=[a_channel,b_channel];    
     alldata=[alldata;bp];
     output=alldata; %returns the feature extreation
