@@ -3,7 +3,6 @@ function [output] = RMS(data_folder)
     alldata=[];
     a_channel= [];
     b_channel= [];
-    output=[];
     myDir = convertCharsToStrings(data_folder);
     try
         data = dlmread(data_folder, '\t');
@@ -27,13 +26,8 @@ function [output] = RMS(data_folder)
         beta_rms=rms(bpass);
 
         temp_a=a_channel;
-        temp_b=b_channel;
-
-        a_channel=[temp_a,alpha_rms];
-        b_channel=[temp_b,beta_rms];
+        a_channel=[temp_a,alpha_rms,beta_rms];
      end
-    % adds the rms variabel and move to next channel
-    bp=[a_channel,b_channel];    
-    alldata=[alldata;bp];
-    output=alldata; %returns the feature extreation
+    % adds the rms variabel and move to next channel    
+    output= a_channel; %returns the feature extreation
     end
