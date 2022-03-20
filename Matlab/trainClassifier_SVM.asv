@@ -43,8 +43,7 @@ function [trainedClassifier, validationAccuracy] = trainClassifier(filename)
 % Extract predictors and response
 % This code processes the data into the right shape for training the
 % model.
-filename=convertCharsToStrings(filename);
-trainingData=readtable(filename); 
+readtable(filename) 
 inputTable = trainingData;
 predictorNames = {'Channel1', 'Channel2', 'Channel3', 'Channel4'};
 predictors = inputTable(:, predictorNames);
