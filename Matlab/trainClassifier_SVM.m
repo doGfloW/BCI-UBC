@@ -1,4 +1,4 @@
-function [trainedClassifier, validationAccuracy] = trainClassifier(filename)
+function [trainedClassifier, validationAccuracy] = trainClassifier_SVM(filename)
 % [trainedClassifier, validationAccuracy] = trainClassifier(trainingData)
 % Returns a trained classifier and its accuracy. This code recreates the
 % classification model trained in Classification Learner app. Use the
