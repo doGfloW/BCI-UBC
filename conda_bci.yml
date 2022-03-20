@@ -60,6 +60,7 @@ dependencies:
   - zstd=1.4.9=h19a0ad4_0
   - pip:
     - brainflow==4.9.0
+    - matlabengineforpython==R2021b
     - nptyping==1.4.4
     - typish==1.9.3
 prefix: C:\Users\bcitteam\anaconda3\envs\conda_bci
