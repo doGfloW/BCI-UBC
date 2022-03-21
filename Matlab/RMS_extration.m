@@ -34,9 +34,9 @@ for k = 1:length(myFiles)
         for count =1 : length(pks)
             if pks(count)<=2
                 T1(c)=locs(count);
-                event(c,1)="movement";
+                event(c,1)=1;
                 if pks(count)==2
-                    event(c,1)="still";
+                    event(c,1)=0;
                 end
                 c=c+1;
             end
@@ -54,22 +54,25 @@ for k = 1:length(myFiles)
         M=[T1,T2]; 
         abandpower=zeros(20,1);
         bbandpower=zeros(20,1);
-        r=zeros(1,20);
+        a=zeros(1,20);
+        b=zeros(1,20);
         for k = 1:length(M) % indices
             if M(k)==0
                 break
             end
             i=M(k,1);
             j=M(k,2);
-            r(k)=rms(apass(i:j));
+            a(k)=rms(apass(i:j));
+            b(k)=rms(bpass(i:j));
             %bbandpower(k)=bandpower(bpass(i:j));
             %r(k)=abandpower(k)/bbandpower(k);
         end
 %         abandpower=nonzeros(abandpower);
 %         bbandpower=nonzeros(bbandpower);
-         r=nonzeros(r);
+         a=nonzeros(a);
+         b=nonzeros(b);
         temp=r_channel;
-        r_channel=[temp,r];
+        r_channel=[temp,a,b];
     end
     bp=[r_channel,event];
 %     
@@ -77,13 +80,13 @@ alldata=[alldata;bp];
 end
 dataset_folder=cd
 dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
-wfilename="RMS_Saphy_2sec.xlsx";
+wfilename="RMS_testdataset.xlsx";
 dataset_folder=fullfile(dataset_folder,wfilename);
 if isfile(dataset_folder)
  fprintf("Dataset Found now adding to data set %s\n",dataset_folder)
 else
  %cols_name={}
- xlswrite(dataset_folder,{1,2,3,4,5})
+ xlswrite(dataset_folder,{1,2,3,4,5,6,7,8,9})
  fprintf('Created new dataset called %s\n',dataset_folder)
 end
 read_data=table2array(readtable(dataset_folder));
