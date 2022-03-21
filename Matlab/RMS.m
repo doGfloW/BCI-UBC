@@ -1,33 +1,29 @@
-function [output] = RMS(data_folder)
-    %inissilize varables 
-    alldata=[];
-    a_channel= [];
-    b_channel= [];
-    myDir = convertCharsToStrings(data_folder);
+function [rms_values] = RMS(data_file)
+    % initialize varables and read data file
+    alldata = [];
+    rms_values = [];
     try
-        data = dlmread(data_folder, '\t');
+        data = dlmread(convertCharsToStrings(data_file), '\t');
     catch
-        data = dlmread(data_folder, ',');
+        data = dlmread(convertCharsToStrings(data_file), ',');
     end
-    [data_row,data_col]=size(data); % passing variabe to matixe size
 
-    for channel=2:(data_col-2)
+    % passing variable to matrix size
+    [data_row, data_col] = size(data);
+
+    for channel = 2:(data_col-2)
         EEG = data(:,channel);
-        if sum(EEG)==0 % checking if the row is empty
+
+        % checking if the row is empty
+        if sum(EEG) == 0
             continue
         end
-        % filtering for alpha and beta
-        apass= bandpass(EEG,[8 13], 200);
-        bpass= bandpass(EEG,[13 32], 200);
-        alpha_rms=zeros(1,20);
-        beta_rms=zeros(1,20);
 
-        alpha_rms=rms(apass);
-        beta_rms=rms(bpass);
+        % filter for alpha and beta and get rms values
+        alpha_rms = rms(bandpass(EEG,[8 13], 200));
+        beta_rms = rms(bandpass(EEG,[13 32], 200));
 
-        temp_a=a_channel;
-        a_channel=[temp_a,alpha_rms,beta_rms];
-     end
-    % adds the rms variabel and move to next channel    
-    output= a_channel; %returns the feature extreation
+        % append values to the output
+        rms_values(end+1) = alpha_rms;
+        rms_values(end+1) = beta_rms;
     end
