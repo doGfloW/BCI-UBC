@@ -1,4 +1,4 @@
-function[bp_values] = bandpower_extraction(data_file)
+function [bp_values] = bandpower_extraction(data_file)
     % read data from text file
     try
         data = dlmread(convertCharsToStrings(data_file), '\t');
