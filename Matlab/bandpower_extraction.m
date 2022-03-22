@@ -30,3 +30,4 @@ function [bp_values] = bandpower_extraction(data_file)
         % store new values with total output
         bp_values(end+1) = alpha_bandpower/beta_bandpower;
     end
+end
