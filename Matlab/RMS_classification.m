@@ -1,6 +1,6 @@
 function [output] = RMS_classification(data_folder)
     myDir = convertCharsToStrings(data_folder)
     inputTable=readtable(filename); 
-    load(rms_model.mat,RMS_model)
-    output = RMS_model.predictFcn(inputTable) 
+    load(rms_KNN_model.mat,rms_KNN_model)
+    output = rms_KNN_model.predictFcn(inputTable) 
 end
