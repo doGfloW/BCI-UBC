@@ -1,6 +1,8 @@
 import matlab.engine
 m = matlab.engine.start_matlab()
-data_fold = r'C:\Users\alyna\Documents\ENGR 499\GitHub Repo\Baseline_tests\Mateo_2sec'
-ex_fold = r'C:\Users\alyna\Documents\ENGR 499\GitHub Repo\Datasets'
-output = m.bandpower_extraction(data_fold, ex_fold)
-print(output)
+data_txtfile = r"mateo_2sec_for_testing.txt"
+bp_vals, rms_vals = m.bp_rms_extraction(data_txtfile, nargout=2)
+bp_vals = list(bp_vals[0])
+rms_vals = list(rms_vals[0])
+print('bp', bp_vals)
+print('rms', rms_vals)
