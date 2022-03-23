@@ -22,4 +22,45 @@ function preprocessing
 
     preprocessing=[time_data attention_channel_ch1 clean_cyton_data_ch2 clean_cyton_data_ch3 clean_cyton_data_ch4 clean_cyton_data_ch5 clean_cyton_data_ch6 clean_cyton_data_ch7 reference_channel_ch8];
     writematrix(preprocessing,'clean_cyton_data.csv')
+
+%Pass attention channel in preprocessed data to the bandpass filtering
+    EEG=clean_cyton_data_ch2
+    
+    apass= bandpass(EEG,[8 13], 200);
+    bpass= bandpass(EEG,[13 32], 200);
+    l=length(EEG); % finging lenth of data
+    t=(0:l-1)*1/200; %calcuating time
+    markers=dirty_cyton_data(:,end)*1E-5;
+    %% plots
+    close all
+    tiledlayout(2,2)
+    nexttile
+    hold on
+    plot(t,EEG);
+    plot(t,markers);
+    title('EEG raw Data');
+    xlabel('time (s)');
+    ylabel('EEG Amplitude (uV)');
+    legend("EEG","Marker");
+    hold off
+    nexttile
+    plot(t,apass,'r');
+    title('EEG Alpha Data');
+    xlabel('time (s)');
+    ylabel('EEG Amplitude (uV)');
+    nexttile
+    plot(t,bpass,'c');
+    title('EEG Beta Data');
+    xlabel('time (s)');
+    ylabel('EEG Amplitude (uV)');
+    %Frequency plot
+    fs = 200;
+    EEG_fft = fft(EEG);
+    L = length(EEG_fft);
+    f = (0:L-1)*fs/L;
+    nexttile
+    plot(f,abs(EEG_fft));
+    xlabel('Frequency (Hz)')
+    ylabel('Amplitude')
+    title('Frequency Data')
 end
