@@ -43,6 +43,8 @@ class mibaseline_win(QWidget):
         #print('save path: '+ self.file_path)
         timestamp = time.strftime("%Y%m%d-%H%M")
         self.csv_name =os.path.join( self.file_path ,csv_name + '_' + timestamp + ".txt")
+        #------------this is for a test: ----------self.csv_name_1 = self.csv_name =os.path.join( self.file_path ,csv_name + '_' + timestamp + ".txt")
+
         
         # Brainflow Initialization
         self.params = BrainFlowInputParams()
