@@ -19,6 +19,7 @@ class win(QMainWindow):
         # use synthetic board for demo
         params = BrainFlowInputParams()
         self.board = BoardShim(BoardIds.SYNTHETIC_BOARD.value, params)
+        print('starting EEG stream')
         self.board.prepare_session()
         self.board.start_stream()
         self.run=True
@@ -59,6 +60,7 @@ class win(QMainWindow):
             
     def arm_control (self):
         # function for controling robotic arm
+        time.sleep(1)
         
 
 
