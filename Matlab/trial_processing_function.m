@@ -92,7 +92,7 @@ for k = 1:length(myFiles)
      fprintf("Dataset Found now adding to data set %s\n",dataset_folder)
     else
      %cols_name={}
-     %xlswrite(dataset_folder,{1,2,3,4,5})
+     xlswrite(dataset_folder,{1,2,3,4,5})
      fprintf('Created new dataset called %s\n',dataset_folder)
     end
     read_data=table2array(readtable(dataset_folder));
