@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--ip-protocol', type=int, help='ip protocol, check IpProtocolType enum', required=False,
                         default=0)
     parser.add_argument('--ip-address', type=str, help='ip address', required=False, default='')
-    parser.add_argument('--serial-port', type=str, help='serial port', required=True, default='COM6')
+    parser.add_argument('--serial-port', type=str, help='serial port', required=True, default='')
     parser.add_argument('--mac-address', type=str, help='mac address', required=False, default='')
     parser.add_argument('--other-info', type=str, help='other info', required=False, default='')
     parser.add_argument('--streamer-params', type=str, help='streamer params', required=False, default='')
@@ -33,7 +33,7 @@ def main():
 
     params = BrainFlowInputParams()
     params.ip_port = args.ip_port
-    params.serial_port = args.serial_port('COM6')
+    params.serial_port = args.serial_port
     params.mac_address = args.mac_address
     params.other_info = args.other_info
     params.serial_number = args.serial_number
