@@ -1,15 +1,21 @@
 function [bp_values, rms_values] = bp_rms_extraction(input_data)
     % check if the data is character/string or 2D numerical array
-    if ischar(input_data) | isstring(input_data)
-        % read data from text file
-        try
-            data = dlmread(convertCharsToStrings(input_data), '\t');
-        catch
-            data = dlmread(convertCharsToStrings(input_data), ',');
-        end
-    else
-        % assign the data to a variable
-        data = input_data
+    % if ischar(input_data) | isstring(input_data)
+    %     % read data from text file
+    %     try
+    %         data = dlmread(convertCharsToStrings(input_data), '\t');
+    %     catch
+    %         data = dlmread(convertCharsToStrings(input_data), ',');
+    %     end
+    % else
+    %     % assign the data to a variable
+    %     data = input_data
+    % end
+
+    try
+        data = dlmread(convertCharsToStrings(input_data), '\t');
+    catch
+        data = dlmread(convertCharsToStrings(input_data), ',');
     end
 
     % define the data size and the output array
