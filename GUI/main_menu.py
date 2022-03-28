@@ -20,6 +20,7 @@ import time
 import os
 
 from mi_window import mibaseline_win
+from save_live_data import live
 
 class MenuWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -220,6 +221,12 @@ class MenuWindow(QMainWindow):
         self.layout.addWidget(self.mi_window_button,6,0, 1, 1, QtCore.Qt.AlignHCenter)
         self.mi_window_button.clicked.connect(self.open_mi_window)
 
+        # here is a button to actually start a live movement window
+        self.live_window_button = QPushButton('Arm control')
+        self.live_window_button.setEnabled(False)
+        self.layout.addWidget(self.live_window_button,7,0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.live_window_button.clicked.connect(self.open_live_control)
+
         # # here is a button to start the arduino window
         # self.arduino_window_button = QPushButton('Turn on Arduino')
         # self.arduino_window_button.setEnabled(False)
@@ -349,6 +356,7 @@ class MenuWindow(QMainWindow):
             self.baseline_window_button.setEnabled(True)
             self.impedance_window_button.setEnabled(True)
             self.mi_window_button.setEnabled(True)
+            self.live_window_button.setEnabled(True)
             self.title.setText('Check Impedance, Start Baseline or Motor Imagery Test')
         
     def handle_bci_port(self):
@@ -360,6 +368,7 @@ class MenuWindow(QMainWindow):
                 self.baseline_window_button.setEnabled(True)
                 self.impedance_window_button.setEnabled(True)
                 self.mi_window_button.setEnabled(True)
+                self.live_window_button.setEnabled(True)
             self.title.setText('Check Impedance or Start Baseline')
         else:
             # print("Error: OpenBCI port # must be an integer.")
@@ -500,6 +509,17 @@ class MenuWindow(QMainWindow):
         )   
         self.graph_window.show()
         self.is_graph_window_open = True
+
+    def open_live_control(self):
+        self.live_win = live(
+        parent = self,
+        hardware = self.hardware, 
+        model = self.model, 
+        data_type = self.data_type, 
+        serial_port = self.bci_serial_port,
+        )   
+        self.live_win.show()
+        self.is_live_window_open = True
 
 if __name__ == '__main__':    
     app = QApplication(sys.argv)    
