@@ -123,7 +123,8 @@ class live(QWidget):
             bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, nargout=2)
             bp_vals = list(bp_vals[0])
             rms_vals = list(rms_vals[0]) 
-
+            print("rms vlaes")
+            print(rms_vals)
             # RMS classification
             rms_result =self.m.RMS_classification(rms_vals)
             rms_result = list(rms_result[0])
