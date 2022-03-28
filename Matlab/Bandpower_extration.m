@@ -12,7 +12,7 @@ for k = 1:length(myFiles)
     end
     r_channel= [];
     fprintf(1, 'Now reading %s\n', fullFileName);
-    markers=data(:,end)*1E-5;
+    markers=data(:,14)*1E-6;
     [data_row,data_col]=size(data);
     for channel=2:(data_col-2)
         EEG = data(:,channel)*1E-6;
