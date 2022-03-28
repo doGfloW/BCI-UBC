@@ -27,7 +27,7 @@ from kortex_api.autogen.messages import Session_pb2, Base_pb2
 # Maximum allowed waiting time during actions (in seconds)
 TIMEOUT_DURATION = 5
 
-filename = open('classification.csv', 'r')
+filename = open('Live_data\classification.csv', 'r')
 file = csv.DictReader(filename)
 var = []
 for col in file:
