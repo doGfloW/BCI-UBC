@@ -106,7 +106,7 @@ class live(QWidget):
                 #self.lbltext.clear(
                 self.timer = QTimer()
                 self.timer.timeout.connect(self.savedata)  # execute `display_time`
-                self.timer.setInterval(5000)  # 1000ms = 1s
+                self.timer.setInterval(1000)  # 1000ms = 1s
                 self.timer.start()
                 
 
