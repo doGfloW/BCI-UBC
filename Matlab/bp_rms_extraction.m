@@ -24,10 +24,10 @@ function [rms_class, bp_values, rms_values] = bp_rms_extraction(input_data)
     bp_values = [];
     rms_values = [];
 
-    if data_col == 24
+    if data_col == 16 % have not tested this number but it matches the text files
         last_channel = 9; % cyton
     else
-        last_channel = data_col-2; % ganglion
+        last_channel = data_col-2 ;% ganglion
     end
 
     % loop through each channel in the data

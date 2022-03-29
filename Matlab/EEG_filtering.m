@@ -9,7 +9,7 @@ catch
 end
 emg = data (:,2);
 markers=data(:,end)*1E-5;
-EEG=emg*1E-6;
+EEG=emg*1E-6 + 8.5*1E-4 ;
 % filltering data
 apass= bandpass(EEG,[8 13], 200);
 bpass= bandpass(EEG,[13 32], 200); 
