@@ -17,6 +17,7 @@ from PyQt5.QtGui import QFont, QPainter, QBrush
 
 #matlab import
 import matlab.engine
+from short_movement import kanova
 
 #Program Constants
 SIMULATE = 0
@@ -63,12 +64,6 @@ class live(QWidget):
         elif self.data_type == SIMULATE:
             self.board_id = -1
 
-        # Setting up the board
-        self.board = BoardShim(self.board_id, self.params)
-        self.board.prepare_session()
-        print('init hardware is running with hardware', self.hardware, 'model', self.model)
-        self.board.start_stream()
-        self.hardware_connected = True
         
         # iniszzilse matlab
         self.m = matlab.engine.start_matlab()
@@ -101,38 +96,54 @@ class live(QWidget):
     def instructions(self):
         self.lbltext.setText("Instructions:\n Think about moving your right arm to move the robot\nPress Enter to start")
         self.start=True
+        self.arm_run=False
         #self.lbltext.setVisible(True)
         
     # method for Key event
     def keyPressEvent(self, event):
-            if self.start == True and event.key() == Qt.Key_Return:
-                self.lbltext.clear()
+            if self.start == True and self.arm_run==False and event.key() == Qt.Key_Return:
+                #self.lbltext.clear()
                 self.savedata()
 
     # def movement(self):
     #     self.lbltext.setText('move your right hand\nuntill timer stops')
 
     def savedata (self):
-        while self.run==True:
+
             self.data=[]
+            # Setting up the board
+            self.board = BoardShim(self.board_id, self.params)
+            self.board.prepare_session()
+            self.hardware_connected = True
+            self.board.start_stream()
             time.sleep(1)
             self.data = self.board.get_board_data() # gets data from borad
             DataFilter.write_file(self.data, self.rawdata, 'w')
+            self.board.stop_stream()
+            self.board.release_session()
             # feature extration
             data_txtfile = r"live_raw_data.txt"
-            bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, nargout=2)
+            rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, nargout=3)
             bp_vals = list(bp_vals[0])
-            rms_vals = list(rms_vals[0]) 
+            rms_vals = list(rms_vals[0])
+            rms_result=int(rms_result)
+            rms_result=str(rms_result)
+            # a=[]
+            # a.append(rms_result)
+            # rms_result=a
+            # print(a)
+            #rms_vals= np.array(rms_vals) 
             print("rms vlaes")
             print(rms_vals)
             # RMS classification
-            rms_result =self.m.RMS_classification(rms_vals)
-            rms_result = list(rms_result[0])
-        
+            #rms_result =self.m.RMS_classification(rms_vals)
+            #rms_result = list(rms_result[0])
+            print("rms classification")
+            print(rms_result)
             # Bandpower classification
             # bp_result =self.m.RMS_classification(bp_vals)
             # bp_result = list(bp_result[0])
-    
+
 
             # compere classification results
             # if bp_result==rms_result:
@@ -145,22 +156,24 @@ class live(QWidget):
 
             self.arm_out= rms_result
             self.write_classification()
+            self.arm_run=True
 
             self.arm_control() # call arm control
+            self.run=False
+            self.start = True
+
         
             
     def arm_control (self):
         # function for controling robotic arm
-        exec(open("GUI\short_movement.py").read())
+        kanova()
+        self.arm_run=False
+        print(self.start,self.arm_run)
     def write_classification(self):
         # open the file in the write mode
-        with open('Live_data/classifaction.csv', 'w') as f:
+        with open('Live_data/classifaction.txt', 'w') as f:
 
-            # create the csv writer
-            writer = csv.writer(f)
-
-            # write a row to the csv file
-            writer.writerow(self.arm_out)
+            f.write(self.arm_out)
 
     def closeEvent(self, event):
             # called by end timer

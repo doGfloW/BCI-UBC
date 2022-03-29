@@ -1,4 +1,4 @@
-function [bp_values, rms_values] = bp_rms_extraction(input_data)
+function [rms_class,bp_values, rms_values] = bp_rms_extraction(input_data)
     % check if the data is character/string or 2D numerical array
     % if ischar(input_data) | isstring(input_data)
     %     % read data from text file
@@ -51,5 +51,8 @@ function [bp_values, rms_values] = bp_rms_extraction(input_data)
         bp_values(end+1) = alpha_bp/beta_bp;
         rms_values(end+1) = alpha_rms;
         rms_values(end+1) = beta_rms;
+        
     end
+    [rms_class] = RMS_classification(rms_values)
+end
 

@@ -12,9 +12,9 @@ for k = 1:length(myFiles)
     end
     r_channel= [];
     fprintf(1, 'Now reading %s\n', fullFileName);
-    markers=data(:,14)*1E-6;
+    markers=data(:,end);
     [data_row,data_col]=size(data);
-    for channel=2:(data_col-2)
+    for channel=2:9
         EEG = data(:,channel)*1E-6;
         if sum(EEG)==0
             continue
@@ -23,7 +23,7 @@ for k = 1:length(myFiles)
         EEG = data(:,channel)*1E-6;
         apass= bandpass(EEG,[8 13], 200);
         bpass= bandpass(EEG,[13 32], 200);
-        [pks,locs]=findpeaks(data(:,15));
+        [pks,locs]=findpeaks(data(:,end));
         marker=[locs,pks];
         a_fft= fft(apass);
         l=length(pks);
@@ -34,9 +34,9 @@ for k = 1:length(myFiles)
         for count =1 : length(pks)
             if pks(count)<=2
                 T1(c)=locs(count);
-                event(c,1)="movement";
+                event(c,1)=1;
                 if pks(count)==2
-                    event(c,1)="still";
+                    event(c,1)=0;
                 end
                 c=c+1;
             end
@@ -74,13 +74,13 @@ for k = 1:length(myFiles)
     bp=[r_channel,event];
     dataset_folder=cd;
     dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
-    wfilename="MotorImergyDataset_Mateo_2sec.xlsx";
+    wfilename="teste.xlsx";
     dataset_folder=fullfile(dataset_folder,wfilename);
     if isfile(dataset_folder)
      fprintf("Dataset Found now adding to data set %s\n",dataset_folder)
     else
      %cols_name={}
-     xlswrite(dataset_folder,{1,2,3,4,5})
+     xlswrite(dataset_folder,{1,2,3,4,5,6,7,8,9})
      fprintf('Created new dataset called %s\n',dataset_folder)
     end
     read_data=table2array(readtable(dataset_folder));
