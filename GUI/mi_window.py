@@ -264,7 +264,7 @@ class mibaseline_win(QWidget):
 
         if self.curr_trial < self.total_trials - 1:
             self.curr_trial += 1
-            self.show_stim=True
+            #self.show_stim=True
             self.start_action()
             winsound.Beep(self.frequency, self.duration)
         else:
@@ -292,29 +292,31 @@ class mibaseline_win(QWidget):
 
         if self.curr_trial==0:
             self.lbl.setText("Starting in 3,2,1")
-            self.show_stim = False
             loop = QEventLoop()
             QTimer.singleShot(3000, loop.quit)
             loop.exec_()
-            self.lbltext.setText('Imagine Right Hand Moving\nMove Arm Up and Down')
+            self.lbltext.setText('Imagine Grabbing Circle')
             self.setStyleSheet("background-color: green;")
+            self.show_stim = True
         
         if  self.running_trial==True and a==1:
             self.lbl.setText("Relax")
+            self.lbltext.clear()
             self.show_stim = False
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
-            self.lbltext.setText('Keep arm still\nuntil timer stops')
+            self.lbltext.setText('Imagine your arm is still\nuntil timer stops')
             self.setStyleSheet("background-color: red;")
         
         if  self.running_trial==True and a==2:
-            self.lbl.setText("Think of Moving Right Arm\nMove Arm Up and Down")
+            self.lbl.setText("Move")
+            self.lbltext.clear()
             self.show_stim = True
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
-            self.lbltext.setText('Move arm left to right\nuntil timer stops')
+            self.lbltext.setText('Imagine Grabbing Circle')
             self.setStyleSheet("background-color: green;")
 
 
@@ -390,6 +392,13 @@ class mibaseline_win(QWidget):
         # self.display_erp()
 
         self.close()
+
+    def closeEvent(self, event):
+        # called by end timer
+        self.run=False
+        self.board.stop_stream()
+        self.board.release_session()
+        print('stop eeg stream ran')
 
     # Method for starting the eeg data stream
     # def eeg_start(self):

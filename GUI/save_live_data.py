@@ -64,6 +64,7 @@ class live(QWidget):
         elif self.data_type == SIMULATE:
             self.board_id = -1
 
+
         
         # iniszzilse matlab
         self.m = matlab.engine.start_matlab()
@@ -102,8 +103,12 @@ class live(QWidget):
     # method for Key event
     def keyPressEvent(self, event):
             if self.start == True and self.arm_run==False and event.key() == Qt.Key_Return:
-                #self.lbltext.clear()
-                self.savedata()
+                #self.lbltext.clear(
+                self.timer = QTimer()
+                self.timer.timeout.connect(self.savedata)  # execute `display_time`
+                self.timer.setInterval(5000)  # 1000ms = 1s
+                self.timer.start()
+                
 
     # def movement(self):
     #     self.lbltext.setText('move your right hand\nuntill timer stops')
