@@ -14,8 +14,19 @@ for k = 1:length(myFiles)
     fprintf(1, 'Now reading %s\n', fullFileName);
     markers=data(:,end);
     [data_row,data_col]=size(data);
-    for channel=2:9
+
+    if data_col == 24
+        last_channel = 9; % cyton
+    else
+        last_channel = data_col-2; % ganglion
+    end
+    for channel=2:last_channel
+
         EEG = data(:,channel)*1E-6;
+        if channel>2 & last_channel==9
+            EEG=EEG-(data(:,last_channel)*1E-6);
+        end
+
         if sum(EEG)==0
             continue
         end

@@ -34,6 +34,9 @@ function [rms_class, bp_values, rms_values] = bp_rms_extraction(input_data)
     for channel = 2:(last_channel)
         % store data for the current channel
         eeg_channel_data = data(:,channel);
+        if channel>2 & last_channel==9
+            eeg_channel_data=eeg_channel_data-(data(:,last_channel)*1E-6);
+        end
 
         % check if the channel was unconnected (sum of zero means no data)
         if sum(eeg_channel_data) == 0
