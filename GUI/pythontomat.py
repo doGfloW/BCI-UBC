@@ -44,4 +44,3 @@ print('rms', rms_vals)
 # bp_vals, rms_vals = m.bp_rms_extraction(data, nargout=2)
 # bp_vals = list(bp_vals[0])
 # rms_vals = list(rms_vals[0])
-

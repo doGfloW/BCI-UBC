@@ -5,28 +5,30 @@ import pandas as pd
 import sys
 import csv 
 
+# board imports
 import brainflow
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, LogLevels, BoardIds
 from brainflow.data_filter import DataFilter, FilterTypes
 
-#PyQT5 GUI Imports
+# PyQt5 GUI imports
 from PyQt5 import QtCore, Qt
 from PyQt5.QtCore import QTimer, QTime, Qt, QEventLoop
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget, QHBoxLayout
+from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont, QPainter, QBrush
 
-#matlab import
+# Matlab import
 import matlab.engine
 from short_movement import kanova
 
-#Program Constants
+# program constants
 SIMULATE = 0
 FILE = 1
 LIVESTREAM = 2
 
-#Class: live control Window
+
+# class: Live Control Window
 class live(QWidget):
-    def __init__(self, hardware=None, model=None, sim_type=None, \
+    def __init__(self, hardware=None, model=None, sim_type=None,
                  data_type=None, csv_name=None, parent=None,
                  arduino_port=None, serial_port=None):
         super().__init__()
@@ -35,7 +37,6 @@ class live(QWidget):
         self.sim_type = sim_type
         self.hardware = hardware
         self.model = model
-
         self.params = BrainFlowInputParams()
         self.params.serial_port = serial_port
 
@@ -46,6 +47,7 @@ class live(QWidget):
         # e.g for Windows users 'COM3', for MacOS or Linux users '/dev/ttyUSB1
         self.com_port = None
 
+        # check if the task is live or simulated
         if data_type == 'Task live':
             self.data_type = LIVESTREAM
         elif data_type == 'Task simulate':
@@ -53,6 +55,7 @@ class live(QWidget):
         else:
             raise Exception('Unknown data type: {} Try "Task live" or "Task simulate"'.format(data_type))
 
+        # if the task is live and OpenBCI hardware, get the board type
         if self.data_type == LIVESTREAM:
             if self.hardware == 'openBCI':
                 if self.model == 'Ganglion':
@@ -64,128 +67,158 @@ class live(QWidget):
         elif self.data_type == SIMULATE:
             self.board_id = -1
 
-
-        
-        # iniszzilse matlab
+        # initialize Matlab connection
         self.m = matlab.engine.start_matlab()
-        # Pyqt setup
+
+        # PyQt layout and widget setup
         self.setMinimumSize(900, 900)
-        self.mainlayout=QVBoxLayout()
+        self.mainlayout = QVBoxLayout()
         self.layout1 = QVBoxLayout()
+        self.hLayout = QHBoxLayout()
         fnt = QFont('Open Sans', 40, QFont.Bold)
-        
-        self.setWindowTitle('Live Control')
+        self.setWindowTitle('Live Robot Control')
+
+        # add push buttons and text labels
+        self.start_button = QPushButton('Start Test')
+        self.stop_button = QPushButton('Stop Test')
+        self.start_button.setFont(QFont('Open Sans', 16))
+        self.stop_button.setFont(QFont('Open Sans', 16))
+        self.start_button.setFixedSize(200, 50)
+        self.stop_button.setFixedSize(200, 50)
         self.lbl = QLabel()
-        self.lbltext=QLabel()
+        self.lbltext = QLabel()
         self.lbl.setAlignment(Qt.AlignHCenter)
         self.lbltext.setAlignment(Qt.AlignHCenter)
         self.lbl.setFont(fnt)
         self.lbltext.setFont(fnt)
+
+        # add buttons and text labels to the mainlayout
         self.layout1.addWidget(self.lbl)
         self.layout1.addWidget(self.lbltext)
         self.layout1.addStretch(1)
+        self.mainlayout.addWidget(self.start_button, alignment=Qt.AlignCenter)
+        self.mainlayout.addWidget(self.stop_button, alignment=Qt.AlignCenter)
         self.mainlayout.addLayout(self.layout1)
         self.setLayout(self.mainlayout)
 
-        self.rawdata="live_raw_data.txt"
-        self.run=True
-        self.data=[]
-        self.temp_result=0
-        self.instructions()
-        #self.savedata()
+        # push button setup
+        self.stop_button.hide()
+        self.start_button.clicked.connect(self.start_stream_button)
+        self.stop_button.clicked.connect(self.stop_stream_button)
 
-    def instructions(self):
-        self.lbltext.setText("Instructions:\n Think about moving your right arm to move the robot\nPress Enter to start")
-        self.start=True
-        self.arm_run=False
-        #self.lbltext.setVisible(True)
-        
-    # method for Key event
-    def keyPressEvent(self, event):
-            if self.start == True and self.arm_run==False and event.key() == Qt.Key_Return:
-                #self.lbltext.clear(
-                self.timer = QTimer()
-                self.timer.timeout.connect(self.savedata)  # execute `display_time`
-                self.timer.setInterval(1000)  # 1000ms = 1s
-                self.timer.start()
-                
+        # set variables
+        self.rawdata = "live_raw_data.txt"
+        self.run = True
+        self.data = []
+        self.temp_result = 0
+        # self.instructions()
+        # self.savedata()
+
+    # def instructions(self):
+    #     self.lbltext.setText("Instructions:\n Think about moving your right arm to move the robot\nPress Enter to start")
+    #     # have this stuff in start push button
+    #     self.start = True
+    #     self.arm_run = False
+    #     #self.lbltext.setVisible(True)
+    #
+    # def keyPressEvent(self, event):
+    #     # have this in start push button
+    #     if self.start == True and self.arm_run == False and event.key() == Qt.Key_Return:
+    #         #self.lbltext.clear(
+    #         self.timer = QTimer()
+    #         self.timer.timeout.connect(self.savedata)  # execute `display_time`
+    #         self.timer.setInterval(1000)  # 1000ms = 1s
+    #         self.timer.start()
+
+    def start_stream_button(self):
+        self.start_button.hide()
+        self.stop_button.show()
+        self.lbltext.setText("Imagine moving your right arm\nto move the robot.")
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.savedata)  # execute `display_time`
+        self.timer.setInterval(1000)  # 1000ms = 1s
+        self.timer.start()
 
     # def movement(self):
     #     self.lbltext.setText('move your right hand\nuntill timer stops')
 
-    def savedata (self):
+    def savedata(self):
+        # set up the board
+        self.data = []
+        self.board = BoardShim(self.board_id, self.params)
+        self.board.prepare_session()
+        self.hardware_connected = True
+        self.board.start_stream()
+        time.sleep(1)
 
-            self.data=[]
-            # Setting up the board
-            self.board = BoardShim(self.board_id, self.params)
-            self.board.prepare_session()
-            self.hardware_connected = True
-            self.board.start_stream()
-            time.sleep(1)
-            self.data = self.board.get_board_data() # gets data from borad
-            DataFilter.write_file(self.data, self.rawdata, 'w')
-            self.board.stop_stream()
-            self.board.release_session()
-            # feature extration
-            data_txtfile = r"live_raw_data.txt"
-            rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, nargout=3)
-            bp_vals = list(bp_vals[0])
-            rms_vals = list(rms_vals[0])
-            rms_result=int(rms_result)
-            rms_result=str(rms_result)
-            # a=[]
-            # a.append(rms_result)
-            # rms_result=a
-            # print(a)
-            #rms_vals= np.array(rms_vals) 
-            print("rms vlaes")
-            print(rms_vals)
-            # RMS classification
-            #rms_result =self.m.RMS_classification(rms_vals)
-            #rms_result = list(rms_result[0])
-            print("rms classification")
-            print(rms_result)
-            # Bandpower classification
-            # bp_result =self.m.RMS_classification(bp_vals)
-            # bp_result = list(bp_result[0])
+        # get data from the board and write it to a file specified earlier
+        self.data = self.board.get_board_data()
+        DataFilter.write_file(self.data, self.rawdata, 'w')
+        self.board.stop_stream()
+        self.board.release_session()
 
+        # Matlab feature extraction
+        data_txtfile = r"live_raw_data.txt"
+        rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, nargout=3)
+        rms_result = str(int(rms_result))
+        bp_vals = list(bp_vals[0])
+        rms_vals = list(rms_vals[0])
 
-            # compere classification results
-            # if bp_result==rms_result:
-            #     self.arm_out= rms_result
-            #     self.temp_result=self.arm_out
+        # a = []
+        # a.append(rms_result)
+        # rms_result = a
+        # print(a)
+        # rms_vals = np.array(rms_vals)
+        print("RMS values", rms_vals)
 
+        # RMS classification
+        # rms_result = self.m.RMS_classification(rms_vals)
+        # rms_result = list(rms_result[0])
+        print("RMS classification", rms_result)
 
-            # else :
-            #     self.arm_out=self.temp_result 
+        # bandpower classification
+        # bp_result = self.m.RMS_classification(bp_vals)
+        # bp_result = list(bp_result[0])
 
-            self.arm_out= rms_result
-            self.write_classification()
-            self.arm_run=True
+        # compare classification results
+        # if bp_result == rms_result:
+        #     self.arm_out = rms_result
+        #     self.temp_result = self.arm_out
+        # else:
+        #     self.arm_out = self.temp_result
 
-            self.arm_control() # call arm control
-            self.run=False
-            self.start = True
+        # set the arm command to the RMS result and call the write_classification method
+        self.arm_out = rms_result
+        self.write_classification()
+        self.arm_run = True
 
-        
-            
-    def arm_control (self):
-        # function for controling robotic arm
+        # call the arm_control method
+        self.arm_control()
+        self.run = False
+        self.start = True
+
+    def arm_control(self):
         kanova()
-        self.arm_run=False
-        print(self.start,self.arm_run)
-    def write_classification(self):
-        # open the file in the write mode
-        with open('Live_data/classifaction.txt', 'w') as f:
+        self.arm_run = False
+        print('arm_control', self.start, self.arm_run)
 
+    def write_classification(self):
+        # open the classification file in write mode
+        with open('Live_data/classification.txt', 'w') as f:
             f.write(self.arm_out)
 
-    def closeEvent(self, event):
-            # called by end timer
-            self.run=False
-            self.board.stop_stream()
-            self.board.release_session()
-            print('stop eeg stream ran')
+    def stop_stream_button(self):
+        self.run = False
+        self.board.stop_stream()
+        self.board.release_session()
+        print('Stopped EEG stream.')
+
+    # def closeEvent(self, event):
+    #     # method called by end timer
+    #     self.run = False
+    #     self.board.stop_stream()
+    #     self.board.release_session()
+    #     print('Stopped EEG stream')
 
 
 if __name__ == "__main__":

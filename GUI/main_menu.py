@@ -3,17 +3,14 @@
 # the user can decide to read files, simulate and livestream data from openbci hardware.
 # the user can select the hardware they want to interface with: arduino, robot, simulation.
 
-
-# Libraries used for main menu
+# libraries used for main menu
 
 import sys
 from PyQt5 import QtGui
 from PyQt5.QtOpenGL import *
 from PyQt5 import QtCore, Qt
 from PyQt5.QtWidgets import *
-
 #import matplotlib
-
 import numpy as np
 import random
 import time
@@ -21,6 +18,7 @@ import os
 
 from mi_window import mibaseline_win
 from save_live_data import live
+
 
 class MenuWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -47,14 +45,13 @@ class MenuWindow(QMainWindow):
 
         '''
 
-        self.setMinimumSize(900,900)
-        
+        self.setMinimumSize(900, 900)
         # self.setStyleSheet("background-color: gray;")
         # setting window title and icon
-        self.setWindowTitle('PyQt5 Menu')
-        #self.setWindowIcon(QtGui.QIcon('utils/logo_icon.jpg')) #change icon once optimized
+        self.setWindowTitle('Main Menu')
+        # self.setWindowIcon(QtGui.QIcon('utils/logo_icon.jpg')) # change icon once optimized
         
-        # init layout
+        # initialize the layout
         self.layout = QGridLayout()
         widget = QWidget()
         widget.setLayout(self.layout)
@@ -65,8 +62,8 @@ class MenuWindow(QMainWindow):
 
         if self.debug == True:
             self.bci_serial_port = 'COM1'
-            #self.arduino_con = 'Debug'
-            #self.arduino_serial_port = 'COM2'
+            # self.arduino_con = 'Debug'
+            # self.arduino_serial_port = 'COM2'
 
         ###################################
         ### Initial GUI Input Elements ####
@@ -103,7 +100,7 @@ class MenuWindow(QMainWindow):
         ### HARDWARE ###
         # drop down menu to decide what hardware
         self.hardware_dropdown = QComboBox()
-        #self.hardware_dropdown.setPlaceholderText('Select hardware')
+        # self.hardware_dropdown.setPlaceholderText('Select hardware')
         self.hardware_dropdown.addItems(['openBCI'])
         self.hardware_dropdown.activated.connect(self.handle_hardware_choice)
         self.hardware_label = QLabel('Select hardware')
@@ -113,7 +110,7 @@ class MenuWindow(QMainWindow):
         ### MODEL ###
         # drop down menu for model of hardware
         self.model_dropdown = QComboBox()
-        #self.model_dropdown.setPlaceholderText('Select model')
+        # self.model_dropdown.setPlaceholderText('Select model')
         self.model_label = QLabel('Select model')
         self.model_dropdown.setEnabled(False) # starts disabled
         self.model_dropdown.activated.connect(self.handle_model_choice)
@@ -131,8 +128,8 @@ class MenuWindow(QMainWindow):
         ### DATATYPE ###
         # drop down menu for simulate or live (previously included file step through)
         self.type_dropdown = QComboBox()
-        #self.type_dropdown.setPlaceholderText('Select data type')
-        self.type_dropdown.addItems(['Task live','Task simulate'])
+        # self.type_dropdown.setPlaceholderText('Select data type')
+        self.type_dropdown.addItems(['Task live', 'Task simulate'])
         self.type_dropdown.activated.connect(self.handle_type_choice)
         self.type_label = QLabel('Select data type')
         self.type_layout.addWidget(self.type_label)
@@ -179,22 +176,22 @@ class MenuWindow(QMainWindow):
         self.limb_layout.addLayout(self.limb_sub_layout)
 
         ### ADD INPUT SUBLAYOUTS TO MAIN ###
-        self.layout.setContentsMargins(100,100,100,100)
-        self.hardware_layout.setContentsMargins(50,50,50,50)
-        self.model_layout.setContentsMargins(50,50,50,50)
-        self.csv_layout.setContentsMargins(50,50,50,15)
-        self.type_layout.setContentsMargins(50,50,50,50)
-        self.port_layout.setContentsMargins(50,50,50,50)
+        self.layout.setContentsMargins(100, 100, 100, 100)
+        self.hardware_layout.setContentsMargins(50, 50, 50, 50)
+        self.model_layout.setContentsMargins(50, 50, 50, 50)
+        self.csv_layout.setContentsMargins(50, 50, 50, 15)
+        self.type_layout.setContentsMargins(50, 50, 50, 50)
+        self.port_layout.setContentsMargins(50, 50, 50, 50)
         #self.arduino_layout.setContentsMargins(50, 50, 50, 15)
         self.limb_layout.setContentsMargins(50, 15, 50, 25)
-        self.layout.addLayout(self.title_layout,0,0,1,-1, QtCore.Qt.AlignHCenter)
-        self.layout.addLayout(self.hardware_layout,1,0)
-        self.layout.addLayout(self.model_layout,2,0)
-        self.layout.addLayout(self.csv_layout,3,0)
-        self.layout.addLayout(self.type_layout,1,1)
-        self.layout.addLayout(self.port_layout,2,1)
+        self.layout.addLayout(self.title_layout, 0, 0, 1, -1, QtCore.Qt.AlignHCenter)
+        self.layout.addLayout(self.hardware_layout, 1, 0)
+        self.layout.addLayout(self.model_layout, 2, 0)
+        self.layout.addLayout(self.csv_layout, 3, 0)
+        self.layout.addLayout(self.type_layout, 1, 1)
+        self.layout.addLayout(self.port_layout, 2, 1)
         #self.layout.addLayout(self.arduino_layout, 3, 1)
-        self.layout.addLayout(self.limb_layout, 4,0,1,-1, QtCore.Qt.AlignHCenter)
+        self.layout.addLayout(self.limb_layout, 4, 0, 1, -1, QtCore.Qt.AlignHCenter)
 
         ####################################
         ##### Init GUI Action Elements #####
@@ -212,19 +209,19 @@ class MenuWindow(QMainWindow):
         # here is a button to actually start a impedance window
         self.impedance_window_button = QPushButton('Impedance Check')
         self.impedance_window_button.setEnabled(False)
-        self.layout.addWidget(self.impedance_window_button,5,0, 1, -1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.impedance_window_button, 5, 0, 1, -1, QtCore.Qt.AlignHCenter)
         self.impedance_window_button.clicked.connect(self.open_impedance_window)
 
         # here is a button to actually start a motor imagery test window
         self.mi_window_button = QPushButton('Motor Imagery Baseline')
         self.mi_window_button.setEnabled(False)
-        self.layout.addWidget(self.mi_window_button,6,0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.mi_window_button, 6, 0, 1, 1, QtCore.Qt.AlignHCenter)
         self.mi_window_button.clicked.connect(self.open_mi_window)
 
         # here is a button to actually start a live movement window
         self.live_window_button = QPushButton('Arm control')
         self.live_window_button.setEnabled(False)
-        self.layout.addWidget(self.live_window_button,7,0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.live_window_button, 7, 0, 1, 1, QtCore.Qt.AlignHCenter)
         self.live_window_button.clicked.connect(self.open_live_control)
 
         # # here is a button to start the arduino window
@@ -236,14 +233,14 @@ class MenuWindow(QMainWindow):
         # here is a button to actually start a data window
         self.baseline_window_button = QPushButton('Oddball Baseline')
         self.baseline_window_button.setEnabled(False)
-        self.layout.addWidget(self.baseline_window_button,5,0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.baseline_window_button, 5, 0, 1, 1, QtCore.Qt.AlignHCenter)
         self.baseline_window_button.clicked.connect(self.open_baseline_window)
 
         # here is a button to train the model
         self.model_window_button = QPushButton('Train Model')
         ##########################################################
         self.model_window_button.setEnabled(True) # set to false for deployment
-        self.layout.addWidget(self.model_window_button,6,0, 1, -1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.model_window_button, 6, 0, 1, -1, QtCore.Qt.AlignHCenter)
         self.model_window_button.clicked.connect(self.open_model_window)
 
         # here is a button to start the session
@@ -252,19 +249,19 @@ class MenuWindow(QMainWindow):
             self.session_window_button.setEnabled(True)
         else:
             self.session_window_button.setEnabled(False)
-        self.layout.addWidget(self.session_window_button,5,1, 1, -1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.session_window_button, 5, 1, 1, -1, QtCore.Qt.AlignHCenter)
         self.session_window_button.clicked.connect(self.open_session_window) # IMPLEMENT THIS FUNCTION
 
         # here is a button to display results of the session
         self.results_window_button = QPushButton('Results')
         self.results_window_button.setEnabled(False)
-        self.layout.addWidget(self.results_window_button,6,1, 1, -1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.results_window_button, 6, 1, 1, -1, QtCore.Qt.AlignHCenter)
         self.results_window_button.clicked.connect(self.open_results_window) # IMPLEMENT THIS FUNCTION
 
         # here is a button to display graph
         self.graph_window_button = QPushButton('Graph')
         self.graph_window_button.setEnabled(True)
-        self.layout.addWidget(self.graph_window_button,7,0, 1, -1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.graph_window_button, 7, 0, 1, -1, QtCore.Qt.AlignHCenter)
         self.graph_window_button.clicked.connect(self.open_graph_window) # IMPLEMENT THIS FUNCTION
 
         # this is a variable to show whether we have a data window open
@@ -316,7 +313,7 @@ class MenuWindow(QMainWindow):
         self.title.setText('Select model')
         self.model_dropdown.clear()
         if self.hardware_dropdown.currentText() == 'openBCI':
-            self.model_dropdown.addItems(['Ganglion','Cyton','Cyton-Daisy'])
+            self.model_dropdown.addItems(['Ganglion', 'Cyton', 'Cyton-Daisy'])
         # elif self.hardware_dropdown.currentText() == 'Muse':
         #     self.model_dropdown.addItems(['Muse 2','Muse S'])
         # elif self.hardware_dropdown.currentText() == 'Blueberry':
@@ -399,7 +396,7 @@ class MenuWindow(QMainWindow):
             if radioBtn.text() == 'Left Arm':
                 self.targ_limb = 1
         elif radioBtn.text() == 'Right Arm':
-                self.targ_limb = 2
+            self.targ_limb = 2
 
     #########################################
     ##### Functions for Opening Windows #####

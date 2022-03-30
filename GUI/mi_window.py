@@ -1,36 +1,36 @@
-#This is our Motor Imagery Test - Version 1
+# Motor Imagery Test - Version 1
 
-#Functionality Imports
+# functionality imports
 import sys
 import csv
 import random
 
-#PyQT5 GUI Imports
+# PyQt5 GUI imports
 from PyQt5 import QtCore, Qt
 from PyQt5.QtCore import QTimer, QTime, Qt, QEventLoop
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel,QWidget, QHBoxLayout
 from PyQt5.QtGui import QFont, QPainter, QBrush
 
-
-#Computation Imports
+# computation imports
 import time
 import winsound
 import os.path
 import numpy as np
 
-#Brainflow Imports
+# Brainflow imports
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
 from brainflow.data_filter import DataFilter, FilterTypes
 
-#Program Constants
+# program constants
 DURATION_INT = 40
 SIMULATE = 0
 FILE = 1
 LIVESTREAM = 2
 
-#Class: Motor Imagery Window
+
+# class: Motor Imagery Window
 class mibaseline_win(QWidget):
-    def __init__(self, hardware=None, model=None, sim_type=None, \
+    def __init__(self, hardware=None, model=None, sim_type=None,
                  data_type=None, csv_name=None, parent=None,
                  arduino_port=None, serial_port=None):
         super().__init__()
@@ -39,14 +39,13 @@ class mibaseline_win(QWidget):
         self.hardware = hardware
         self.model = model
         
-        self.file_path= os.getcwd()+"\\Baseline_tests"
-        #print('save path: '+ self.file_path)
+        self.file_path = os.getcwd() + "\\Baseline_tests"
+        # print('save path: '+ self.file_path)
         timestamp = time.strftime("%Y%m%d-%H%M")
-        self.csv_name =os.path.join( self.file_path ,csv_name + '_' + timestamp + ".txt")
+        self.csv_name = os.path.join( self.file_path ,csv_name + '_' + timestamp + ".txt")
         #------------this is for a test: ----------self.csv_name_1 = self.csv_name =os.path.join( self.file_path ,csv_name + '_' + timestamp + ".txt")
 
-        
-        # Brainflow Initialization
+        # Brainflow initialization
         self.params = BrainFlowInputParams()
         self.params.serial_port = serial_port
         # self.params.serial_port = 'COM15'
@@ -60,6 +59,7 @@ class mibaseline_win(QWidget):
         # e.g for Windows users 'COM3', for MacOS or Linux users '/dev/ttyUSB1
         self.com_port = None
 
+        # check if the task is live or simulated
         if data_type == 'Task live':
             self.data_type = LIVESTREAM
         elif data_type == 'Task simulate':
@@ -67,6 +67,7 @@ class mibaseline_win(QWidget):
         else:
             raise Exception('Unknown data type: {} Try "Task live" or "Task simulate"'.format(data_type))
 
+        # if the task is live and OpenBCI hardware, get the board type
         if self.data_type == LIVESTREAM:
             if self.hardware == 'openBCI':
                 if self.model == 'Ganglion':
@@ -78,44 +79,44 @@ class mibaseline_win(QWidget):
         elif self.data_type == SIMULATE:
             self.board_id = -1
 
-
+        # PyQt window basic layout
         self.setMinimumSize(900, 900)
-
-        #PyQT Window Basic Layout
-        self.mainlayout=QVBoxLayout()
+        self.mainlayout = QVBoxLayout()
         self.layout1 = QVBoxLayout()
         fnt = QFont('Open Sans', 40, QFont.Bold)
-        
-        self.setWindowTitle('Motor imergy baseline Test')
+        self.setWindowTitle('Motor Imagery Baseline Test')
+
+        # add text labels
         self.lbl = QLabel()
-        self.lbltext=QLabel()
+        self.lbltext = QLabel()
         self.lbl.setAlignment(Qt.AlignHCenter)
         self.lbltext.setAlignment(Qt.AlignHCenter)
         self.lbl.setFont(fnt)
         self.lbltext.setFont(fnt)
-        
+
+        # add text labels to the main layout
         self.layout1.addWidget(self.lbl)
         self.layout1.addWidget(self.lbltext)
         self.layout1.addStretch(1)
-
         self.mainlayout.addLayout(self.layout1)
-
         self.setLayout(self.mainlayout)
-        #self.setLayout(self.layout2)
+        # self.setLayout(self.layout2)
 
+        # set previous values for the random circles
         self.previous_count = 0
         self.previous_xchoice = 0
         self.previous_ychoice = 0
 
+        # start the timer
         self.start = False
-        self.count=0
-        self.stim_code=0
+        self.count = 0
+        self.stim_code = 0
         timer = QTimer(self)
         timer.timeout.connect(self.showTime)
         timer.start(1000)
         self.show()
 
-        # making it a precision timer
+        # make it a precision timer
         self.stim_timer = QTimer()
         self.stim_timer.setTimerType(0)
         self.stim_timer.setSingleShot(True)
@@ -126,63 +127,58 @@ class mibaseline_win(QWidget):
         # otherwise will call both new and old fucntions
         self.stim_timer.timeout.connect(self.end_stim)
         
-        self.end_trig = 11  #End of Period Marker Value
-        self.frequency = 1000  # Set Frequency To 2500 Hertz
-        self.duration = 500  # Set Duration To 1000 ms == 1 second
+        self.end_trig = 11  # end of period marker value
+        self.frequency = 1000  # set frequency to 2500 Hertz
+        self.duration = 500  # set duration to 1000 ms == 1 second
 
+        # action periods per trial
+        self.movement = {'move': 1, 'still': 2}
 
-        # Action Periods per Trial
-        self.movement={'move': (1), 'still': (2)}
-
-
-        # Innitilize number of trials
+        # initialize number of trials
         self.total_trials = 10
         move_trials = self.total_trials // 2
         no_move_trials = self.total_trials - move_trials
 
         # temp variable to help setup array
-        a=np.empty((10,))
-        a[::2] =[self.movement['move']] * move_trials
+        a = np.empty((10,))
+        a[::2] = [self.movement['move']] * move_trials
         a[1::2] = [self.movement['still']] * no_move_trials
-        self.trials=a
-        print(self.trials)
+        self.trials = a
+        print('trial', self.trials)
         self.curr_trial = 0
 
         # this is whether or not we've gone through all our trials yet
         self.finished = False
         self.show_stim = False
-        
-        # now we display the instructions
+
+        # ensure we dont try to close the object a second time
         self.running_trial = False
-        
-        # To ensure we dont try to close the object a second time
         self.is_end = False
 
-        # Setting up the board
+        # setting up the board
         self.board = BoardShim(self.board_id, self.params)
         self.board.prepare_session()
-        print('init hardware is running with hardware', self.hardware, 'model', self.model)
+        print('Init hardware is running with hardware', self.hardware, 'model', self.model)
         self.board.start_stream()
         self.hardware_connected = True
 
-
-        # displaying the instructions
+        # display the instructions
         self.instructions()
 
-    # Method for showing the time
+    # method for showing the time
     def showTime(self):
-        # checking if flag is true
+        # check if flag is true
         if self.start:
-            # Countdow Timer: incrementing the counter
+            # countdown timer; increment the counter
             self.count -= 1
             self.update()
 
             # timer is completed
             if self.count == 0:
-                # making flag false
+                # make flag false
                 self.start = False
 
-                # setting text to the label
+                # set text to the label
                 self.stimulation()
                 self.responding_time = True
                 self.stim_timer.timeout.disconnect()
@@ -190,68 +186,63 @@ class mibaseline_win(QWidget):
                 self.stim_timer.start(1000)
                 self.update()
 
-
         if self.start:
-            # getting text from count
+            # get text from count and show text
             text = str(self.count) + " s"
-
-            # showing text
             self.lbl.setText(text)
 
-    # Method for geting the time for the timer
+    # method for geting the time for the timer
     def get_seconds(self):
-
-        # making flag false
+        # make flag false
         self.start = False
 
-        # getting seconds and flag
+        # get seconds and flag
         second = 10
-        done=True
+        done = True
 
-        # if flag is true
         if done:
-            # changing the value of count
+            # change the count value
             self.count = second
 
-            #inserting marker into data
+            #insert marker into the data
             self.board.insert_marker(int(self.stim_code))
             print("marker: " + str(int(self.stim_code)))
 
-            # setting text to the label
+            # set text to the label
             self.lbl.setText(str(second) + " s")
 
-    # Method for starting the timer
+    # method for starting the timer
     def start_action(self):
         self.get_seconds()
-        # making flag true
+
+        # make flag true
         self.start = True
 
-
-        # count = 0
+        # check if the count is 0
         if self.count == 0:
             self.start = False
+
         self.update()
 
-
-# method for Key event
+    # method for key event
     def keyPressEvent(self, event):
-            if self.start == False and event.key() == Qt.Key_Return:
-                self.lbltext.clear()
-                #self.call_timer3()
-                #self.movement()
-                self.start_trial()
+        if self.start == False and event.key() == Qt.Key_Return:
+            self.lbltext.clear()
+            # self.call_timer3()
+            # self.movement()
+            self.start_trial()
 
     # def movement(self):
     #     self.lbltext.setText('move your right hand\nuntill timer stops')
 
-# instructions to displace at the start
+    # method to display instructions at the start
     def instructions(self):
         self.lbltext.setText("Instructions:\nMove your hand when it says\nPress Enter to start")
-        #self.lbltext.setVisible(True)
+        # self.lbltext.setVisible(True)
         
     def start_trial(self):
-        # starts trial - starts timers.
-        print('starting trial')
+        # starts trial - starts timers
+        print('Starting trial')
         self.stimulation()
         self.running_trial = True
 
@@ -259,8 +250,8 @@ class mibaseline_win(QWidget):
         print(self.curr_trial)
         self.stim_code = self.trials[self.curr_trial]
         print(self.stim_code)
-        #time.sleep(0.5)
-        print("curr: " + str(self.curr_trial) + " < " + str(self.total_trials))
+        # time.sleep(0.5)
+        print("Curr: " + str(self.curr_trial) + " < " + str(self.total_trials))
 
         if self.curr_trial < self.total_trials - 1:
             self.curr_trial += 1
@@ -268,13 +259,13 @@ class mibaseline_win(QWidget):
             self.start_action()
             winsound.Beep(self.frequency, self.duration)
         else:
-            print('all trials done')
+            print('All trials done')
             self.finished = True
             self.board.insert_marker(self.end_trig)
             self.on_end()
 
     def end_stim(self):
-        print('ending stimulation')
+        print('Ending stimulation')
         self.responding_time = False
         self.show_stim = False
         self.board.insert_marker(self.end_trig)
@@ -282,24 +273,23 @@ class mibaseline_win(QWidget):
         self.update()
         # self.data = self.board.get_board_data()
         # time.sleep(1)
-
         self.stim_timer.timeout.disconnect()
         self.stim_timer.timeout.connect(self.start_trial)
         self.stim_timer.start(1000)
 
     def stimulation(self):
-        a=int(self.stim_code)
+        a = int(self.stim_code)
 
-        if self.curr_trial==0:
+        if self.curr_trial == 0:
             self.lbl.setText("Starting in 3,2,1")
             loop = QEventLoop()
             QTimer.singleShot(3000, loop.quit)
             loop.exec_()
-            self.lbltext.setText('Imagine Grabbing Circle')
+            self.lbltext.setText('Imagine grabbing the circle')
             self.setStyleSheet("background-color: green;")
             self.show_stim = True
         
-        if  self.running_trial==True and a==1:
+        if self.running_trial == True and a == 1:
             self.lbl.setText("Relax")
             self.lbltext.clear()
             self.show_stim = False
@@ -309,26 +299,25 @@ class mibaseline_win(QWidget):
             self.lbltext.setText('Imagine your arm is still\nuntil timer stops')
             self.setStyleSheet("background-color: red;")
         
-        if  self.running_trial==True and a==2:
+        if self.running_trial == True and a == 2:
             self.lbl.setText("Move")
             self.lbltext.clear()
             self.show_stim = True
             loop = QEventLoop()
             QTimer.singleShot(500, loop.quit)
             loop.exec_()
-            self.lbltext.setText('Imagine Grabbing Circle')
+            self.lbltext.setText('Imagine grabbing the circle')
             self.setStyleSheet("background-color: green;")
-
 
     def paintEvent(self, event):
         # here is where we draw stuff on the screen
         # you give drawing instructions in pixels - here I'm getting pixel values based on window size
-        print('paint event runs')
+        # print('Paint event runs')
         painter = QPainter(self)
-        print("painer showing stim "+ str(self.show_stim))
+        # print("Painter showing stim " + str(self.show_stim))
 
         if self.show_stim:
-            print('painting stim')
+            # print('Painting stim')
             painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
             cross_width = 100
             line_width = 20
@@ -361,24 +350,17 @@ class mibaseline_win(QWidget):
                 # painting circle random a quadrent
                 painter.drawEllipse(xchoice, ychoice, radius, radius)
 
-                #painter.drawEllipse(center + offset,center - offset,radius,radius) # 1st quad
-                #painter.drawEllipse(center + offset,center + offset,radius,radius) # 2nd quad
-                #painter.drawEllipse(center - offset,center + offset,radius,radius) # 3rd quad
-                #painter.drawEllipse(center - offset,center - offset,radius,radius) # 4th quad
-     
         elif self.finished:
             # no need to paint anything specifically
             pass
 
     def on_end(self):
         # called by end timer
-        print('stop eeg stream ran')
+        print('Stop EEG stream')
 
         self.data = self.board.get_board_data()
-
         self.board.stop_stream()
         self.board.release_session()
-
         DataFilter.write_file(self.data, self.csv_name, 'w')
         print('EEG data saved')
         # self.is_end = True
@@ -395,22 +377,18 @@ class mibaseline_win(QWidget):
 
     def closeEvent(self, event):
         # called by end timer
-        self.run=False
+        self.run = False
         self.board.stop_stream()
         self.board.release_session()
         print('stop eeg stream ran')
 
-    # Method for starting the eeg data stream
+    # method for starting the eeg data stream
     # def eeg_start(self):
     #     self.board = BoardShim(self.board_id, self.params)
     #     self.board.prepare_session()
     #     print('init hardware is running with hardware', self.hardware, 'model', self.model)
     #     self.board.start_stream()
     #     self.hardware_connected = True
-
-
-
-
 
     # def timer_Start3(self):
     #     self.time_left_int = 3
@@ -433,7 +411,7 @@ class mibaseline_win(QWidget):
     #
     #     self.update_gui()
 
-  # def call_timer(self):
+    # def call_timer(self):
     #     self.timer_start()
     #     self.update_gui()
     #
@@ -444,7 +422,6 @@ class mibaseline_win(QWidget):
     #     loop.exec_()
     #     self.timer_Start3()
     #     self.update_gui()
-
 
     # def timer_start(self):
     #     self.time_left_int = DURATION_INT
@@ -461,10 +438,8 @@ class mibaseline_win(QWidget):
     #
     #     self.update_gui()
 
-
     # def update_gui(self):
     #     self.lbl.setText(str(self.time_left_int))
-
 
 
 if __name__ == "__main__":
