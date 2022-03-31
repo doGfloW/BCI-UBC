@@ -165,6 +165,8 @@ class mibaseline_win(QWidget):
         # display the instructions
         self.instructions()
 
+    """ Functions for Test Program """
+
     # method for showing the time
     def showTime(self):
         # check if flag is true
@@ -334,9 +336,20 @@ class mibaseline_win(QWidget):
             # check if the count changed; if so, draw a new circle at a randomized position
             if (self.count != self.previous_count) & (self.count != 0):
                 # get position values (randomized) for one of four circles
-                rand_list = [center + offset - radius//2, center - offset - radius//2]
-                xchoice = random.choice(rand_list)
-                ychoice = random.choice(rand_list)
+                # rand_list = [center + offset - radius//2, center - offset - radius//2]
+                # xchoice = random.choice(rand_list)
+                # ychoice = random.choice(rand_list)
+
+                # get position values radomized (Top Left and Top Right) at 4 locations
+                rand_list = [center + offset - radius//2 + line_width*3, center - offset - radius//2 - line_width*3]
+                xchoice = random.choice(rand_list) 
+                #xchoice to extend the circles position along x-axis
+                if xchoice == rand_list[0]:
+                    xchoice += radius
+                elif xchoice == rand_list[1]:
+                    xchoice -= radius
+
+                ychoice = rand_list[1]
 
                 # choices match previous choices so change the x position choice
                 if (xchoice == self.previous_xchoice) & (ychoice == self.previous_ychoice):
@@ -346,6 +359,8 @@ class mibaseline_win(QWidget):
                 self.previous_count = self.count
                 self.previous_xchoice = xchoice
                 self.previous_ychoice = ychoice
+
+
 
                 # painting circle random a quadrent
                 painter.drawEllipse(xchoice, ychoice, radius, radius)
