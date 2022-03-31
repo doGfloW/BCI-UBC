@@ -53,7 +53,7 @@ def main():
     board.release_session()
 
     print(data)
-    print(shape(data))
+    print(np.shape(data))
 
 
 if __name__ == "__main__":
