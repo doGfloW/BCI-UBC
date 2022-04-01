@@ -153,7 +153,7 @@ class live(QWidget):
             self.board.prepare_session()
             self.hardware_connected = True
             self.board.start_stream()
-            time.sleep(1)
+            time.sleep(4)
 
             # get data from the board and write it to a file specified earlier
             self.data = self.board.get_board_data()
@@ -165,6 +165,7 @@ class live(QWidget):
             data_txtfile = r"live_raw_data.txt"
             bp_result,rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, nargout=4)
             rms_result = str(int(rms_result))
+            bp_result = str(int(bp_result))
             bp_vals = list(bp_vals[0])
             rms_vals = list(rms_vals[0])
 
@@ -179,20 +180,21 @@ class live(QWidget):
             # rms_result = self.m.RMS_classification(rms_vals)
             # rms_result = list(rms_result[0])
             print("RMS classification", rms_result)
+            print("bp classification", bp_result)
 
             # bandpower classification
             # bp_result = self.m.RMS_classification(bp_vals)
             # bp_result = list(bp_result[0])
 
-            # compare classification results
-            # if bp_result == rms_result:
-            #     self.arm_out = rms_result
-            #     self.temp_result = self.arm_out
-            # else:
-            #     self.arm_out = self.temp_result
+            #compare classification results
+            if bp_result == rms_result:
+                self.arm_out = rms_result
+            
+            else:
+                self.arm_out = self.temp_result
 
             # set the arm command to the RMS result and call the write_classification method
-            self.arm_out = rms_result
+            #self.arm_out = rms_result
             self.write_classification()
             self.arm_run = True
 
@@ -209,7 +211,7 @@ class live(QWidget):
     def write_classification(self):
         # open the classification file in write mode
         with open('Live_data/classification.txt', 'w') as f:
-            f.write(self.arm_out)
+            f.write(str(self.arm_out))
 
     def stop_stream_button(self):
         self.run = False

@@ -276,9 +276,9 @@ class kanova:
                     success = True
                     # classifier_output = input("What's the classifier output:")
                     # Example core
-                    if i == '1':
+                    if i == '0':
                         success &= move_to_home_position(base)
-                    elif i == '0':
+                    elif i == '1':
                         success &= up_twist_command(base)
                     elif i == '2':
                         success &= topr_twist_command(base)
