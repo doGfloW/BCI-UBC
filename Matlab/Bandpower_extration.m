@@ -23,17 +23,12 @@ for k = 1:length(myFiles)
     for channel=2:last_channel
 
         EEG = data(:,channel)*1E-6;
-        if channel>2 & last_channel==9
+        if channel==3 ||channel==4 || channel==5 || channel==7  || channel==8 && last_channel==9
             EEG=EEG-(data(:,last_channel)*1E-6);
         end
 
-        if sum(EEG)==0
-            continue
-        end
-
-        EEG = data(:,channel)*1E-6;
-        apass= bandpass(EEG,[8 13], 200);
-        bpass= bandpass(EEG,[13 32], 200);
+        apass= bandpass(EEG,[8 13], 250);
+        bpass= bandpass(EEG,[13 32], 250);
         [pks,locs]=findpeaks(data(:,end));
         marker=[locs,pks];
         a_fft= fft(apass);
@@ -85,7 +80,7 @@ for k = 1:length(myFiles)
     bp=[r_channel,event];
     dataset_folder=cd;
     dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
-    wfilename="teste.xlsx";
+    wfilename="new_8.xlsx";
     dataset_folder=fullfile(dataset_folder,wfilename);
     if isfile(dataset_folder)
      fprintf("Dataset Found now adding to data set %s\n",dataset_folder)

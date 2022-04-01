@@ -1,5 +1,6 @@
 import argparse
 import time
+from turtle import Turtle
 import numpy as np
 import pandas as pd
 import sys
@@ -131,11 +132,13 @@ class live(QWidget):
     #         self.timer.start()
 
     def start_stream_button(self):
+        self.start = True
+        self.arm_run = False
         self.start_button.hide()
         self.stop_button.show()
         self.lbltext.setText("Imagine moving your right arm\nto move the robot.")
         self.timer = QTimer()
-        self.timer.timeout.connect(self.savedata)  # execute `display_time`
+        self.timer.timeout.connect(self.savedata)  # execute `savedata`
         self.timer.setInterval(1000)  # 1000ms = 1s
         self.timer.start()
 
@@ -143,64 +146,65 @@ class live(QWidget):
     #     self.lbltext.setText('move your right hand\nuntill timer stops')
 
     def savedata(self):
-        # set up the board
-        self.data = []
-        self.board = BoardShim(self.board_id, self.params)
-        self.board.prepare_session()
-        self.hardware_connected = True
-        self.board.start_stream()
-        time.sleep(1)
+        if self.run==True and self.arm_run==False:
+            # set up the board
+            self.data = []
+            self.board = BoardShim(self.board_id, self.params)
+            self.board.prepare_session()
+            self.hardware_connected = True
+            self.board.start_stream()
+            time.sleep(1)
 
-        # get data from the board and write it to a file specified earlier
-        self.data = self.board.get_board_data()
-        DataFilter.write_file(self.data, self.rawdata, 'w')
-        self.board.stop_stream()
-        self.board.release_session()
+            # get data from the board and write it to a file specified earlier
+            self.data = self.board.get_board_data()
+            DataFilter.write_file(self.data, self.rawdata, 'w')
+            self.board.stop_stream()
+            self.board.release_session()
 
-        # Matlab feature extraction
-        data_txtfile = r"live_raw_data.txt"
-        rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, nargout=3)
-        rms_result = str(int(rms_result))
-        bp_vals = list(bp_vals[0])
-        rms_vals = list(rms_vals[0])
+            # Matlab feature extraction
+            data_txtfile = r"live_raw_data.txt"
+            bp_result,rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, nargout=4)
+            rms_result = str(int(rms_result))
+            bp_vals = list(bp_vals[0])
+            rms_vals = list(rms_vals[0])
 
-        # a = []
-        # a.append(rms_result)
-        # rms_result = a
-        # print(a)
-        # rms_vals = np.array(rms_vals)
-        print("RMS values", rms_vals)
+            # a = []
+            # a.append(rms_result)
+            # rms_result = a
+            # print(a)
+            # rms_vals = np.array(rms_vals)
+            print("RMS values", rms_vals)
 
-        # RMS classification
-        # rms_result = self.m.RMS_classification(rms_vals)
-        # rms_result = list(rms_result[0])
-        print("RMS classification", rms_result)
+            # RMS classification
+            # rms_result = self.m.RMS_classification(rms_vals)
+            # rms_result = list(rms_result[0])
+            print("RMS classification", rms_result)
 
-        # bandpower classification
-        # bp_result = self.m.RMS_classification(bp_vals)
-        # bp_result = list(bp_result[0])
+            # bandpower classification
+            # bp_result = self.m.RMS_classification(bp_vals)
+            # bp_result = list(bp_result[0])
 
-        # compare classification results
-        # if bp_result == rms_result:
-        #     self.arm_out = rms_result
-        #     self.temp_result = self.arm_out
-        # else:
-        #     self.arm_out = self.temp_result
+            # compare classification results
+            # if bp_result == rms_result:
+            #     self.arm_out = rms_result
+            #     self.temp_result = self.arm_out
+            # else:
+            #     self.arm_out = self.temp_result
 
-        # set the arm command to the RMS result and call the write_classification method
-        self.arm_out = rms_result
-        self.write_classification()
-        self.arm_run = True
+            # set the arm command to the RMS result and call the write_classification method
+            self.arm_out = rms_result
+            self.write_classification()
+            self.arm_run = True
 
-        # call the arm_control method
-        self.arm_control()
-        self.run = False
-        self.start = True
+            # call the arm_control method
+            self.arm_control()
+            self.run = True
+            self.start = True
 
     def arm_control(self):
         kanova()
         self.arm_run = False
-        print('arm_control', self.start, self.arm_run)
+        #print('arm_control', self.start, self.arm_run)
 
     def write_classification(self):
         # open the classification file in write mode
@@ -213,12 +217,12 @@ class live(QWidget):
         self.board.release_session()
         print('Stopped EEG stream.')
 
-    # def closeEvent(self, event):
-    #     # method called by end timer
-    #     self.run = False
-    #     self.board.stop_stream()
-    #     self.board.release_session()
-    #     print('Stopped EEG stream')
+    def closeEvent(self, event):
+        #method called by closeing window
+        self.run = False
+        self.board.stop_stream()
+        self.board.release_session()
+        print('Stopped EEG stream')
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-function [rms_class, bp_values, rms_values] = bp_rms_extraction(input_data)
+function [bp_class,rms_class, bp_values, rms_values] = bp_rms_extraction(input_data)
     % check if the data is character/string or 2D numerical array
     % if ischar(input_data) | isstring(input_data)
     %     % read data from text file
@@ -26,26 +26,24 @@ function [rms_class, bp_values, rms_values] = bp_rms_extraction(input_data)
 
     if data_col == 24
         last_channel = 9; % cyton
+        f=250;
     else
         last_channel = data_col-2; % ganglion
+        f=200;
     end
 
     % loop through each channel in the data
     for channel = 2:(last_channel)
         % store data for the current channel
         eeg_channel_data = data(:,channel);
-        if channel>2 & last_channel==9
+         if channel==3 ||channel==4 || channel==5 || channel==7  || channel==8 && last_channel==9
             eeg_channel_data=eeg_channel_data-(data(:,last_channel)*1E-6);
         end
 
-        % check if the channel was unconnected (sum of zero means no data)
-        if sum(eeg_channel_data) == 0
-            continue
-        end
 
         % pass channel data through a bandpass filter
-        alpha_bandpass = bandpass(eeg_channel_data, [8 13], 200);
-        beta_bandpass = bandpass(eeg_channel_data, [13 32], 200);
+        alpha_bandpass = bandpass(eeg_channel_data, [8 13], f);
+        beta_bandpass = bandpass(eeg_channel_data, [13 32], f);
 
         % get bandpower and rms values
         alpha_bp = bandpower(alpha_bandpass);
@@ -58,10 +56,17 @@ function [rms_class, bp_values, rms_values] = bp_rms_extraction(input_data)
 
         % append values to the outputs
         bp_values(end+1) = alpha_bp/beta_bp;
-        rms_values(end+1) = alpha_rms;
-        rms_values(end+1) = beta_rms;
+        rms_values(end+1) = alpha_rms/beta_rms;
+        
         
     end
-    [rms_class] = RMS_classification(rms_values)
+    if  last_channel == 9
+
+        [bp_class] = BP_classification(bp_values);
+        [rms_class] = RMS_classification_cyton(rms_values);
+    else 
+        [bp_class] = BP_classification(bp_values);
+        [rms_class] = RMS_classification(rms_values);
+    end
 end
 
