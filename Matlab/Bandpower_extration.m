@@ -22,10 +22,10 @@ for k = 1:length(myFiles)
     end
     for channel=2:last_channel
 
-        EEG = data(:,channel)*1E-6;
-        if channel==3 ||channel==4 || channel==5 || channel==7  || channel==8 && last_channel==9
-            EEG=EEG-(data(:,last_channel)*1E-6);
-        end
+        EEG = data(:,channel);
+%         if channel==3 ||channel==4 || channel==5 || channel==7  || channel==8 && last_channel==9
+%             EEG=EEG-data(:,last_channel);
+%         end
 
         apass= bandpass(EEG,[8 13], 250);
         bpass= bandpass(EEG,[13 32], 250);
@@ -79,8 +79,8 @@ for k = 1:length(myFiles)
     end
     bp=[r_channel,event];
     dataset_folder=cd;
-    dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
-    wfilename="new_8.xlsx";
+    dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets","Cyton datasets");
+    wfilename="Cyton_bp_dataset.xlsx";
     dataset_folder=fullfile(dataset_folder,wfilename);
     if isfile(dataset_folder)
      fprintf("Dataset Found now adding to data set %s\n",dataset_folder)

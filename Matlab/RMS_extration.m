@@ -89,8 +89,8 @@ for k = 1:length(myFiles)
 alldata=[alldata;bp];
 end
 dataset_folder=cd
-dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
-wfilename="RMS_newv2.xlsx";
+dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets","Cyton datasets");
+wfilename="Cyton_rms_dataset.xlsx";
 dataset_folder=fullfile(dataset_folder,wfilename);
 if isfile(dataset_folder)
     fprintf("Dataset Found now adding to data set %s\n",dataset_folder)

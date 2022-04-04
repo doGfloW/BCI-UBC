@@ -7,11 +7,8 @@ try
 catch
     data = dlmread(file, ',');
 end
-for x= 1:1
-    data(1,:) = [];
-    x=x+1;
-end
-emg = data (:,3);
+
+emg = data (:,2);
 markers=data(:,end)*1E-5;
 EEG=emg*1E-6 + 8.5*1E-4 ;
 % filltering data
