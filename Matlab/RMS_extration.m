@@ -24,10 +24,11 @@ for k = 1:length(myFiles)
 
     for channel=2:(last_channel)
         EEG = data(:,channel);
-
-        if channel==3 ||channel==4 || channel==5 || channel==7  || channel==8 && last_channel==9
-            EEG=EEG-(data(:,last_channel)*1E-6);
-        end
+        % refrecencing to channel 8
+%         if channel==3 ||channel==4 || channel==5 || channel==7  || channel==8 && last_channel==9
+%             EEG=EEG-(data(:,last_channel));
+%  
+%         end
         %fprintf('Now reading channel %d\n', (channel-1));
         apass= bandpass(EEG,[8 13], 250);
         bpass= bandpass(EEG,[13 32], 250);
@@ -89,16 +90,16 @@ alldata=[alldata;bp];
 end
 dataset_folder=cd
 dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets");
-wfilename="RMS_new.xlsx";
+wfilename="RMS_newv2.xlsx";
 dataset_folder=fullfile(dataset_folder,wfilename);
 if isfile(dataset_folder)
- fprintf("Dataset Found now adding to data set %s\n",dataset_folder)
+    fprintf("Dataset Found now adding to data set %s\n",dataset_folder)
+    read_data=table2array(readtable(dataset_folder));
+    write_data=[read_data; alldata];
+    writematrix(write_data,dataset_folder);
 else
- %cols_name={}
- xlswrite(dataset_folder,{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17})
- fprintf('Created new dataset called %s\n',dataset_folder)
+    writematrix(alldata,dataset_folder);
+    fprintf('Created new dataset called %s\n',dataset_folder)
 end
-read_data=table2array(readtable(dataset_folder));
-write_data=[read_data; alldata];
-writematrix(write_data,dataset_folder);
+
 fprintf('done')
