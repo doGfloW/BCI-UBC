@@ -29,14 +29,13 @@ from kortex_api.autogen.messages import Session_pb2, Base_pb2
 TIMEOUT_DURATION = 5
 
 class kanova:
-    # Parse arguments
+    # parse arguments
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
     
     args = utilities.parseConnectionArguments()
     def __init__ (self):
 
-
-        # Create closure to set an event after an END or an ABORT
+        # create closure to set an event after an END or an ABORT
         def check_for_end_or_abort(e):
             """Return a closure checking for END or ABORT notifications
             Arguments:
@@ -53,15 +52,13 @@ class kanova:
 
             return check
 
-
-
         def move_to_home_position(base):
-            # Make sure the arm is in Single Level Servoing mode
+            # make sure the arm is in Single Level Servoing mode
             base_servo_mode = Base_pb2.ServoingModeInformation()
             base_servo_mode.servoing_mode = Base_pb2.SINGLE_LEVEL_SERVOING
             base.SetServoingMode(base_servo_mode)
 
-            # Move arm to ready position
+            # move arm to ready position
             print("Moving the arm to a safe position")
             action_type = Base_pb2.RequestedActionType()
             action_type.action_type = Base_pb2.REACH_JOINT_ANGLES
@@ -94,7 +91,6 @@ class kanova:
 
         def up_twist_command(base):
             command = Base_pb2.TwistCommand()
-
             command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
             command.duration = 0
 
@@ -109,7 +105,7 @@ class kanova:
             print("Sending the twist command for 5 seconds...")
             base.SendTwistCommand(command)
 
-            # Let time for twist to be executed
+            # let time for twist to be executed
             time.sleep(0.1)
 
             print("Stopping the robot...")
@@ -120,7 +116,6 @@ class kanova:
 
         def down_twist_command(base):
             command = Base_pb2.TwistCommand()
-
             command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
             command.duration = 0
 
@@ -135,7 +130,7 @@ class kanova:
             print("Sending the twist command for 5 seconds...")
             base.SendTwistCommand(command)
 
-            # Let time for twist to be executed
+            # let time for twist to be executed
             time.sleep(0.1)
 
             print("Stopping the robot...")
@@ -146,7 +141,6 @@ class kanova:
 
         def topr_twist_command(base):
             command = Base_pb2.TwistCommand()
-
             command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
             command.duration = 0
 
@@ -161,7 +155,7 @@ class kanova:
             print("Sending the twist command for 5 seconds...")
             base.SendTwistCommand(command)
 
-            # Let time for twist to be executed
+            # let time for twist to be executed
             time.sleep(0.1)
 
             print("Stopping the robot...")
@@ -172,7 +166,6 @@ class kanova:
 
         def topl_twist_command(base):
             command = Base_pb2.TwistCommand()
-
             command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
             command.duration = 0
 
@@ -187,7 +180,7 @@ class kanova:
             print("Sending the twist command for 5 seconds...")
             base.SendTwistCommand(command)
 
-            # Let time for twist to be executed
+            # let time for twist to be executed
             time.sleep(0.1)
 
             print("Stopping the robot...")
@@ -198,7 +191,6 @@ class kanova:
 
         def bottomr_twist_command(base):
             command = Base_pb2.TwistCommand()
-
             command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
             command.duration = 0
 
@@ -213,7 +205,7 @@ class kanova:
             print("Sending the twist command for 5 seconds...")
             base.SendTwistCommand(command)
 
-            # Let time for twist to be executed
+            # let time for twist to be executed
             time.sleep(0.1)
 
             print("Stopping the robot...")
@@ -224,7 +216,6 @@ class kanova:
 
         def bottoml_twist_command(base):
             command = Base_pb2.TwistCommand()
-
             command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
             command.duration = 0
 
@@ -239,7 +230,7 @@ class kanova:
             print("Sending the twist command for 5 seconds...")
             base.SendTwistCommand(command)
 
-            # Let time for twist to be executed
+            # let time for twist to be executed
             time.sleep(0.1)
 
             print("Stopping the robot...")
@@ -248,8 +239,6 @@ class kanova:
 
             return True
 
-        
-
         def control():
             with open('Live_data\classification.txt') as filename:
                 print("filename :",filename)
@@ -257,25 +246,14 @@ class kanova:
                 file = filename.readlines()
                 for col in file:
                     var.append(col[0])
-            # for row in file:
-            #     var.append(row[0])
-                print("You have commanded the following sequences:", var)
 
-            # # Import the utilities helper module
-            # sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-            # import utilities
-
-            # # Parse arguments
-            # args = utilities.parseConnectionArguments()
-
-            # Create connection to the device and get the router
+            # create connection to the device and get the router
             with utilities.DeviceConnection.createTcpConnection(self.args) as router:
-                # Create required services
+                # create required services
                 base = BaseClient(router)
                 for i in var:
                     success = True
-                    # classifier_output = input("What's the classifier output:")
-                    # Example core
+                    
                     if i == '0':
                         success &= move_to_home_position(base)
                     elif i == '1':
@@ -301,3 +279,4 @@ if __name__ == "__main__":
     main=kanova()
     main.show()
     exit(main())
+    
