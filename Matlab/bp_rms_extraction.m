@@ -35,10 +35,10 @@ function [bp_class,rms_class, bp_values, rms_values] = bp_rms_extraction(input_d
     % loop through each channel in the data
     for channel = 2:(last_channel)
         % store data for the current channel
-        eeg_channel_data = data(:,channel)*1E-6;
-         if channel==3 ||channel==4 || channel==5 || channel==7  || channel==8 && last_channel==9
-            eeg_channel_data=eeg_channel_data-(data(:,last_channel)*1E-6);
-        end
+        eeg_channel_data = data(:,channel);
+        % if channel==3 ||channel==4 || channel==5 || channel==7  || channel==8 && last_channel==9
+            % eeg_channel_data=eeg_channel_data-(data(:,last_channel));
+        % end
 
 
         % pass channel data through a bandpass filter
