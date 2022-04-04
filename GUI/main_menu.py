@@ -3,18 +3,15 @@
 # the user can decide to read files, simulate and livestream data from openbci hardware.
 # the user can select the hardware they want to interface with: arduino, robot, simulation.
 
-# libraries used for main menu
-
 import sys
-from PyQt5 import QtGui
-from PyQt5.QtOpenGL import *
-from PyQt5 import QtCore, Qt
-from PyQt5.QtWidgets import *
-#import matplotlib
 import numpy as np
 import random
 import time
 import os
+from PyQt5 import QtGui
+from PyQt5.QtOpenGL import *
+from PyQt5 import QtCore, Qt
+from PyQt5.QtWidgets import *
 
 from mi_window import mibaseline_win
 from save_live_data import live
@@ -45,14 +42,12 @@ class MenuWindow(QMainWindow):
         |-------------------------------------------|
 
         '''
-
-        self.setMinimumSize(900, 900)
-        # self.setStyleSheet("background-color: gray;")
-        # setting window title and icon
-        self.setWindowTitle('Main Menu')
-        # self.setWindowIcon(QtGui.QIcon('utils/logo_icon.jpg')) # change icon once optimized
         
-        # initialize the layout
+        # initialize window
+        self.setMinimumSize(900, 900)
+        self.setWindowTitle('Main Menu')
+        
+        # initialize layout
         self.layout = QGridLayout()
         widget = QWidget()
         widget.setLayout(self.layout)
@@ -71,7 +66,7 @@ class MenuWindow(QMainWindow):
         ################################### 
 
         ### INITIAL INPUT LAYOUTS ###
-        # Create layouts explicitly for all GUI input fields
+        # create layouts explicitly for all GUI input fields
         self.title_layout = QHBoxLayout() 
         self.hardware_layout = QVBoxLayout()
         self.model_layout = QVBoxLayout()
@@ -101,7 +96,6 @@ class MenuWindow(QMainWindow):
         ### HARDWARE ###
         # drop down menu to decide what hardware
         self.hardware_dropdown = QComboBox()
-        # self.hardware_dropdown.setPlaceholderText('Select hardware')
         self.hardware_dropdown.addItems(['openBCI'])
         self.hardware_dropdown.activated.connect(self.handle_hardware_choice)
         self.hardware_label = QLabel('Select hardware')
@@ -111,7 +105,6 @@ class MenuWindow(QMainWindow):
         ### MODEL ###
         # drop down menu for model of hardware
         self.model_dropdown = QComboBox()
-        # self.model_dropdown.setPlaceholderText('Select model')
         self.model_label = QLabel('Select model')
         self.model_dropdown.setEnabled(False) # starts disabled
         self.model_dropdown.activated.connect(self.handle_model_choice)
@@ -129,14 +122,14 @@ class MenuWindow(QMainWindow):
         ### DATATYPE ###
         # drop down menu for simulate or live (previously included file step through)
         self.type_dropdown = QComboBox()
-        # self.type_dropdown.setPlaceholderText('Select data type')
         self.type_dropdown.addItems(['Task live', 'Task simulate'])
         self.type_dropdown.activated.connect(self.handle_type_choice)
         self.type_label = QLabel('Select data type')
         self.type_layout.addWidget(self.type_label)
         self.type_layout.addWidget(self.type_dropdown)
+        
         if self.debug == True:
-            self.type_dropdown.setEnabled(True) # start disabled
+            self.type_dropdown.setEnabled(True) # start enabled
         else:
             self.type_dropdown.setEnabled(False) # start disabled
 
@@ -148,21 +141,6 @@ class MenuWindow(QMainWindow):
         self.port_layout.addWidget(self.openbci_port)
         self.openbci_port.setPlaceholderText("Enter Port # (Integers Only)") 
         self.openbci_port.textEdited.connect(self.handle_bci_port)
-
-        # ### ARDUINO ###
-        # self.arduino_label = QLabel("Arduino Settings")
-        # self.arduino_dropdown = QComboBox()
-        # self.arduino_dropdown.setPlaceholderText('Select connection to arduino')
-        # self.arduino_dropdown.addItems(['Wired','NeuroStimDuino','Wireless','Debug'])
-        # self.arduino_dropdown.activated.connect(self.handle_arduino_dropdown)
-        # self.arduino_port = QLineEdit()
-        # self.arduino_port.setEnabled(False)
-        # self.arduino_port.setPlaceholderText("Enter Port # (Integers Only)") 
-        # self.arduino_port.textEdited.connect(self.handle_arduino_port)
-        # self.arduino_layout.addWidget(self.arduino_label)
-        # self.arduino_layout.addWidget(self.arduino_dropdown)
-        # self.arduino_layout.addWidget(self.arduino_port)
-        # # self.arduino_process = None
 
         ### LIMB ###
         self.limb_sub_layout = QHBoxLayout()
@@ -183,7 +161,6 @@ class MenuWindow(QMainWindow):
         self.csv_layout.setContentsMargins(50, 50, 50, 15)
         self.type_layout.setContentsMargins(50, 50, 50, 50)
         self.port_layout.setContentsMargins(50, 50, 50, 50)
-        #self.arduino_layout.setContentsMargins(50, 50, 50, 15)
         self.limb_layout.setContentsMargins(50, 15, 50, 25)
         self.layout.addLayout(self.title_layout, 0, 0, 1, -1, QtCore.Qt.AlignHCenter)
         self.layout.addLayout(self.hardware_layout, 1, 0)
@@ -191,7 +168,6 @@ class MenuWindow(QMainWindow):
         self.layout.addLayout(self.csv_layout, 3, 0)
         self.layout.addLayout(self.type_layout, 1, 1)
         self.layout.addLayout(self.port_layout, 2, 1)
-        #self.layout.addLayout(self.arduino_layout, 3, 1)
         self.layout.addLayout(self.limb_layout, 4, 0, 1, -1, QtCore.Qt.AlignHCenter)
 
         ####################################
@@ -225,12 +201,6 @@ class MenuWindow(QMainWindow):
         self.layout.addWidget(self.live_window_button, 7, 0, 1, 1, QtCore.Qt.AlignHCenter)
         self.live_window_button.clicked.connect(self.open_live_control)
 
-        # # here is a button to start the arduino window
-        # self.arduino_window_button = QPushButton('Turn on Arduino')
-        # self.arduino_window_button.setEnabled(False)
-        # self.layout.addWidget(self.arduino_window_button,6,0, 1, 1, QtCore.Qt.AlignHCenter)
-        # self.arduino_window_button.clicked.connect(self.open_arduino_window) # IMPLEMENT THIS FUNCTION
-
         # here is a button to actually start a data window
         self.baseline_window_button = QPushButton('Oddball Baseline')
         self.baseline_window_button.setEnabled(False)
@@ -239,7 +209,6 @@ class MenuWindow(QMainWindow):
 
         # here is a button to train the model
         self.model_window_button = QPushButton('Train Model')
-        ##########################################################
         self.model_window_button.setEnabled(True) # set to false for deployment
         self.layout.addWidget(self.model_window_button, 6, 0, 1, -1, QtCore.Qt.AlignHCenter)
         self.model_window_button.clicked.connect(self.open_model_window)
@@ -251,48 +220,34 @@ class MenuWindow(QMainWindow):
         else:
             self.session_window_button.setEnabled(False)
         self.layout.addWidget(self.session_window_button, 5, 1, 1, -1, QtCore.Qt.AlignHCenter)
-        self.session_window_button.clicked.connect(self.open_session_window) # IMPLEMENT THIS FUNCTION
+        self.session_window_button.clicked.connect(self.open_session_window)
 
         # here is a button to display results of the session
         self.results_window_button = QPushButton('Results')
         self.results_window_button.setEnabled(False)
         self.layout.addWidget(self.results_window_button, 6, 1, 1, -1, QtCore.Qt.AlignHCenter)
-        self.results_window_button.clicked.connect(self.open_results_window) # IMPLEMENT THIS FUNCTION
+        self.results_window_button.clicked.connect(self.open_results_window)
 
         # here is a button to display graph
         self.graph_window_button = QPushButton('Graph')
         self.graph_window_button.setEnabled(True)
         self.layout.addWidget(self.graph_window_button, 7, 0, 1, -1, QtCore.Qt.AlignHCenter)
-        self.graph_window_button.clicked.connect(self.open_graph_window) # IMPLEMENT THIS FUNCTION
+        self.graph_window_button.clicked.connect(self.open_graph_window)
 
-        # this is a variable to show whether we have a data window open
-        self.data_window_open = False
-
-        # this is a variable to show whether we have a impedance window open
-        self.impedance_window_open = False
-
-        # this is a variable to show whether we have a motor imagery test window open
-        self.mi_window_open = False
-
-        # init variable for saving temp csv name
-        self.csv_name = None
-
-        # init variables for model
-        self.ml_model = None
-
-        # targ limb
-        self.targ_limb = None 
+        # initialize variables
+        self.data_window_open = False # data window open
+        self.impedance_window_open = False # impedance window open
+        self.mi_window_open = False # motor imagery test window open
+        self.csv_name = None # save temp .csv name
+        self.ml_model = None # initialize model variables
+        self.targ_limb = None # target limb
 
         if self.debug == True:
             self.hardware = 'openBCI' 
             self.model = 'Cyton-Daisy'
             self.data_type = 'Task simulate'
             self.targ_limb = 1
-            #self.arduino_con = 'Debug'
-            #self.arduino_serial_port = 'COM1'
             self.csv_name = 'eeg_log_file_'
-            #self.ml_model = tf.keras.models.load_model('saved_models/{}_model'.format(self.csv_name))
-            # self.ml_model = tf.keras.models.load_model('saved_model/my_model')
 
     def closeEvent(self, event):
         # this code will autorun just before the window closes
@@ -315,10 +270,6 @@ class MenuWindow(QMainWindow):
         self.model_dropdown.clear()
         if self.hardware_dropdown.currentText() == 'openBCI':
             self.model_dropdown.addItems(['Ganglion', 'Cyton', 'Cyton-Daisy'])
-        # elif self.hardware_dropdown.currentText() == 'Muse':
-        #     self.model_dropdown.addItems(['Muse 2','Muse S'])
-        # elif self.hardware_dropdown.currentText() == 'Blueberry':
-        #     self.model_dropdown.addItem('Prototype')
     
     def handle_model_choice(self):
         # handle the choice of model by opening up data type selection
@@ -332,11 +283,11 @@ class MenuWindow(QMainWindow):
     def csv_name_changed(self):
         # this runs when the user hits enter on the text edit to set the name of the csv log file
         # first we check if file already exists
-        print('text is {}'.format(self.csv_name_edit.text()))
+        print('Text is {}'.format(self.csv_name_edit.text()))
         if not self.csv_name_edit.text().endswith('.csv'):
             # add .csv ending if absent
             self.csv_name_edit.setText(self.csv_name_edit.text() + '.csv')
-        print('csv name after adding ending {}'.format(self.csv_name_edit.text()))
+        print('CSV name after adding ending {}'.format(self.csv_name_edit.text()))
         
         if os.path.isfile(self.csv_name_edit.text()):
             # chop off .csv ending, add number, read .csv
@@ -369,27 +320,8 @@ class MenuWindow(QMainWindow):
                 self.live_window_button.setEnabled(True)
             self.title.setText('Check Impedance or Start Baseline')
         else:
-            # print("Error: OpenBCI port # must be an integer.")
             self.baseline_window_button.setEnabled(False)
             self.title.setText('Select BCI Hardware Port')
-
-    # def handle_arduino_dropdown(self):
-    #     # check if arduino checkbox is enabled
-    #     self.arduino_con = self.arduino_dropdown.currentText()
-    #     self.arduino_port.setEnabled(True)
-    #     if self.arduino_port.text().isdigit():
-    #         self.arduino_window_button.setEnabled(True)
-    #         self.arduino_serial_port = "COM" + self.arduino_port.text()
-    #     else: 
-    #         self.arduino_window_button.setEnabled(False)
-
-    # def handle_arduino_port(self):
-    #     # check for correct value entering and enable type dropdown menu
-    #     if self.arduino_port.text().isdigit():
-    #         self.arduino_window_button.setEnabled(True)
-    #         self.arduino_serial_port = "COM" + self.arduino_port.text()
-    #     else:
-    #         self.arduino_window_button.setEnabled(False)
 
     def onClicked(self):
         radioBtn = self.sender()
@@ -402,27 +334,6 @@ class MenuWindow(QMainWindow):
     #########################################
     ##### Functions for Opening Windows #####
     #########################################    
-
-    # def open_arduino_window(self):
-    #     # this actually starts the arduino testing window
-    #     # called by user pressing button, which is enabled by selecting from dropdowns
-    #     # if self.arduino_process is not None:
-    #     #     self.arduino_process.terminate()
-    #     #     while self.arduino_process.is_alive():
-    #     #         time.sleep(0.1)
-    #     #     self.arduino_process.close()
-    #     #     self.arduino_process = None
-    #     if self.arduino_port.text().isdigit() != True:
-    #         print("Error: arduino port # must be an integer.")
-    #     else:
-    #         self.data_window = ard_turn_on(
-    #             parent = self,
-    #             arduino_con = self.arduino_con,
-    #             arduino_port=self.arduino_serial_port,
-    #         )
-    #         self.data_window.show()
-    #         self.data_window.show()
-    #         self.is_data_window_open = True
     
     def open_mi_window(self):
         self.mi_window = mibaseline_win(
@@ -478,8 +389,6 @@ class MenuWindow(QMainWindow):
             csv_name = self.csv_name, 
             parent = self,
             serial_port = self.bci_serial_port,
-            #arduino_con = self.arduino_con,
-            #arduino_port=self.arduino_serial_port,
             )
         self.session_window.show()
         self.is_session_window_open = True
@@ -491,7 +400,6 @@ class MenuWindow(QMainWindow):
             data_type = self.data_type, 
             csv_name = self.csv_name, 
             parent = self,
-            #arduino_port=self.arduino_port.text(),
             serial_port = self.bci_serial_port,
             )
         self.session_window.show()
@@ -523,5 +431,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)    
     win = MenuWindow() 
     win.show() 
-    # print('we got here')  
     sys.exit(app.exec())
