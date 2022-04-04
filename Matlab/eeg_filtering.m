@@ -1,5 +1,5 @@
 clear all
-% close all
+
 % read data file
 [file,path] = uigetfile('*.txt');
 try
