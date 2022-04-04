@@ -42,11 +42,11 @@ class DeviceConnection:
 
         self.sessionManager = None
 
-        # Setup API
+        # setup API
         self.transport = TCPTransport() if port == DeviceConnection.TCP_PORT else UDPTransport()
         self.router = RouterClient(self.transport, RouterClient.basicErrorCallback)
 
-    # Called when entering 'with' statement
+    # called when entering 'with' statement
     def __enter__(self):
         
         self.transport.connect(self.ipAddress, self.port)
@@ -64,7 +64,7 @@ class DeviceConnection:
 
         return self.router
 
-    # Called when exiting 'with' statement
+    # called when exiting 'with' statement
     def __exit__(self, exc_type, exc_value, traceback):
     
         if self.sessionManager != None:
