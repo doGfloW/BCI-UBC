@@ -112,24 +112,6 @@ class live(QWidget):
         self.run = True
         self.data = []
         self.temp_result = 0
-        # self.instructions()
-        # self.savedata()
-
-    # def instructions(self):
-    #     self.lbltext.setText("Instructions:\n Think about moving your right arm to move the robot\nPress Enter to start")
-    #     # have this stuff in start push button
-    #     self.start = True
-    #     self.arm_run = False
-    #     #self.lbltext.setVisible(True)
-    #
-    # def keyPressEvent(self, event):
-    #     # have this in start push button
-    #     if self.start == True and self.arm_run == False and event.key() == Qt.Key_Return:
-    #         #self.lbltext.clear(
-    #         self.timer = QTimer()
-    #         self.timer.timeout.connect(self.savedata)  # execute `display_time`
-    #         self.timer.setInterval(1000)  # 1000ms = 1s
-    #         self.timer.start()
 
     def start_stream_button(self):
         self.start = True
@@ -141,9 +123,6 @@ class live(QWidget):
         self.timer.timeout.connect(self.savedata)  # execute `savedata`
         self.timer.setInterval(1000)  # 1000ms = 1s
         self.timer.start()
-
-    # def movement(self):
-    #     self.lbltext.setText('move your right hand\nuntill timer stops')
 
     def savedata(self):
         if self.run==True and self.arm_run==False:
@@ -169,32 +148,17 @@ class live(QWidget):
             bp_vals = list(bp_vals[0])
             rms_vals = list(rms_vals[0])
 
-            # a = []
-            # a.append(rms_result)
-            # rms_result = a
-            # print(a)
-            # rms_vals = np.array(rms_vals)
             print("RMS values", rms_vals)
-
-            # RMS classification
-            # rms_result = self.m.RMS_classification(rms_vals)
-            # rms_result = list(rms_result[0])
             print("RMS classification", rms_result)
-            print("bp classification", bp_result)
-
-            # bandpower classification
-            # bp_result = self.m.RMS_classification(bp_vals)
-            # bp_result = list(bp_result[0])
+            print("BP classification", bp_result)
 
             #compare classification results
             if bp_result == rms_result:
                 self.arm_out = rms_result
-            
             else:
                 self.arm_out = self.temp_result
 
             # set the arm command to the RMS result and call the write_classification method
-            #self.arm_out = rms_result
             self.write_classification()
             self.arm_run = True
 
@@ -206,7 +170,6 @@ class live(QWidget):
     def arm_control(self):
         kanova()
         self.arm_run = False
-        #print('arm_control', self.start, self.arm_run)
 
     def write_classification(self):
         # open the classification file in write mode
