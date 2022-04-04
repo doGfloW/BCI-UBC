@@ -270,14 +270,16 @@ class mibaseline_win(QWidget):
         print('Ending stimulation')
         self.responding_time = False
         self.show_stim = False
-        self.board.insert_marker(self.end_trig)
-        print("End marker: " + str(self.end_trig))
-        self.update()
+        if self.is_end == False:
+            self.board.insert_marker(self.end_trig)
+            print("End marker: " + str(self.end_trig))
+            self.update()
         # self.data = self.board.get_board_data()
         # time.sleep(1)
-        self.stim_timer.timeout.disconnect()
-        self.stim_timer.timeout.connect(self.start_trial)
-        self.stim_timer.start(1000)
+            self.stim_timer.timeout.disconnect()
+            self.stim_timer.timeout.connect(self.start_trial)
+            self.stim_timer.start(1000)
+
 
     def stimulation(self):
         a = int(self.stim_code)
@@ -378,7 +380,7 @@ class mibaseline_win(QWidget):
         self.board.release_session()
         DataFilter.write_file(self.data, self.csv_name, 'w')
         print('EEG data saved')
-        # self.is_end = True
+        self.is_end = True
 
         # let's initialize electrode to display
         # self.curr_electrode = 0
@@ -391,11 +393,13 @@ class mibaseline_win(QWidget):
         self.close()
 
     def closeEvent(self, event):
-        # called by end timer
-        self.run = False
-        self.board.stop_stream()
-        self.board.release_session()
-        print('stop eeg stream ran')
+        # called by closing window
+        if self.is_end == False:
+            self.run = False
+            self.board.stop_stream()
+            self.board.release_session()
+            print('stop eeg stream ran')
+            self.is_end = True
 
     # method for starting the eeg data stream
     # def eeg_start(self):
