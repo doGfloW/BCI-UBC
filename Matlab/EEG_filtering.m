@@ -8,9 +8,9 @@ catch
     data = dlmread(file, ',');
 end
 
-emg = data (:,2);
-markers=data(:,end)*1E-5;
-EEG=emg*1E-6 + 8.5*1E-4 ;
+emg = data (:,9);
+markers=data(:,end);
+EEG=emg ;
 % filltering data
 apass= bandpass(EEG,[8 13], 250);
 bpass= bandpass(EEG,[13 32], 250); 
@@ -45,7 +45,6 @@ ylabel('EEG Amplitude (uV)');
 hold off
 nexttile
 hold on
-plot(apass,'r');
 plot(bpass,'c');
 plot(markers);
 title('EEG Beta Data');
@@ -53,7 +52,7 @@ xlabel('time (s)');
 ylabel('EEG Amplitude (uV)');
 hold off
 %Frequency plot
-fs = 200;
+fs = 250;
 EEG_fft = fft(EEG);
 L = length(EEG_fft);
 f = (0:L-1)*fs/L;
@@ -62,5 +61,19 @@ plot(f,abs(EEG_fft));
 xlabel('Frequency (Hz)')
 ylabel('Amplitude')
 title('Frequency Data')
+alpha=apass;
+beta=bpass;
+figure
+ for x= 1:450
+             alpha(1,:) = [];
+             alpha(end,:) = [];
+             beta(1,:) = [];
+             beta(end,:) = [];
+            x=x+1;
+ end
+hold on
+plot(alpha)
+plot(beta)
+hold off
 
 

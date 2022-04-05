@@ -137,6 +137,11 @@ class live(QWidget):
         self.start_button.hide()
         self.stop_button.show()
         self.lbltext.setText("Imagine moving your right arm\nto move the robot.")
+        self.data = []
+        self.board = BoardShim(self.board_id, self.params)
+        self.board.prepare_session()
+        self.hardware_connected = True
+        self.board.start_stream()
         self.timer = QTimer()
         self.timer.timeout.connect(self.savedata)  # execute `savedata`
         self.timer.setInterval(1000)  # 1000ms = 1s
@@ -148,18 +153,18 @@ class live(QWidget):
     def savedata(self):
         if self.run==True and self.arm_run==False:
             # set up the board
-            self.data = []
-            self.board = BoardShim(self.board_id, self.params)
-            self.board.prepare_session()
-            self.hardware_connected = True
-            self.board.start_stream()
-            time.sleep(4)
+            # self.data = []
+            # self.board = BoardShim(self.board_id, self.params)
+            # self.board.prepare_session()
+            # self.hardware_connected = True
+            # self.board.start_stream()
+            time.sleep(5)
 
             # get data from the board and write it to a file specified earlier
             self.data = self.board.get_board_data()
             DataFilter.write_file(self.data, self.rawdata, 'w')
-            self.board.stop_stream()
-            self.board.release_session()
+            # self.board.stop_stream()
+            # self.board.release_session()
 
             # Matlab feature extraction
             data_txtfile = r"live_raw_data.txt"
@@ -175,6 +180,7 @@ class live(QWidget):
             # print(a)
             # rms_vals = np.array(rms_vals)
             print("RMS values", rms_vals)
+            print("bp values", bp_vals)
 
             # RMS classification
             # rms_result = self.m.RMS_classification(rms_vals)
