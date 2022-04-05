@@ -163,7 +163,7 @@ class live(QWidget):
 
             # Matlab feature extraction
             data_txtfile = r"live_raw_data.txt"
-            bp_result,rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, nargout=4)
+            bp_result, rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, 1, nargout=4)
             rms_result = str(int(rms_result))
             bp_result = str(int(bp_result))
             bp_vals = list(bp_vals[0])

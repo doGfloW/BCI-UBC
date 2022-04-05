@@ -2,13 +2,14 @@ import matlab.engine
 
 m = matlab.engine.start_matlab()
 # data_txtfile = r"mateo_2sec_for_testing.txt"
-data_txtfile = r"dirty_cyton_data.txt"
+data_txtfile = r"alexis_nonlive_testing.txt"
 
-rms_class, bp_vals, rms_vals = m.bp_rms_extraction(data_txtfile, nargout=3)
+bp_class, rms_class, bp_vals, rms_vals = m.bp_rms_extraction(data_txtfile, 0, nargout=4)
 # rms_class = list(rms_class[0])
-bp_vals = list(bp_vals[0])
-rms_vals = list(rms_vals[0])
-print('rms class', rms_class)
+print('bp_class', bp_class)
+print('rms_class', rms_class)
+# bp_vals = list(bp_vals[0])
+# rms_vals = list(rms_vals[0])
 print('bp', bp_vals)
 print('rms', rms_vals)
 
