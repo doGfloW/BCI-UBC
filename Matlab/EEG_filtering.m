@@ -45,7 +45,6 @@ ylabel('EEG Amplitude (uV)');
 hold off
 nexttile
 hold on
-plot(apass,'r');
 plot(bpass,'c');
 plot(markers);
 title('EEG Beta Data');
@@ -53,7 +52,7 @@ xlabel('time (s)');
 ylabel('EEG Amplitude (uV)');
 hold off
 %Frequency plot
-fs = 200;
+fs = 250;
 EEG_fft = fft(EEG);
 L = length(EEG_fft);
 f = (0:L-1)*fs/L;
@@ -62,5 +61,19 @@ plot(f,abs(EEG_fft));
 xlabel('Frequency (Hz)')
 ylabel('Amplitude')
 title('Frequency Data')
+alpha=apass;
+beta=bpass;
+figure
+ for x= 1:450
+             alpha(1,:) = [];
+             alpha(end,:) = [];
+             beta(1,:) = [];
+             beta(end,:) = [];
+            x=x+1;
+ end
+hold on
+plot(alpha)
+plot(beta)
+hold off
 
 

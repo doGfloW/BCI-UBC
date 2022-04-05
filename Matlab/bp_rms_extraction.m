@@ -45,7 +45,7 @@ function [bp_class,rms_class, bp_values, rms_values] = bp_rms_extraction(input_d
         alpha_bandpass = bandpass(eeg_channel_data, [8 13], f)
         beta_bandpass = bandpass(eeg_channel_data, [13 32], f)
 
-        for x= 1:350
+        for x= 1:450
              alpha_bandpass(1,:) = [];
              alpha_bandpass(end,:) = [];
              beta_bandpass(1,:) = [];

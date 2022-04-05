@@ -158,7 +158,7 @@ class live(QWidget):
             # self.board.prepare_session()
             # self.hardware_connected = True
             # self.board.start_stream()
-            time.sleep(6)
+            time.sleep(5)
 
             # get data from the board and write it to a file specified earlier
             self.data = self.board.get_board_data()
