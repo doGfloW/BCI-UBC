@@ -8,9 +8,9 @@ catch
     data = dlmread(file, ',');
 end
 
-emg = data (:,2);
-markers=data(:,end)*1E-5;
-EEG=emg*1E-6 + 8.5*1E-4 ;
+emg = data (:,9);
+markers=data(:,end);
+EEG=emg ;
 % filltering data
 apass= bandpass(EEG,[8 13], 250);
 bpass= bandpass(EEG,[13 32], 250); 

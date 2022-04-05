@@ -1,17 +1,5 @@
-function [bp_class,rms_class, bp_values, rms_values] = bp_rms_extraction(input_data)
-    % check if the data is character/string or 2D numerical array
-    % if ischar(input_data) | isstring(input_data)
-    %     % read data from text file
-    %     try
-    %         data = dlmread(convertCharsToStrings(input_data), '\t');
-    %     catch
-    %         data = dlmread(convertCharsToStrings(input_data), ',');
-    %     end
-    % else
-    %     % assign the data to a variable
-    %     data = input_data
-    % end
-
+    
+input_data="C:\Users\ethan\Documents\GitHub\BCI-UBC\live_raw_data.txt"
     try
         data = dlmread(convertCharsToStrings(input_data), '\t');
     catch
@@ -42,12 +30,16 @@ function [bp_class,rms_class, bp_values, rms_values] = bp_rms_extraction(input_d
 
 
         % pass channel data through a bandpass filter
-        alpha_bandpass = bandpass(eeg_channel_data, [8 13], f)
-        beta_bandpass = bandpass(eeg_channel_data, [13 32], f)
-
-        for x= 1:350
+        alpha_bandpass = bandpass(eeg_channel_data, [8 13], f);
+        beta_bandpass = bandpass(eeg_channel_data, [13 32], f);
+        testa=alpha_bandpass;
+        testb=beta_bandpass;
+        for x= 1:800
              alpha_bandpass(1,:) = [];
-             alpha_bandpass(end,:) = [];
+             %alpha_bandpass(end,:) = []
+            x=x+1;
+        end
+        for x= 1:350
              beta_bandpass(1,:) = [];
              beta_bandpass(end,:) = [];
             x=x+1;
@@ -76,5 +68,3 @@ function [bp_class,rms_class, bp_values, rms_values] = bp_rms_extraction(input_d
         [bp_class] = BP_classification(bp_values);
         [rms_class] = RMS_classification(rms_values);
     end
-end
-
