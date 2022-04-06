@@ -25,6 +25,7 @@ class nonlive():
         # initialize Matlab connection
         self.m = matlab.engine.start_matlab()
         self.temp_result = 0
+        self.arm_run = False
         self.classify_data()
 
     def classify_data(self):
@@ -64,7 +65,9 @@ class nonlive():
 
                 f.write(str(self.arm_out))
 
+def main():
+    nonlive()
+  
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    sys.exit(app.exec())
+    main()

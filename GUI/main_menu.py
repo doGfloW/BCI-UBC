@@ -534,6 +534,7 @@ class MenuWindow(QMainWindow):
 
     def open_nonlive_control(self):
         self.nonlive_win = nonlive()
+       
 
 if __name__ == '__main__':    
     app = QApplication(sys.argv)    
