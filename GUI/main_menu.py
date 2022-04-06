@@ -221,7 +221,7 @@ class MenuWindow(QMainWindow):
         self.mi_window_button.clicked.connect(self.open_mi_window)
 
         # here is a button to actually start a live movement window
-        self.live_window_button = QPushButton('Arm control')
+        self.live_window_button = QPushButton('Arm Control')
         self.live_window_button.setEnabled(False)
         self.layout.addWidget(self.live_window_button, 7, 0, 1, 1, QtCore.Qt.AlignHCenter)
         self.live_window_button.clicked.connect(self.open_live_control)
@@ -534,6 +534,8 @@ class MenuWindow(QMainWindow):
 
     def open_nonlive_control(self):
         self.nonlive_win = nonlive()
+        self.nonlive_win.show()
+        self.is_nonlive_window_open = True
        
 
 if __name__ == '__main__':    

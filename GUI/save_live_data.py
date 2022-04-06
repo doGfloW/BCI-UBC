@@ -75,7 +75,6 @@ class live(QWidget):
         self.setMinimumSize(900, 900)
         self.mainlayout = QVBoxLayout()
         self.layout1 = QVBoxLayout()
-        self.hLayout = QHBoxLayout()
         fnt = QFont('Open Sans', 40, QFont.Bold)
         self.setWindowTitle('Live Robot Control')
 
