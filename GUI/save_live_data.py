@@ -161,10 +161,11 @@ class live(QWidget):
             print("BP values", bp_vals)
             print("RMS classification:", rms_result)
             print("BP classification:", bp_result)
-            self.bp_write_array = np.array(bp_result)
+            self.bp_write_array = np.array(bp_vals)
             np.append(self.bp_write_array, bp_result)
-            self.rms_write_array = np.array(bp_result)
+            self.rms_write_array = np.array(rms_vals)
             np.append(self.rms_write_array, rms_result)
+            print("arry", self.bp_write_array)
             self.save_results()
             
 
@@ -189,7 +190,7 @@ class live(QWidget):
     def save_results(self):
         # open a text file to append the arry too
         with open('Live_data/bp_results.txt', 'wb') as f:
-             f.write(self.rms_write_array)
+             f.write(self.bp_write_array)
 
         with open('Live_data/rms_results.txt', 'a+') as f:
             f.write(self.rms_write_array)
