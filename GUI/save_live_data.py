@@ -77,6 +77,7 @@ class live(QWidget):
         self.setMinimumSize(900, 900)
         self.mainlayout = QVBoxLayout()
         self.layout1 = QVBoxLayout()
+        self.hLayout = QHBoxLayout()
         fnt = QFont('Open Sans', 40, QFont.Bold)
         self.setWindowTitle('Live Robot Control')
 
@@ -157,14 +158,11 @@ class live(QWidget):
     #     self.lbltext.setText('move your right hand\nuntill timer stops')
 
     def savedata(self):
-        self.control_shown= random.randrange(0,1)
-        self.show_stim=True
-        winsound.Beep(self.frequency, self.duration)
         self.update()
         if self.run==True and self.arm_run==False:
-           
-
-
+            winsound.Beep(self.frequency, self.duration)
+            self.show_stim=True
+            self.control_shown= random.randrange(0,1)
             
             loop = QEventLoop()
             QTimer.singleShot(5000, loop.quit)
@@ -182,6 +180,8 @@ class live(QWidget):
             bp_result = str(int(bp_result))
             bp_vals = list(bp_vals[0])
             rms_vals = list(rms_vals[0])
+            self.bp_write_array=np.array(bp_result)
+            self.bp_write_array.a
 
             # a = []
             # a.append(rms_result)
@@ -220,30 +220,39 @@ class live(QWidget):
             self.run = True
             self.start = True
 
-    def arm_control(self):
+    def save_results(self):
+        # open a text file to append the arry too
+        write_array=np.array(se)
+        with open('Live_data/bp_results.txt', 'wb') as f:
+            np.savetxt(f, np.arange(3), fmt='%5d', delimiter=',')
+
+        with open('Live_data/rms_results.txt', 'wb') as f:
+             f.write('\n')
+
+    def arm_control(self): #funtion to sent data to arm and conroll
         kanova()
         self.arm_run = False
         #print('arm_control', self.start, self.arm_run)
 
-    def write_classification(self):
+    def write_classification(self): # function to write classifacation data to file for arm to process
         # open the classification file in write mode
         with open('Live_data/classification.txt', 'w') as f:
             f.write(str(self.arm_out))
 
-    def stop_stream_button(self):
+    def stop_stream_button(self): # function called by stop bttn
         self.run = False
         self.board.stop_stream()
         self.board.release_session()
         print('Stopped EEG stream.')
 
-    def closeEvent(self, event):
+    def closeEvent(self, event): # call on closing the window
         #method called by closeing window
         self.run = False
         self.board.stop_stream()
         self.board.release_session()
         print('Stopped EEG stream')
 
-    def paintEvent(self,event):
+    def paintEvent(self,event): # function to draw on screan
         # here is where we draw stuff on the screen
         # you give drawing instructions in pixels - here I'm getting pixel values based on window size
         print("paint event runs")
@@ -261,16 +270,15 @@ class live(QWidget):
             if  self.control_shown== 0:
                 self.setStyleSheet("background-color: red;")
                 self.lbltext.setText("relax\ntry to not move the robot")
-                # draw two rectangles for the fixation cross
-                painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
-                painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
 
             # check if the count changed; if so, draw a new circle at a randomized position
             if (self.control_shown==1):
                 self.setStyleSheet("background-color: green;")
                 self.lbltext.setText("relax\ntry to not move the robot")
                 # get position values (randomized) for one of four circles
-
+                # draw two rectangles for the fixation cross
+                painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
+                painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
 
                 # get position values radomized (Top Left and Top Right) at 4 locations
                 rand_list = [center + offset - radius//2 + line_width*3, center - offset - radius//2 - line_width*3]

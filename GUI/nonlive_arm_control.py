@@ -21,7 +21,7 @@ from short_movement import kanova
 # class: Live Control Window
 class nonlive(QMainWindow):
     def __init__(self):
-        super(nonlive, self).__init__()
+        super().__init__()
 
         # initialize Matlab connection
         self.m = matlab.engine.start_matlab()
@@ -121,8 +121,9 @@ class nonlive(QMainWindow):
         self.close()
   
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    main = nonlive()
-    main.show()
-    sys.exit(app.exec())
+
+  
+app = QApplication(sys.argv)
+w = nonlive()
+w.show()
+sys.exit(app.exec())
