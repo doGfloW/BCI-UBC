@@ -123,7 +123,8 @@ class nonlive(QMainWindow):
 
 
   
-app = QApplication(sys.argv)
-w = nonlive()
-w.show()
-sys.exit(app.exec())
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    main = nonlive()
+    main.show()
+    sys.exit(app.exec())
