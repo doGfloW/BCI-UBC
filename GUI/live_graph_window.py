@@ -186,7 +186,7 @@ def main():
     parser.add_argument('--streamer-params', type=str, help='streamer params', required=False, default='')
     parser.add_argument('--serial-number', type=str, help='serial number', required=False, default='')
     parser.add_argument('--board-id', type=int, help='board id, check docs to get a list of supported boards',
-                        required=False, default=BoardIds.GANGLION_BOARD)
+                        required=False, default=BoardIds.CYTON_BOARD)
     parser.add_argument('--file', type=str, help='file', required=False, default='')
     args = parser.parse_args()
 
