@@ -185,17 +185,18 @@ class live(QWidget):
             # RMS classification
             # rms_result = self.m.RMS_classification(rms_vals)
             # rms_result = list(rms_result[0])
-            print("RMS classification", rms_result)
-            print("bp classification", bp_result)
+            print("RMS classification:", rms_result)
+            print("bp classification:", bp_result)
 
-            # bandpower classification
+        # bandpower classification
             # bp_result = self.m.RMS_classification(bp_vals)
             # bp_result = list(bp_result[0])
 
             #compare classification results
             if bp_result == rms_result:
                 self.arm_out = rms_result
-            
+            elif rms_result==self.temp_result:
+                self.arm_out==rms_result
             else:
                 self.arm_out = self.temp_result
 
@@ -206,6 +207,7 @@ class live(QWidget):
 
             # call the arm_control method
             self.arm_control()
+            
             self.run = True
             self.start = True
 

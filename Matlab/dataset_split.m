@@ -11,4 +11,4 @@ Training = data(idx(1:round(P*m)),:) ;
 Testing = data(idx(round(P*m)+1:end),:) ;
 writematrix(Training,file_location,'Sheet','Training');
 writematrix(Testing,file_location,'Sheet','Testing');
-print("done");
+fprintf("done");
