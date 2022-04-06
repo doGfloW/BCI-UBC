@@ -117,6 +117,8 @@ class live(QWidget):
         self.temp_result = 0
         self.frequency = 1000  # set frequency to 2500 Hertz
         self.duration = 500  # set duration to 1000 ms == 1 second
+        self.previous_xchoice=0
+        self.previous_ychoice=0
 
     def start_stream_button(self):
         self.start = True
@@ -131,15 +133,17 @@ class live(QWidget):
         self.board.start_stream()
         self.timer = QTimer()
         self.timer.timeout.connect(self.savedata)  # execute `savedata`
-        self.timer.setInterval(1000)  # 1000ms = 1s
+        self.timer.setInterval(000)  # 1000ms = 1s
         self.timer.start()
 
     def savedata(self):
+        mylist=[0,1]
         self.update()
+        self.show_stim = True
         if self.run == True and self.arm_run == False:
             winsound.Beep(self.frequency, self.duration)
-            self.show_stim = True
-            self.control_shown = random.randrange(0,1)
+            self.control_shown = random.choice(mylist)
+            print("the stimulation is:", self.control_shown)
             
             loop = QEventLoop()
             QTimer.singleShot(5000, loop.quit)
@@ -152,17 +156,23 @@ class live(QWidget):
             # Matlab feature extraction
             data_txtfile = r"live_raw_data.txt"
             bp_result, rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, 1, nargout=4)
-            rms_result = str(int(rms_result))
-            bp_result = str(int(bp_result))
+            rms_result = (int(rms_result))
+            bp_result = (int(bp_result))
             bp_vals = list(bp_vals[0])
             rms_vals = list(rms_vals[0])
-            self.bp_write_array = np.array(bp_result)
-            self.bp_write_array.a
-
             print("RMS values", rms_vals)
             print("BP values", bp_vals)
             print("RMS classification:", rms_result)
             print("BP classification:", bp_result)
+            self.bp_write_array = np.array(bp_vals)
+            self.bp_write_array=np.append(self.bp_write_array, bp_result)
+            self.rms_write_array = np.array(rms_vals)
+            np.append(self.rms_write_array, rms_result)
+            print("arry", self.bp_write_array)
+            self.save_results()
+            
+            rms_result = str(int(rms_result))
+            bp_result = str(int(bp_result))
 
             # compare classification results
             if bp_result == rms_result:
@@ -184,12 +194,13 @@ class live(QWidget):
 
     def save_results(self):
         # open a text file to append the arry too
-        write_array = np.array(se)
-        with open('Live_data/bp_results.txt', 'wb') as f:
-            np.savetxt(f, np.arange(3), fmt='%5d', delimiter=',')
+        with open('Live_data/bp_results.txt', 'a+') as f:
+            f.write(b'\n')
+            np.savetxt(f,self.bp_write_array, fmt='%5f', delimiter='   ', newline='')
 
-        with open('Live_data/rms_results.txt', 'wb') as f:
-            f.write('\n')
+        with open('Live_data/rms_results.txt', 'a+') as f:
+            f.write(b'\n')
+            np.savetxt(f,self.rms_write_array, fmt='%5f', delimiter='   ', newline='')
 
     # function to sent data to arm for control
     def arm_control(self):
@@ -221,8 +232,9 @@ class live(QWidget):
         # here is where we draw stuff on the screen
         # you give drawing instructions in pixels - here I'm getting pixel values based on window size
         painter = QPainter(self)
+        print("paint event")
 
-        if self.show_stim:
+        if self.show_stim==True and self.run == True:
             painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
             cross_width = 100
             line_width = 20
