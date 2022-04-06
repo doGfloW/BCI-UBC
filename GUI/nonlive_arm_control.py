@@ -19,17 +19,14 @@ from short_movement import kanova
 
 
 # class: Live Control Window
-class nonlive(QMainWindow):
+class nonlive(QWidget):
     def __init__(self):
         super().__init__()
-
+        print('inizzile matlab')
         # initialize Matlab connection
         self.m = matlab.engine.start_matlab()
-        self.temp_result = 0
-        self.arm_run = False
-        self.run = True
-        self.classify_data()
-
+        print('got here1')
+        
         print('got here2')
 
         # PyQt layout and widget setup
@@ -70,6 +67,12 @@ class nonlive(QMainWindow):
         self.stop_button.hide()
         self.start_button.clicked.connect(self.classify_data)
         self.stop_button.clicked.connect(self.stop_button)
+        
+        self.temp_result = 0
+        self.arm_run = False
+        self.run = True
+        self.classify_data()
+
 
     def classify_data(self):
         if self.run == True and self.arm_run == False:
@@ -123,7 +126,8 @@ class nonlive(QMainWindow):
 
 
   
-app = QApplication(sys.argv)
-w = nonlive()
-w.show()
-sys.exit(app.exec())
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    main = nonlive()
+    main.show()
+    sys.exit(app.exec())

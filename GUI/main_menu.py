@@ -535,6 +535,7 @@ class MenuWindow(QMainWindow):
         self.is_live_window_open = True
 
     def open_nonlive_control(self):
+        print("pressed button")
         self.nonlive_win = nonlive()
         self.nonlive_win.show()
         self.is_nonlive_window_open = True
