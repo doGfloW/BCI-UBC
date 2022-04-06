@@ -139,7 +139,7 @@ class live(QWidget):
         self.show_stim = True
         if self.run == True and self.arm_run == False:
             winsound.Beep(self.frequency, self.duration)
-            self.control_shown = random.randrange(0,1)
+            self.control_shown = random.choice(0,1)
             print("the stimulation is:", self.control_shown)
             
             loop = QEventLoop()
@@ -162,7 +162,7 @@ class live(QWidget):
             print("RMS classification:", rms_result)
             print("BP classification:", bp_result)
             self.bp_write_array = np.array(bp_vals)
-            np.append(self.bp_write_array, bp_result)
+            self.bp_write_array=np.append(self.bp_write_array, bp_result)
             self.rms_write_array = np.array(rms_vals)
             np.append(self.rms_write_array, rms_result)
             print("arry", self.bp_write_array)
