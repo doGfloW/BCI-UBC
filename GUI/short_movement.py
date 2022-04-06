@@ -36,6 +36,30 @@ class kanova:
     args = utilities.parseConnectionArguments()
     def __init__ (self):
 
+        # Create closure to set an event after an END or an ABORT
+        def check_for_sequence_end_or_abort(e):
+            """Return a closure checking for END or ABORT notifications on a sequence
+            Arguments:
+            e -- event to signal when the action is completed
+                (will be set when an END or ABORT occurs)
+            """
+
+            def check(notification, e=e):
+                event_id = notification.event_identifier
+                task_id = notification.task_index
+                if event_id == Base_pb2.SEQUENCE_TASK_COMPLETED:
+                    print("Sequence task {} completed".format(task_id))
+                elif event_id == Base_pb2.SEQUENCE_ABORTED:
+                    print("Sequence aborted with error {}:{}" \
+                        .format( \
+                        notification.abort_details, \
+                        Base_pb2.SubErrorCodes.Name(notification.abort_details)))
+                    e.set()
+                elif event_id == Base_pb2.SEQUENCE_COMPLETED:
+                    print("Sequence completed.")
+                    e.set()
+
+            return check
 
         # Create closure to set an event after an END or an ABORT
         def check_for_end_or_abort(e):
