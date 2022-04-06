@@ -22,7 +22,7 @@ from kortex_api.RouterClient import RouterClient
 from kortex_api.SessionManager import SessionManager
 
 from kortex_api.autogen.client_stubs.BaseClientRpc import BaseClient
-from kortex_api.autogen.client_stubs.BaseCyclicClientRpc import BaseCyclicClient
+from kortex_api.autogen.client_stubs.BaseCyclicClientRpc import BaseCyclicClient 
 
 from kortex_api.autogen.messages import Session_pb2, Base_pb2, BaseCyclic_pb2
 
@@ -160,7 +160,7 @@ class kanova:
                 # Create required services
                 base = BaseClient(router)
                 base_cyclic=BaseCyclicClient(router)
-
+                
                 for i in var:
                     success = True
                     # classifier_output = input("What's the classifier output:")
