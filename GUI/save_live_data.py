@@ -78,7 +78,7 @@ class live(QWidget):
         self.mainlayout = QVBoxLayout()
         self.layout1 = QVBoxLayout()
         self.hLayout = QHBoxLayout()
-        fnt = QFont('Open Sans', 40, QFont.Bold)
+        fnt = QFont('Open Sans', 30, QFont.Bold)
         self.setWindowTitle('Live Robot Control')
 
         # add push buttons and text labels
@@ -133,17 +133,19 @@ class live(QWidget):
         self.board.start_stream()
         self.timer = QTimer()
         self.timer.timeout.connect(self.savedata)  # execute `savedata`
-        self.timer.setInterval(000)  # 1000ms = 1s
+        self.timer.setInterval(1000)  # 1000ms = 1s
         self.timer.start()
 
     def savedata(self):
         mylist=[0,1]
-        self.update()
+        #self.update()
         self.show_stim = True
         if self.run == True and self.arm_run == False:
+            self.relax=False
             winsound.Beep(self.frequency, self.duration)
             self.control_shown = random.choice(mylist)
             print("the stimulation is:", self.control_shown)
+            self.update()
             
             loop = QEventLoop()
             QTimer.singleShot(5000, loop.quit)
@@ -167,7 +169,9 @@ class live(QWidget):
             self.bp_write_array = np.array(bp_vals)
             self.bp_write_array=np.append(self.bp_write_array, bp_result)
             self.rms_write_array = np.array(rms_vals)
-            np.append(self.rms_write_array, rms_result)
+            self.rms_write_array=np.append(self.rms_write_array, rms_result)
+            self.rms_write_array=np.append(self.rms_write_array,self.control_shown)
+            self.bp_write_array=np.append(self.bp_write_array,self.control_shown)
             print("arry", self.bp_write_array)
             self.save_results()
             
@@ -189,22 +193,31 @@ class live(QWidget):
 
             # call the arm_control method
             self.arm_control()
+            self.relax=True
+            self.update()
+            self.setStyleSheet("background-color: white;")
+            self.lbltext.setText("Relax\nWere not mearseing your brain right now!!")
+            print("sleep statment")
+            time.sleep(5)
             self.run = True
             self.start = True
 
     def save_results(self):
         # open a text file to append the arry too
         with open('Live_data/bp_results.txt', 'a+') as f:
-            f.write(b'\n')
-            np.savetxt(f,self.bp_write_array, fmt='%5f', delimiter='   ', newline='')
+            f.write('\n')
+            np.savetxt(f,self.bp_write_array, fmt='%5f', delimiter='\t', newline='\t')
 
         with open('Live_data/rms_results.txt', 'a+') as f:
-            f.write(b'\n')
-            np.savetxt(f,self.rms_write_array, fmt='%5f', delimiter='   ', newline='')
+            f.write('\n')
+            np.savetxt(f,self.rms_write_array, fmt='%5f', delimiter='\t', newline='\t')
 
     # function to sent data to arm for control
     def arm_control(self):
         kanova()
+        loop = QEventLoop()
+        QTimer.singleShot(2000, loop.quit)
+        loop.exec_()
         self.arm_run = False
 
     # function to write classifacation data to file for arm to process
@@ -232,7 +245,7 @@ class live(QWidget):
         # here is where we draw stuff on the screen
         # you give drawing instructions in pixels - here I'm getting pixel values based on window size
         painter = QPainter(self)
-        print("paint event")
+        #print("paint event")
 
         if self.show_stim==True and self.run == True:
             painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
@@ -241,6 +254,10 @@ class live(QWidget):
             radius = 80
             center = self.geometry().width()//2
             offset = 100
+
+            if self.relax==True:
+                self.setStyleSheet("background-color: white;")
+                self.lbltext.setText("Relax\nWere not mearseing your brain right now!!")
 
             if self.control_shown == 0:
                 self.setStyleSheet("background-color: red;")
@@ -277,7 +294,6 @@ class live(QWidget):
 
                 # painting circle random a quadrant
                 painter.drawEllipse(xchoice, ychoice, radius, radius)
-        self.update()
 
 
 if __name__ == "__main__":
