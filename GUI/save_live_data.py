@@ -117,6 +117,8 @@ class live(QWidget):
         self.temp_result = 0
         self.frequency = 1000  # set frequency to 2500 Hertz
         self.duration = 500  # set duration to 1000 ms == 1 second
+        self.previous_xchoice=0
+        self.previous_ychoice=0
 
     def start_stream_button(self):
         self.start = True
@@ -131,15 +133,16 @@ class live(QWidget):
         self.board.start_stream()
         self.timer = QTimer()
         self.timer.timeout.connect(self.savedata)  # execute `savedata`
-        self.timer.setInterval(1000)  # 1000ms = 1s
+        self.timer.setInterval(000)  # 1000ms = 1s
         self.timer.start()
 
     def savedata(self):
+        mylist=[0,1]
         self.update()
         self.show_stim = True
         if self.run == True and self.arm_run == False:
             winsound.Beep(self.frequency, self.duration)
-            self.control_shown = random.choice(0,1)
+            self.control_shown = random.choice(mylist)
             print("the stimulation is:", self.control_shown)
             
             loop = QEventLoop()
@@ -191,11 +194,13 @@ class live(QWidget):
 
     def save_results(self):
         # open a text file to append the arry too
-        with open('Live_data/bp_results.txt', 'wb') as f:
-             f.write(self.bp_write_array)
+        with open('Live_data/bp_results.txt', 'a+') as f:
+            f.write(b'\n')
+            np.savetxt(f,self.bp_write_array, fmt='%5f', delimiter='   ', newline='')
 
         with open('Live_data/rms_results.txt', 'a+') as f:
-            f.write(self.rms_write_array)
+            f.write(b'\n')
+            np.savetxt(f,self.rms_write_array, fmt='%5f', delimiter='   ', newline='')
 
     # function to sent data to arm for control
     def arm_control(self):
