@@ -91,164 +91,40 @@ class kanova:
                 print("Timeout on action notification wait")
             return finished
 
+        def hello_sequence(base, base_cyclic):
+            print("Creating Action for Sequence")
 
-        def up_twist_command(base):
-            command = Base_pb2.TwistCommand()
+            actuator_count = base.GetActuatorCount().count
+            angular_action = create_angular_action(actuator_count)
 
-            command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
-            command.duration = 0
+            print("Creating Sequence")
+            sequence = Base_pb2.Sequence()
+            sequence.name = "Hello Sequence"
 
-            twist = command.twist
-            twist.linear_x = 0
-            twist.linear_y = 0.5
-            twist.linear_z = 0
-            twist.angular_x = 0
-            twist.angular_y = 0
-            twist.angular_z = 0
+            print("Appending Actions to Sequence")
+            task_1 = sequence.tasks.add()
+            task_1.group_identifier = 0
+            task_1.action.CopyFrom(angular_action)
 
-            print("Sending the twist command for 5 seconds...")
-            base.SendTwistCommand(command)
 
-            # Let time for twist to be executed
-            time.sleep(0.1)
+            e = threading.Event()
+            notification_handle = base.OnNotificationSequenceInfoTopic(
+                check_for_sequence_end_or_abort(e),
+                Base_pb2.NotificationOptions()
+            )
 
-            print("Stopping the robot...")
-            base.Stop()
-            time.sleep(1)
+            print("Creating sequence on device and executing it")
+            handle_sequence = base.CreateSequence(sequence)
+            base.PlaySequence(handle_sequence)
 
-            return True
+            print("Waiting for movement to finish ...")
+            finished = e.wait(TIMEOUT_DURATION)
+            base.Unsubscribe(notification_handle)
 
-        def down_twist_command(base):
-            command = Base_pb2.TwistCommand()
+            if not finished:
+                print("Timeout on action notification wait")
+            return finished
 
-            command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
-            command.duration = 0
-
-            twist = command.twist
-            twist.linear_x = 0
-            twist.linear_y = -0.5
-            twist.linear_z = 0
-            twist.angular_x = 0
-            twist.angular_y = 0
-            twist.angular_z = 0
-
-            print("Sending the twist command for 5 seconds...")
-            base.SendTwistCommand(command)
-
-            # Let time for twist to be executed
-            time.sleep(0.1)
-
-            print("Stopping the robot...")
-            base.Stop()
-            time.sleep(1)
-
-            return True
-
-        def topr_twist_command(base):
-            command = Base_pb2.TwistCommand()
-
-            command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
-            command.duration = 0
-
-            twist = command.twist
-            twist.linear_x = 0.5
-            twist.linear_y = 0.5
-            twist.linear_z = 0
-            twist.angular_x = 0
-            twist.angular_y = 0
-            twist.angular_z = 0
-
-            print("Sending the twist command for 5 seconds...")
-            base.SendTwistCommand(command)
-
-            # Let time for twist to be executed
-            time.sleep(0.1)
-
-            print("Stopping the robot...")
-            base.Stop()
-            time.sleep(1)
-
-            return True
-
-        def topl_twist_command(base):
-            command = Base_pb2.TwistCommand()
-
-            command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
-            command.duration = 0
-
-            twist = command.twist
-            twist.linear_x = -0.5
-            twist.linear_y = 0.5
-            twist.linear_z = 0
-            twist.angular_x = 0
-            twist.angular_y = 0
-            twist.angular_z = 0
-
-            print("Sending the twist command for 5 seconds...")
-            base.SendTwistCommand(command)
-
-            # Let time for twist to be executed
-            time.sleep(0.1)
-
-            print("Stopping the robot...")
-            base.Stop()
-            time.sleep(1)
-
-            return True
-
-        def bottomr_twist_command(base):
-            command = Base_pb2.TwistCommand()
-
-            command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
-            command.duration = 0
-
-            twist = command.twist
-            twist.linear_x = 0.5
-            twist.linear_y = -0.5
-            twist.linear_z = 0
-            twist.angular_x = 0
-            twist.angular_y = 0
-            twist.angular_z = 0
-
-            print("Sending the twist command for 5 seconds...")
-            base.SendTwistCommand(command)
-
-            # Let time for twist to be executed
-            time.sleep(0.1)
-
-            print("Stopping the robot...")
-            base.Stop()
-            time.sleep(1)
-
-            return True
-
-        def bottoml_twist_command(base):
-            command = Base_pb2.TwistCommand()
-
-            command.reference_frame = Base_pb2.CARTESIAN_REFERENCE_FRAME_TOOL
-            command.duration = 0
-
-            twist = command.twist
-            twist.linear_x = -0.5
-            twist.linear_y = -0.5
-            twist.linear_z = 0
-            twist.angular_x = 0
-            twist.angular_y = 0
-            twist.angular_z = 0
-
-            print("Sending the twist command for 5 seconds...")
-            base.SendTwistCommand(command)
-
-            # Let time for twist to be executed
-            time.sleep(0.1)
-
-            print("Stopping the robot...")
-            base.Stop()
-            time.sleep(1)
-
-            return True
-
-        
 
         def control():
             with open('Live_data\classification.txt') as filename:
@@ -279,15 +155,8 @@ class kanova:
                     if i == '0':
                         success &= move_to_home_position(base)
                     elif i == '1':
-                        success &= up_twist_command(base)
-                    elif i == '2':
-                        success &= topr_twist_command(base)
-                    elif i == '3':
-                        success &= bottomr_twist_command(base)
-                    elif i == '4':
-                        success &= topl_twist_command(base)
-                    elif i == '5':
-                        success &= bottoml_twist_command(base)
+                        success &= hello_sequence(base,base_cyclic)
+                        success &= move_to_home_position(base)
 
                     continue
 
