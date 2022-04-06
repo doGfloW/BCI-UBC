@@ -24,7 +24,7 @@ from kortex_api.SessionManager import SessionManager
 from kortex_api.autogen.client_stubs.BaseClientRpc import BaseClient
 from kortex_api.autogen.client_stubs.BaseCyclicClientRpc import BaseCyclicClient 
 
-from kortex_api.autogen.messages import Session_pb2, Base_pb2
+from kortex_api.autogen.messages import Session_pb2, Base_pb2, BaseCyclic_pb2
 
 # Maximum allowed waiting time during actions (in seconds)
 TIMEOUT_DURATION = 5
@@ -54,7 +54,17 @@ class kanova:
 
             return check
 
+        def create_angular_action(actuator_count):
+            print("Creating angular action")
+            action = Base_pb2.Action()
+            action.name = "Example angular action"
+            action.application_data = ""
 
+            for joint_id in range(actuator_count):
+                joint_angle = action.reach_joint_angles.joint_angles.joint_angles.add()
+                joint_angle.value = 0.0
+
+            return action
 
         def move_to_home_position(base):
             # Make sure the arm is in Single Level Servoing mode
@@ -150,6 +160,7 @@ class kanova:
                 # Create required services
                 base = BaseClient(router)
                 base_cyclic=BaseCyclicClient(router)
+                
                 for i in var:
                     success = True
                     # classifier_output = input("What's the classifier output:")
