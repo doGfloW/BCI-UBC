@@ -80,7 +80,7 @@ for k = 1:length(myFiles)
     bp=[r_channel,event];
     dataset_folder=cd;
     dataset_folder=fullfile(dataset_folder,"BCI-UBC","Datasets","Cyton datasets");
-    wfilename="Cyton_bp_dataset.xlsx";
+    wfilename="Cyton_bp_test_cgdataset.xlsx";
     dataset_folder=fullfile(dataset_folder,wfilename);
     if isfile(dataset_folder)
      fprintf("Dataset Found now adding to data set %s\n",dataset_folder)

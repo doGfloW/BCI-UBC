@@ -8,6 +8,7 @@ import csv
 
 # PyQt5 GUI imports
 from PyQt5 import QtCore, Qt
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer, QTime, Qt, QEventLoop
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont, QPainter, QBrush
@@ -18,26 +19,70 @@ from short_movement import kanova
 
 
 # class: Live Control Window
-class nonlive():
+class nonlive(QWidget):
     def __init__(self):
         super().__init__()
-
+        print('inizzile matlab')
         # initialize Matlab connection
         self.m = matlab.engine.start_matlab()
+        print('got here1')
+        
+        print('got here2')
+
+        # PyQt layout and widget setup
+        self.setMinimumSize(900, 900)
+        self.mainlayout = QVBoxLayout()
+        self.layout1 = QVBoxLayout()
+        fnt = QFont('Open Sans', 40, QFont.Bold)
+        self.setWindowTitle('Non-Live Robot Control')
+
+        # add push buttons and text labels
+        self.start_button = QPushButton('Start Test')
+        self.stop_button = QPushButton('Stop Test')
+        self.start_button.setFont(QFont('Open Sans', 16))
+        self.stop_button.setFont(QFont('Open Sans', 16))
+        self.start_button.setFixedSize(200, 50)
+        self.stop_button.setFixedSize(200, 50)
+        self.lbl = QLabel()
+        self.lbltext = QLabel()
+        self.lbl.setAlignment(Qt.AlignHCenter)
+        self.lbltext.setAlignment(Qt.AlignHCenter)
+        self.lbl.setFont(fnt)
+        self.lbltext.setFont(fnt)
+
+        # add buttons and text labels to the mainlayout
+        self.layout1.addWidget(self.lbl)
+        self.layout1.addWidget(self.lbltext)
+        self.layout1.addStretch(1)
+        self.widget = QWidget()
+        self.mainlayout.addWidget(self.start_button, alignment=Qt.AlignCenter)
+        self.mainlayout.addWidget(self.stop_button, alignment=Qt.AlignCenter)
+        self.mainlayout.addLayout(self.layout1)
+        self.widget.setLayout(self.mainlayout)
+        self.setCentralWidget(self.widget)
+        self.lbltext.setText("Non-Live EEG data processing for arm control is being executed.")
+        self.lbltext.setVisible(True)
+
+        # push button setup
+        self.stop_button.hide()
+        self.start_button.clicked.connect(self.classify_data)
+        self.stop_button.clicked.connect(self.stop_button)
+        
         self.temp_result = 0
+        self.arm_run = False
+        self.run = True
         self.classify_data()
 
+
     def classify_data(self):
-        if self.arm_run == False:
+        if self.run == True and self.arm_run == False:
             # Matlab feature extraction
             data_txtfile = r"alexis_nonlive_testing.txt"
             bp_result, rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, 0, nargout=4)
-
+            self.lbltext.setText("Non-Live EEG data has been classified.")
+            self.lbltext.setVisible(True)
             self.bp_result = bp_result[0]
             self.rms_result = rms_result[0]
-
-            print("BP classification", self.bp_result)
-            print("RMS classification", self.rms_result)
 
             # set the arm command to the RMS result and call the write_classification method
             self.write_classification()
@@ -45,6 +90,7 @@ class nonlive():
 
             # call the arm_control method
             self.arm_control()
+            self.run = True
             self.start = True
 
     def arm_control(self):
@@ -54,6 +100,9 @@ class nonlive():
     def write_classification(self):
         # open the classification file in write mode
         # change to write an array to file
+        self.lbltext.setText("Classification results are being\nsent to the robotic arm.\n Please wait.")
+        self.lbltext.setVisible(True)
+
         with open('Live_data/classification.txt', 'w') as f:
             for element in range(0, len(self.bp_result)):
                 # compare classification results
@@ -64,7 +113,21 @@ class nonlive():
 
                 f.write(str(self.arm_out))
 
+    def stop_button(self):
+        self.run = False
+        print('Stopped non-live arm control.')
+        self.close()
 
+    def closeEvent(self, event):
+        self.run = False
+        print('Stopped non-live arm control.')
+        self.close()
+  
+
+
+  
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    main = nonlive()
+    main.show()
     sys.exit(app.exec())

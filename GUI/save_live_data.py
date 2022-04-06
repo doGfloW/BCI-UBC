@@ -1,10 +1,12 @@
 import argparse
 import time
-from turtle import Turtle
+from turtle import Turtle, update
 import numpy as np
 import pandas as pd
 import sys
 import csv 
+import random
+import winsound
 
 # board imports
 import brainflow
@@ -110,33 +112,18 @@ class live(QWidget):
         # set variables
         self.rawdata = "live_raw_data.txt"
         self.run = True
+        self.show_stim=False
         self.data = []
         self.temp_result = 0
-        # self.instructions()
-        # self.savedata()
-
-    # def instructions(self):
-    #     self.lbltext.setText("Instructions:\n Think about moving your right arm to move the robot\nPress Enter to start")
-    #     # have this stuff in start push button
-    #     self.start = True
-    #     self.arm_run = False
-    #     #self.lbltext.setVisible(True)
-    #
-    # def keyPressEvent(self, event):
-    #     # have this in start push button
-    #     if self.start == True and self.arm_run == False and event.key() == Qt.Key_Return:
-    #         #self.lbltext.clear(
-    #         self.timer = QTimer()
-    #         self.timer.timeout.connect(self.savedata)  # execute `display_time`
-    #         self.timer.setInterval(1000)  # 1000ms = 1s
-    #         self.timer.start()
+        self.frequency = 1000  # set frequency to 2500 Hertz
+        self.duration = 500  # set duration to 1000 ms == 1 second
 
     def start_stream_button(self):
         self.start = True
         self.arm_run = False
         self.start_button.hide()
         self.stop_button.show()
-        self.lbltext.setText("Imagine moving your right arm\nto move the robot.")
+        self.lbltext.setText("Imagine grabbing the circle to move the robot\nRelax to keep the robot still\nPrompts will appear on the screen")
         self.data = []
         self.board = BoardShim(self.board_id, self.params)
         self.board.prepare_session()
@@ -147,24 +134,21 @@ class live(QWidget):
         self.timer.setInterval(1000)  # 1000ms = 1s
         self.timer.start()
 
-    # def movement(self):
-    #     self.lbltext.setText('move your right hand\nuntill timer stops')
-
     def savedata(self):
-        if self.run==True and self.arm_run==False:
-            # set up the board
-            # self.data = []
-            # self.board = BoardShim(self.board_id, self.params)
-            # self.board.prepare_session()
-            # self.hardware_connected = True
-            # self.board.start_stream()
-            time.sleep(5)
+        self.update()
+        self.show_stim = True
+        if self.run == True and self.arm_run == False:
+            winsound.Beep(self.frequency, self.duration)
+            self.control_shown = random.randrange(0,1)
+            print("the stimulation is:", self.control_shown)
+            
+            loop = QEventLoop()
+            QTimer.singleShot(5000, loop.quit)
+            loop.exec_()
 
             # get data from the board and write it to a file specified earlier
             self.data = self.board.get_board_data()
             DataFilter.write_file(self.data, self.rawdata, 'w')
-            # self.board.stop_stream()
-            # self.board.release_session()
 
             # Matlab feature extraction
             data_txtfile = r"live_raw_data.txt"
@@ -173,34 +157,27 @@ class live(QWidget):
             bp_result = str(int(bp_result))
             bp_vals = list(bp_vals[0])
             rms_vals = list(rms_vals[0])
-
-            # a = []
-            # a.append(rms_result)
-            # rms_result = a
-            # print(a)
-            # rms_vals = np.array(rms_vals)
             print("RMS values", rms_vals)
-            print("bp values", bp_vals)
+            print("BP values", bp_vals)
+            print("RMS classification:", rms_result)
+            print("BP classification:", bp_result)
+            self.bp_write_array = np.array(bp_result)
+            np.append(self.bp_write_array, bp_result)
+            self.rms_write_array = np.array(bp_result)
+            np.append(self.rms_write_array, rms_result)
+            self.save_results()
+            
 
-            # RMS classification
-            # rms_result = self.m.RMS_classification(rms_vals)
-            # rms_result = list(rms_result[0])
-            print("RMS classification", rms_result)
-            print("bp classification", bp_result)
-
-            # bandpower classification
-            # bp_result = self.m.RMS_classification(bp_vals)
-            # bp_result = list(bp_result[0])
-
-            #compare classification results
+            # compare classification results
             if bp_result == rms_result:
                 self.arm_out = rms_result
-            
+            elif rms_result == self.temp_result:
+                self.arm_out == rms_result
             else:
                 self.arm_out = self.temp_result
 
             # set the arm command to the RMS result and call the write_classification method
-            #self.arm_out = rms_result
+            # self.arm_out = rms_result
             self.write_classification()
             self.arm_run = True
 
@@ -209,28 +186,89 @@ class live(QWidget):
             self.run = True
             self.start = True
 
+    def save_results(self):
+        # open a text file to append the arry too
+        with open('Live_data/bp_results.txt', 'wb') as f:
+             f.write(self.rms_write_array)
+
+        with open('Live_data/rms_results.txt', 'a+') as f:
+            f.write(self.rms_write_array)
+
+    # function to sent data to arm for control
     def arm_control(self):
         kanova()
         self.arm_run = False
-        #print('arm_control', self.start, self.arm_run)
 
+    # function to write classifacation data to file for arm to process
     def write_classification(self):
         # open the classification file in write mode
         with open('Live_data/classification.txt', 'w') as f:
             f.write(str(self.arm_out))
 
+    # function called by stop button
     def stop_stream_button(self):
         self.run = False
         self.board.stop_stream()
         self.board.release_session()
         print('Stopped EEG stream.')
 
+    # key event for closing the window
     def closeEvent(self, event):
-        #method called by closeing window
         self.run = False
         self.board.stop_stream()
         self.board.release_session()
         print('Stopped EEG stream')
+
+    # function to draw on screen
+    def paintEvent(self, event):
+        # here is where we draw stuff on the screen
+        # you give drawing instructions in pixels - here I'm getting pixel values based on window size
+        painter = QPainter(self)
+
+        if self.show_stim==True and self.run == True:
+            painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
+            cross_width = 100
+            line_width = 20
+            radius = 80
+            center = self.geometry().width()//2
+            offset = 100
+
+            if self.control_shown == 0:
+                self.setStyleSheet("background-color: red;")
+                self.lbltext.setText("Relax\nThink of being still")
+
+            if self.control_shown == 1:
+                self.setStyleSheet("background-color: green;")
+                self.lbltext.setText("Imagine grabbing the circle\n")
+
+                # get position values (randomized) for one of four circles
+                # draw two rectangles for the fixation cross
+                painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
+                painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
+
+                # get position values radomized (Top Left and Top Right) at 4 locations
+                rand_list = [center + offset - radius//2 + line_width*3, center - offset - radius//2 - line_width*3]
+                xchoice = random.choice(rand_list) 
+
+                # xchoice to extend the circles position along x-axis
+                if xchoice == rand_list[0]:
+                    xchoice += radius
+                elif xchoice == rand_list[1]:
+                    xchoice -= radius
+
+                ychoice = rand_list[1]
+
+                # choices match previous choices so change the x position choice
+                if (xchoice == self.previous_xchoice) & (ychoice == self.previous_ychoice):
+                    xchoice = random.choice([x for x in rand_list if x != self.previous_xchoice])
+
+                # update previous values for the next loop
+                self.previous_xchoice = xchoice
+                self.previous_ychoice = ychoice
+
+                # painting circle random a quadrant
+                painter.drawEllipse(xchoice, ychoice, radius, radius)
+        self.update()
 
 
 if __name__ == "__main__":

@@ -221,7 +221,7 @@ class MenuWindow(QMainWindow):
         self.mi_window_button.clicked.connect(self.open_mi_window)
 
         # here is a button to actually start a live movement window
-        self.live_window_button = QPushButton('Arm control')
+        self.live_window_button = QPushButton('Arm Control')
         self.live_window_button.setEnabled(False)
         self.layout.addWidget(self.live_window_button, 7, 0, 1, 1, QtCore.Qt.AlignHCenter)
         self.live_window_button.clicked.connect(self.open_live_control)
@@ -364,7 +364,7 @@ class MenuWindow(QMainWindow):
             self.baseline_window_button.setEnabled(True)
             self.impedance_window_button.setEnabled(True)
             self.mi_window_button.setEnabled(True)
-            self.live_window_button.setEnabled(False)
+            self.live_window_button.setEnabled(True)
             self.nonlive_window_button.setEnabled(True)
             self.title.setText('Check Impedance, Start Baseline or Motor Imagery Test')
         
@@ -384,6 +384,8 @@ class MenuWindow(QMainWindow):
         else:
             # print("Error: OpenBCI port # must be an integer.")
             self.baseline_window_button.setEnabled(False)
+            self.mi_window_button.setEnabled(False)
+            self.live_window_button.setEnabled(False)
             self.title.setText('Select BCI Hardware Port')
 
     # def handle_arduino_dropdown(self):
@@ -533,7 +535,11 @@ class MenuWindow(QMainWindow):
         self.is_live_window_open = True
 
     def open_nonlive_control(self):
+        print("pressed button")
         self.nonlive_win = nonlive()
+        self.nonlive_win.show()
+        self.is_nonlive_window_open = True
+       
 
 if __name__ == '__main__':    
     app = QApplication(sys.argv)    
