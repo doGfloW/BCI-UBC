@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import sys
 import csv 
+import random
+import winsound
 
 # board imports
 import brainflow
@@ -110,8 +112,11 @@ class live(QWidget):
         # set variables
         self.rawdata = "live_raw_data.txt"
         self.run = True
+        self.show_stim=False
         self.data = []
         self.temp_result = 0
+        self.frequency = 1000  # set frequency to 2500 Hertz
+        self.duration = 500  # set duration to 1000 ms == 1 second
         # self.instructions()
         # self.savedata()
 
@@ -136,7 +141,7 @@ class live(QWidget):
         self.arm_run = False
         self.start_button.hide()
         self.stop_button.show()
-        self.lbltext.setText("Imagine moving your right arm\nto move the robot.")
+        self.lbltext.setText("Imagine grabing the circle to move the robot\nRelax to keep the robot still\nPromts will appear on the screen")
         self.data = []
         self.board = BoardShim(self.board_id, self.params)
         self.board.prepare_session()
@@ -151,20 +156,19 @@ class live(QWidget):
     #     self.lbltext.setText('move your right hand\nuntill timer stops')
 
     def savedata(self):
+        self.control_shown= random.randrange(0,1)
+        winsound.Beep(self.frequency, self.duration)
         if self.run==True and self.arm_run==False:
-            # set up the board
-            # self.data = []
-            # self.board = BoardShim(self.board_id, self.params)
-            # self.board.prepare_session()
-            # self.hardware_connected = True
-            # self.board.start_stream()
+           
+
+
+            
             time.sleep(5)
 
             # get data from the board and write it to a file specified earlier
             self.data = self.board.get_board_data()
             DataFilter.write_file(self.data, self.rawdata, 'w')
-            # self.board.stop_stream()
-            # self.board.release_session()
+           
 
             # Matlab feature extraction
             data_txtfile = r"live_raw_data.txt"
@@ -233,6 +237,55 @@ class live(QWidget):
         self.board.stop_stream()
         self.board.release_session()
         print('Stopped EEG stream')
+
+    def paintEvent(self, event):
+        # here is where we draw stuff on the screen
+        # you give drawing instructions in pixels - here I'm getting pixel values based on window size
+        painter = QPainter(self)
+        if self.show_stim:
+            # print('Painting stim')
+            painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
+            cross_width = 100
+            line_width = 20
+            radius = 80
+            center = self.geometry().width()//2
+            offset = 100
+
+            # check if count is zero; this removes the slight overlap when the cross should be gone
+            if  self.control_shown== 0:
+                self.setStyleSheet("background-color: red;")
+                self.lbltext.setText("relax\ntry to not move the robot")
+                # draw two rectangles for the fixation cross
+                painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
+                painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
+
+            # check if the count changed; if so, draw a new circle at a randomized position
+            if (self.control_shown==1):
+                self.setStyleSheet("background-color: green;")
+                self.lbltext.setText("relax\ntry to not move the robot")
+                # get position values (randomized) for one of four circles
+
+
+                # get position values radomized (Top Left and Top Right) at 4 locations
+                rand_list = [center + offset - radius//2 + line_width*3, center - offset - radius//2 - line_width*3]
+                xchoice = random.choice(rand_list) 
+                #xchoice to extend the circles position along x-axis
+                if xchoice == rand_list[0]:
+                    xchoice += radius
+                elif xchoice == rand_list[1]:
+                    xchoice -= radius
+
+                ychoice = rand_list[1]
+
+                # choices match previous choices so change the x position choice
+                if (xchoice == self.previous_xchoice) & (ychoice == self.previous_ychoice):
+                    xchoice = random.choice([x for x in rand_list if x != self.previous_xchoice])
+                # update previous values for the next loop
+                self.previous_xchoice = xchoice
+                self.previous_ychoice = ychoice
+                # painting circle random a quadrent
+                painter.drawEllipse(xchoice, ychoice, radius, radius)
+
 
 
 if __name__ == "__main__":
