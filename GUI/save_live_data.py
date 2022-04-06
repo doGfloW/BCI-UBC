@@ -153,8 +153,8 @@ class live(QWidget):
             # Matlab feature extraction
             data_txtfile = r"live_raw_data.txt"
             bp_result, rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, 1, nargout=4)
-            rms_result = str(int(rms_result))
-            bp_result = str(int(bp_result))
+            rms_result = (int(rms_result))
+            bp_result = (int(bp_result))
             bp_vals = list(bp_vals[0])
             rms_vals = list(rms_vals[0])
             print("RMS values", rms_vals)
@@ -168,6 +168,8 @@ class live(QWidget):
             print("arry", self.bp_write_array)
             self.save_results()
             
+            rms_result = str(int(rms_result))
+            bp_result = str(int(bp_result))
 
             # compare classification results
             if bp_result == rms_result:
@@ -225,6 +227,7 @@ class live(QWidget):
         # here is where we draw stuff on the screen
         # you give drawing instructions in pixels - here I'm getting pixel values based on window size
         painter = QPainter(self)
+        print("paint event")
 
         if self.show_stim==True and self.run == True:
             painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
