@@ -12,6 +12,13 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer, QTime, Qt, QEventLoop
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont, QPainter, QBrush
+from PyQt5 import QtGui
+from PyQt5.QtOpenGL import *
+from PyQt5 import QtCore, Qt
+from PyQt5.Qt import *
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QFont
 
 # Matlab import
 import matlab.engine
@@ -20,21 +27,21 @@ from short_movement import kanova
 
 # class: Live Control Window
 class nonlive(QWidget):
-    def __init__(self):
-        super().__init__()
-        print('inizzile matlab')
+    def __init__(self, parent=None):
+        super(nonlive, self).__init__(parent)
+
         # initialize Matlab connection
         self.m = matlab.engine.start_matlab()
-        print('got here1')
-        
-        print('got here2')
 
         # PyQt layout and widget setup
+        # self.setGeometry(0, 0, 250, 250)
         self.setMinimumSize(900, 900)
-        self.mainlayout = QVBoxLayout()
-        self.layout1 = QVBoxLayout()
         fnt = QFont('Open Sans', 40, QFont.Bold)
         self.setWindowTitle('Non-Live Robot Control')
+        self.mainlayout = QVBoxLayout(self)
+        self.layout1 = QVBoxLayout()
+        self.setLayout(self.mainlayout)
+        self.mainlayout.addLayout(self.layout1)
 
         # add push buttons and text labels
         self.start_button = QPushButton('Start Test')
@@ -54,27 +61,30 @@ class nonlive(QWidget):
         self.layout1.addWidget(self.lbl)
         self.layout1.addWidget(self.lbltext)
         self.layout1.addStretch(1)
-        self.widget = QWidget()
         self.mainlayout.addWidget(self.start_button, alignment=Qt.AlignCenter)
         self.mainlayout.addWidget(self.stop_button, alignment=Qt.AlignCenter)
-        self.mainlayout.addLayout(self.layout1)
-        self.widget.setLayout(self.mainlayout)
-        self.setCentralWidget(self.widget)
         self.lbltext.setText("Non-Live EEG data processing for arm control is being executed.")
         self.lbltext.setVisible(True)
 
         # push button setup
         self.stop_button.hide()
         self.start_button.clicked.connect(self.classify_data)
-        self.stop_button.clicked.connect(self.stop_button)
-        
+        # self.stop_button.clicked.connect(self.stop_button)
+
+        print('got here1')
+
+        # self.mainWindow.show()
+
+        # set variables and call function
         self.temp_result = 0
         self.arm_run = False
         self.run = True
+        # self.show()
         self.classify_data()
 
-
     def classify_data(self):
+        print('got here2')
+
         if self.run == True and self.arm_run == False:
             # Matlab feature extraction
             data_txtfile = r"alexis_nonlive_testing.txt"
@@ -113,19 +123,17 @@ class nonlive(QWidget):
 
                 f.write(str(self.arm_out))
 
-    def stop_button(self):
-        self.run = False
-        print('Stopped non-live arm control.')
-        self.close()
+    # def stop_button(self):
+    #     self.run = False
+    #     print('Stopped non-live arm control.')
+    #     self.close()
 
     def closeEvent(self, event):
         self.run = False
         print('Stopped non-live arm control.')
         self.close()
-  
 
 
-  
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     main = nonlive()
