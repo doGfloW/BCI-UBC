@@ -364,7 +364,7 @@ class MenuWindow(QMainWindow):
             self.baseline_window_button.setEnabled(True)
             self.impedance_window_button.setEnabled(True)
             self.mi_window_button.setEnabled(True)
-            self.live_window_button.setEnabled(False)
+            self.live_window_button.setEnabled(True)
             self.nonlive_window_button.setEnabled(True)
             self.title.setText('Check Impedance, Start Baseline or Motor Imagery Test')
         
@@ -384,6 +384,8 @@ class MenuWindow(QMainWindow):
         else:
             # print("Error: OpenBCI port # must be an integer.")
             self.baseline_window_button.setEnabled(False)
+            self.mi_window_button.setEnabled(False)
+            self.live_window_button.setEnabled(False)
             self.title.setText('Select BCI Hardware Port')
 
     # def handle_arduino_dropdown(self):

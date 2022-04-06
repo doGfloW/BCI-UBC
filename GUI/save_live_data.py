@@ -1,6 +1,6 @@
 import argparse
 import time
-from turtle import Turtle
+from turtle import Turtle, update
 import numpy as np
 import pandas as pd
 import sys
@@ -151,19 +151,25 @@ class live(QWidget):
         self.timer.timeout.connect(self.savedata)  # execute `savedata`
         self.timer.setInterval(1000)  # 1000ms = 1s
         self.timer.start()
+        
+        
 
     # def movement(self):
     #     self.lbltext.setText('move your right hand\nuntill timer stops')
 
     def savedata(self):
         self.control_shown= random.randrange(0,1)
+        self.show_stim=True
         winsound.Beep(self.frequency, self.duration)
+        self.update()
         if self.run==True and self.arm_run==False:
            
 
 
             
-            time.sleep(5)
+            loop = QEventLoop()
+            QTimer.singleShot(5000, loop.quit)
+            loop.exec_()
 
             # get data from the board and write it to a file specified earlier
             self.data = self.board.get_board_data()
@@ -238,12 +244,13 @@ class live(QWidget):
         self.board.release_session()
         print('Stopped EEG stream')
 
-    def paintEvent(self, event):
+    def paintEvent(self,event):
         # here is where we draw stuff on the screen
         # you give drawing instructions in pixels - here I'm getting pixel values based on window size
+        print("paint event runs")
         painter = QPainter(self)
         if self.show_stim:
-            # print('Painting stim')
+            print('Painting stim')
             painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
             cross_width = 100
             line_width = 20
@@ -285,6 +292,7 @@ class live(QWidget):
                 self.previous_ychoice = ychoice
                 # painting circle random a quadrent
                 painter.drawEllipse(xchoice, ychoice, radius, radius)
+        self.update()
 
 
 
