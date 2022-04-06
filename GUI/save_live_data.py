@@ -136,10 +136,11 @@ class live(QWidget):
 
     def savedata(self):
         self.update()
+        self.show_stim = True
         if self.run == True and self.arm_run == False:
             winsound.Beep(self.frequency, self.duration)
-            self.show_stim = True
             self.control_shown = random.randrange(0,1)
+            print("the stimulation is:", self.control_shown)
             
             loop = QEventLoop()
             QTimer.singleShot(5000, loop.quit)
@@ -156,13 +157,16 @@ class live(QWidget):
             bp_result = str(int(bp_result))
             bp_vals = list(bp_vals[0])
             rms_vals = list(rms_vals[0])
-            self.bp_write_array = np.array(bp_result)
-            self.bp_write_array.a
-
             print("RMS values", rms_vals)
             print("BP values", bp_vals)
             print("RMS classification:", rms_result)
             print("BP classification:", bp_result)
+            self.bp_write_array = np.array(bp_result)
+            np.append(self.bp_write_array, bp_result)
+            self.rms_write_array = np.array(bp_result)
+            np.append(self.rms_write_array, rms_result)
+            self.save_results()
+            
 
             # compare classification results
             if bp_result == rms_result:
@@ -184,12 +188,11 @@ class live(QWidget):
 
     def save_results(self):
         # open a text file to append the arry too
-        write_array = np.array(se)
         with open('Live_data/bp_results.txt', 'wb') as f:
-            np.savetxt(f, np.arange(3), fmt='%5d', delimiter=',')
+             f.write(self.rms_write_array)
 
-        with open('Live_data/rms_results.txt', 'wb') as f:
-            f.write('\n')
+        with open('Live_data/rms_results.txt', 'a+') as f:
+            f.write(self.rms_write_array)
 
     # function to sent data to arm for control
     def arm_control(self):
@@ -222,7 +225,7 @@ class live(QWidget):
         # you give drawing instructions in pixels - here I'm getting pixel values based on window size
         painter = QPainter(self)
 
-        if self.show_stim:
+        if self.show_stim==True and self.run == True:
             painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
             cross_width = 100
             line_width = 20
