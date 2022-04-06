@@ -84,7 +84,7 @@ class mibaseline_win(QWidget):
         self.mainlayout = QVBoxLayout()
         self.layout1 = QVBoxLayout()
         fnt = QFont('Open Sans', 40, QFont.Bold)
-        self.setWindowTitle('Motor Imagery Baseline Test')
+        self.setWindowTitle('Motor Imagery Test')
 
         # add text labels
         self.lbl = QLabel()
