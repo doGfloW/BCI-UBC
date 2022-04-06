@@ -22,6 +22,7 @@ from kortex_api.RouterClient import RouterClient
 from kortex_api.SessionManager import SessionManager
 
 from kortex_api.autogen.client_stubs.BaseClientRpc import BaseClient
+from kortex_api.autogen.client_stubs.BaseCyclicClientRpc import BaseCyclicClient
 
 from kortex_api.autogen.messages import Session_pb2, Base_pb2
 
