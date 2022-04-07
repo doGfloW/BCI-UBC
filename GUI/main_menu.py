@@ -335,6 +335,7 @@ class MenuWindow(QMainWindow):
     ##### Functions for Opening Windows #####
     #########################################    
     
+    # Calling and Sending Params to Motor Imagery Baseline
     def open_mi_window(self):
         self.mi_window = mibaseline_win(
         parent = self,
@@ -347,6 +348,7 @@ class MenuWindow(QMainWindow):
         self.mi_window.show()
         self.is_mi_window_open = True
     
+    # Calling and Sending Params to Live Impedance Check
     def open_impedance_window(self):
         self.impedance_window = impedance_win(
         parent = self,
@@ -358,6 +360,7 @@ class MenuWindow(QMainWindow):
         self.impedance_window.show()
         self.is_impedance_window_open = True
 
+    # Calling and Sending Params to P300 Oddball Baseline
     def open_baseline_window(self):
         self.data_window = baseline_win(
             hardware = self.hardware, 
@@ -370,6 +373,7 @@ class MenuWindow(QMainWindow):
         self.data_window.show()
         self.is_data_window_open = True
 
+    # Not Used
     def open_model_window(self):
         self.impedance_window = model_win(
         parent = self,
@@ -380,6 +384,7 @@ class MenuWindow(QMainWindow):
         self.impedance_window.show()
         self.is_impedance_window_open = True
 
+    # Not Used
     def open_session_window(self):
         self.session_window = session_win(
             hardware = self.hardware, 
@@ -393,6 +398,7 @@ class MenuWindow(QMainWindow):
         self.session_window.show()
         self.is_session_window_open = True
 
+    # Not Used
     def open_results_window(self):
         self.session_window = session_win(
             hardware = self.hardware, 
@@ -405,6 +411,7 @@ class MenuWindow(QMainWindow):
         self.session_window.show()
         self.is_session_window_open = True
 
+    # Calling and Sending Params to Live Graph Window
     def open_graph_window(self):
         self.live_graph_window = graph_win(
         parent = self,
@@ -416,6 +423,7 @@ class MenuWindow(QMainWindow):
         self.live_graph_window.show()
         self.is_graph_window_open = True
 
+    # Calling and Sending Params to Live Control Window
     def open_live_control(self):
         self.live_win = live(
         parent = self,
