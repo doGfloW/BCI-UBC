@@ -36,7 +36,7 @@ class impedance_win(QWidget):
         self.model = model
         self.serial_port = serial_port
 
-        self.col_thresh = [50, 100, 250, 500, 1000]
+        self.col_thresh = [65, 120, 200, 450, 800]
         self.col = [QtCore.Qt.green, QtCore.Qt.yellow, QtCore.Qt.darkYellow, QtCore.Qt.red, QtCore.Qt.black]
 
         self.electrodes = ["Fp1-Fp2","C3","P3","CZ","Cp1-Cp2","C4","P4","FZ"]
@@ -44,7 +44,7 @@ class impedance_win(QWidget):
         self.chan_num = 8
 
         self.coords = {
-            "Fp1-Fp2"   :[-0.06734486,  0.04071033, -0.01094572],
+            "Fp1-Fp2"   :[-0.16,  0.04, 0],
             "C3"        :[-0.04815716,  0.05090548,  0.04043975],
             "P4"        :[0.04968343, 0.0520495 , 0.03911898], 
             "CZ"        :[0.0700096 ,  0.04257685, -0.01150164], 
@@ -84,13 +84,7 @@ class impedance_win(QWidget):
 
         # BoardShim.enable_dev_board_logger()
 
-        # MANUALLY SPECIFY COM PORT IF USING CYTON OR CYTON DAISY
-        # if not specified, will use first available port
-        # should be a string representing the COM port that the Cyton Dongle is connected to. 
-        # e.g for Windows users 'COM3', for MacOS or Linux users '/dev/ttyUSB1
-
         self.setMinimumSize(800,800)
-        self.setWindowIcon(QtGui.QIcon('utils/logo_icon.jpg'))
     
         # setting window title
         self.setWindowTitle('Impedance Window')
@@ -143,7 +137,6 @@ class impedance_win(QWidget):
 
         # let's start eeg receiving!
         # self.start_data_stream()
-
         self.board = BoardShim(self.board_id, self.params)
         self.board.prepare_session()
         self.chan_ind = self.board.get_exg_channels(self.board_id)
@@ -194,8 +187,6 @@ class impedance_win(QWidget):
     #     self.loop_timer.timeout.connect(self.start_iteration)
     #     self.loop_timer.start(1000)
 
-
-
     def start_iteration(self):
         if not self.finished:
             time.sleep(1)
@@ -241,7 +232,7 @@ class impedance_win(QWidget):
                 self.start_iteration()
 
     def paintEvent(self, event):
-            # here is where we draw stuff on the screen
+        # here is where we draw stuff on the screen
         # you give drawing instructions in pixels - here I'm getting pixel values based on window size
         print('paint event runs')
         painter = QPainter(self)
