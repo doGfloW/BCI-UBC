@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import *
 from mi_window import mibaseline_win
 from save_live_data import live
 from live_graph_window import graph_win
+from impedance_window import impedance_win
 
 
 class MenuWindow(QMainWindow):
