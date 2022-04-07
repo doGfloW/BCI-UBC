@@ -34,14 +34,11 @@ class nonlive(QWidget):
         self.m = matlab.engine.start_matlab()
 
         # PyQt layout and widget setup
-        # self.setGeometry(0, 0, 250, 250)
         self.setMinimumSize(900, 900)
-        self.fnt = QFont('Open Sans', 40, QFont.Bold)
+        self.fnt = QFont('Open Sans', 20, QFont.Bold)
         self.setWindowTitle('Non-Live Robot Control')
         self.mainlayout = QVBoxLayout(self)
         self.layout1 = QVBoxLayout()
-        self.setLayout(self.mainlayout)
-        self.mainlayout.addLayout(self.layout1)
 
         # add push buttons and text labels
         self.start_button = QPushButton('Start Test')
@@ -56,6 +53,8 @@ class nonlive(QWidget):
         self.lbltext.setAlignment(Qt.AlignHCenter)
         self.lbl.setFont(self.fnt)
         self.lbltext.setFont(self.fnt)
+        self.lbltext.setText("Press start to begin\nnon-live EEG data processing\nand classification for arm control.")
+        self.lbltext.setVisible(True)
 
         # add buttons and text labels to the mainlayout
         self.layout1.addWidget(self.lbl)
@@ -63,33 +62,34 @@ class nonlive(QWidget):
         self.layout1.addStretch(1)
         self.mainlayout.addWidget(self.start_button, alignment=Qt.AlignCenter)
         self.mainlayout.addWidget(self.stop_button, alignment=Qt.AlignCenter)
-        self.lbltext.setText("Non-Live EEG data processing for arm control is being executed.")
-        self.lbltext.setVisible(True)
 
         # push button setup
         self.stop_button.hide()
         self.start_button.clicked.connect(self.classify_data)
         self.stop_button.clicked.connect(self.stop_button_function)
 
-        print('got here1')
-
-        # self.mainWindow.show()
+        # put layouts together
+        self.mainlayout.addLayout(self.layout1)
+        self.setLayout(self.mainlayout)
 
         # set variables and call function
         self.temp_result = 0
         self.arm_run = False
         self.run = True
-        self.classify_data()
 
     def classify_data(self):
-        print('got here2')
+        self.start_button.hide()
+        self.stop_button.show()
 
         if self.run == True and self.arm_run == False:
+            self.lbltext.setText("Non-Live EEG data processing\nand classification for arm control\nis being executed.\nPlease wait.")
+            self.lbltext.setVisible(True)
+            self.update()
+
             # Matlab feature extraction
             data_txtfile = r"alexis_nonlive_testing.txt"
             bp_result, rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, 0, nargout=4)
-            print('got here3')
-            self.lbltext.setText("Non-Live EEG data has been classified.")
+            self.lbltext.setText("Non-Live EEG classification for\narm control is complete.")
             self.lbltext.setVisible(True)
             self.bp_result = bp_result[0]
             self.rms_result = rms_result[0]

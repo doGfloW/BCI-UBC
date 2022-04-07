@@ -77,18 +77,21 @@ function [bp_class, rms_class, bp_values, rms_values] = bp_rms_extraction(input_
         end
 
     else
-        segment = 1;
+        segment = 0;
+        counter = 0;
         bp_class = [];
         rms_class = [];
 
         % loop through each segment of data in the data file
-        while segment+f < data_row
+        while segment+f+250 < data_row
+            counter = counter + 1;
+            fprintf('Classifying segment: %d\n', counter)
             bp_values = [];
             rms_values = [];
 
             % loop through each channel in the data
             for channel = 2:(last_channel)
-                eeg_channel_data = data(segment+1:segment+f, channel);
+                eeg_channel_data = data(segment+1:segment+f+250, channel);
 
                 % pass channel data through a bandpass filter
                 alpha_bandpass = bandpass(eeg_channel_data, [8 13], f);
@@ -124,8 +127,10 @@ function [bp_class, rms_class, bp_values, rms_values] = bp_rms_extraction(input_
 
             bp_class_interim = bp_class_interim;
             rms_class_interim = rms_class_interim;
-            bp_class = [bp_class, bp_class_interim];
-            rms_class = [rms_class, rms_class_interim];
+            bp_class = [bp_class, bp_class_interim]
+            rms_class = [rms_class, rms_class_interim]
+
+            segment = segment + 500;
         end
     end
 
