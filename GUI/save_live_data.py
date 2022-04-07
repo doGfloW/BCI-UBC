@@ -124,8 +124,13 @@ class live(QWidget):
         self.start = True
         self.arm_run = False
         self.start_button.hide()
-        self.stop_button.show()
         self.lbltext.setText("Imagine grabbing the circle to move the robot\nRelax to keep the robot still\nPrompts will appear on the screen")
+        self.stop_button.show()
+
+        # sleep to give enough time to read the text
+        # keeps making the window crash?
+        # timer.sleep(5000)
+
         self.data = []
         self.board = BoardShim(self.board_id, self.params)
         self.board.prepare_session()
@@ -137,14 +142,16 @@ class live(QWidget):
         self.timer.start()
 
     def savedata(self):
-        mylist=[0,1]
+        mylist = [0, 1]
         #self.update()
         self.show_stim = True
+
         if self.run == True and self.arm_run == False:
-            self.relax=False
+            self.relax = False
             winsound.Beep(self.frequency, self.duration)
             self.control_shown = random.choice(mylist)
-            print("the stimulation is:", self.control_shown)
+            self.circle_paint = 0
+            print("The stimulation is:", self.control_shown)
             self.update()
             
             loop = QEventLoop()
@@ -167,12 +174,12 @@ class live(QWidget):
             print("RMS classification:", rms_result)
             print("BP classification:", bp_result)
             self.bp_write_array = np.array(bp_vals)
-            self.bp_write_array=np.append(self.bp_write_array, bp_result)
+            self.bp_write_array = np.append(self.bp_write_array, bp_result)
             self.rms_write_array = np.array(rms_vals)
-            self.rms_write_array=np.append(self.rms_write_array, rms_result)
-            self.rms_write_array=np.append(self.rms_write_array,self.control_shown)
-            self.bp_write_array=np.append(self.bp_write_array,self.control_shown)
-            print("arry", self.bp_write_array)
+            self.rms_write_array = np.append(self.rms_write_array, rms_result)
+            self.rms_write_array = np.append(self.rms_write_array,self.control_shown)
+            self.bp_write_array = np.append(self.bp_write_array,self.control_shown)
+            print("array", self.bp_write_array)
             self.save_results()
             
             rms_result = str(int(rms_result))
@@ -193,10 +200,10 @@ class live(QWidget):
 
             # call the arm_control method
             self.arm_control()
-            self.relax=True
+            self.relax = True
             self.update()
             self.setStyleSheet("background-color: white;")
-            self.lbltext.setText("Relax\nWere not mearseing your brain right now!!")
+            self.lbltext.setText("Relax\nYour brain is not being measured right now.")
             print("sleep statment")
             time.sleep(5)
             self.run = True
@@ -206,11 +213,11 @@ class live(QWidget):
         # open a text file to append the arry too
         with open('Live_data/bp_results.txt', 'a+') as f:
             f.write('\n')
-            np.savetxt(f,self.bp_write_array, fmt='%5f', delimiter='\t', newline='\t')
+            np.savetxt(f, self.bp_write_array, fmt='%5f', delimiter='\t', newline='\t')
 
         with open('Live_data/rms_results.txt', 'a+') as f:
             f.write('\n')
-            np.savetxt(f,self.rms_write_array, fmt='%5f', delimiter='\t', newline='\t')
+            np.savetxt(f, self.rms_write_array, fmt='%5f', delimiter='\t', newline='\t')
 
     # function to sent data to arm for control
     def arm_control(self):
@@ -245,9 +252,8 @@ class live(QWidget):
         # here is where we draw stuff on the screen
         # you give drawing instructions in pixels - here I'm getting pixel values based on window size
         painter = QPainter(self)
-        #print("paint event")
 
-        if self.show_stim==True and self.run == True:
+        if self.show_stim == True and self.run == True:
             painter.setBrush(QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern))
             cross_width = 100
             line_width = 20
@@ -255,45 +261,51 @@ class live(QWidget):
             center = self.geometry().width()//2
             offset = 100
 
-            if self.relax==True:
+            if self.relax == True:
                 self.setStyleSheet("background-color: white;")
-                self.lbltext.setText("Relax\nWere not mearseing your brain right now!!")
+                self.lbltext.setText("Relax\nYour brain is not being measured right now.")
 
             if self.control_shown == 0:
                 self.setStyleSheet("background-color: red;")
-                self.lbltext.setText("Relax\nThink of being still")
+                self.lbltext.setText("Relax\nThink of being still.")
 
             if self.control_shown == 1:
                 self.setStyleSheet("background-color: green;")
-                self.lbltext.setText("Imagine grabbing the circle\n")
+                self.lbltext.setText("Imagine grabbing the circle.\n")
 
                 # get position values (randomized) for one of four circles
                 # draw two rectangles for the fixation cross
                 painter.drawRect(center - cross_width//2, center - line_width//2, cross_width, line_width)
                 painter.drawRect(center - line_width//2, center - cross_width//2, line_width, cross_width)
 
-                # get position values radomized (Top Left and Top Right) at 4 locations
-                rand_list = [center + offset - radius//2 + line_width*3, center - offset - radius//2 - line_width*3]
-                xchoice = random.choice(rand_list) 
+                if (self.circle_paint % 350) == 0:
+                    # get position values radomized (Top Left and Top Right) at 4 locations
+                    # rand_list = [center + offset - radius//2 + line_width*3, center - offset - radius//2 - line_width*3]
+                    rand_list = [center + offset - radius//2, center - offset - radius//2]
+                    xchoice = random.choice(rand_list)
+                    ychoice = random.choice(rand_list)
 
-                # xchoice to extend the circles position along x-axis
-                if xchoice == rand_list[0]:
-                    xchoice += radius
-                elif xchoice == rand_list[1]:
-                    xchoice -= radius
+                    # # xchoice to extend the circles position along x-axis
+                    # if xchoice == rand_list[0]:
+                    #     xchoice += radius
+                    # elif xchoice == rand_list[1]:
+                    #     xchoice -= radius
 
-                ychoice = rand_list[1]
+                    # choices match previous choices so change the x position choice
+                    if (xchoice == self.previous_xchoice) & (ychoice == self.previous_ychoice):
+                        xchoice = random.choice([x for x in rand_list if x != self.previous_xchoice])
 
-                # choices match previous choices so change the x position choice
-                if (xchoice == self.previous_xchoice) & (ychoice == self.previous_ychoice):
-                    xchoice = random.choice([x for x in rand_list if x != self.previous_xchoice])
+                    # update previous values for the next loop
+                    self.previous_xchoice = xchoice
+                    self.previous_ychoice = ychoice
 
-                # update previous values for the next loop
-                self.previous_xchoice = xchoice
-                self.previous_ychoice = ychoice
+                    # painting circle random a quadrant
+                    painter.drawEllipse(xchoice, ychoice, radius, radius)
 
-                # painting circle random a quadrant
-                painter.drawEllipse(xchoice, ychoice, radius, radius)
+                else:
+                    painter.drawEllipse(self.previous_xchoice, self.previous_ychoice, radius, radius)
+
+                self.circle_paint = self.circle_paint + 1
 
 
 if __name__ == "__main__":
