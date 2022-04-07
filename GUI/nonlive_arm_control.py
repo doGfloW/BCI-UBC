@@ -27,8 +27,8 @@ from short_movement import kanova
 
 # class: Live Control Window
 class nonlive(QWidget):
-    def __init__(self, parent=None):
-        super(nonlive, self).__init__(parent)
+    def __init__(self):
+        super().__init__()
 
         # initialize Matlab connection
         self.m = matlab.engine.start_matlab()
@@ -36,7 +36,7 @@ class nonlive(QWidget):
         # PyQt layout and widget setup
         # self.setGeometry(0, 0, 250, 250)
         self.setMinimumSize(900, 900)
-        fnt = QFont('Open Sans', 40, QFont.Bold)
+        self.fnt = QFont('Open Sans', 40, QFont.Bold)
         self.setWindowTitle('Non-Live Robot Control')
         self.mainlayout = QVBoxLayout(self)
         self.layout1 = QVBoxLayout()
@@ -54,8 +54,8 @@ class nonlive(QWidget):
         self.lbltext = QLabel()
         self.lbl.setAlignment(Qt.AlignHCenter)
         self.lbltext.setAlignment(Qt.AlignHCenter)
-        self.lbl.setFont(fnt)
-        self.lbltext.setFont(fnt)
+        self.lbl.setFont(self.fnt)
+        self.lbltext.setFont(self.fnt)
 
         # add buttons and text labels to the mainlayout
         self.layout1.addWidget(self.lbl)
@@ -69,7 +69,7 @@ class nonlive(QWidget):
         # push button setup
         self.stop_button.hide()
         self.start_button.clicked.connect(self.classify_data)
-        # self.stop_button.clicked.connect(self.stop_button)
+        self.stop_button.clicked.connect(self.stop_button_function)
 
         print('got here1')
 
@@ -79,7 +79,6 @@ class nonlive(QWidget):
         self.temp_result = 0
         self.arm_run = False
         self.run = True
-        # self.show()
         self.classify_data()
 
     def classify_data(self):
@@ -89,6 +88,7 @@ class nonlive(QWidget):
             # Matlab feature extraction
             data_txtfile = r"alexis_nonlive_testing.txt"
             bp_result, rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, 0, nargout=4)
+            print('got here3')
             self.lbltext.setText("Non-Live EEG data has been classified.")
             self.lbltext.setVisible(True)
             self.bp_result = bp_result[0]
@@ -123,10 +123,10 @@ class nonlive(QWidget):
 
                 f.write(str(self.arm_out))
 
-    # def stop_button(self):
-    #     self.run = False
-    #     print('Stopped non-live arm control.')
-    #     self.close()
+    def stop_button_function(self):
+        self.run = False
+        print('Stopped non-live arm control.')
+        self.close()
 
     def closeEvent(self, event):
         self.run = False
@@ -139,3 +139,4 @@ if __name__ == "__main__":
     main = nonlive()
     main.show()
     sys.exit(app.exec())
+
