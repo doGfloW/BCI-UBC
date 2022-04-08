@@ -162,9 +162,9 @@ class kanova:
 
 
         def control():
-            with open('Live_data\classification.txt') as filename:
-                print("filename :",filename)
-                var=[]
+            with open(r"classification.txt") as filename:
+                print("filename :", filename)
+                var = []
                 file = filename.readlines()
                 for col in file:
                     var.append(col[0])

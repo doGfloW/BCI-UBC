@@ -84,15 +84,16 @@ class nonlive(QWidget):
         if self.run == True and self.arm_run == False:
             self.lbltext.setText("Non-Live EEG data processing\nand classification for arm control\nis being executed.\nPlease wait.")
             self.lbltext.setVisible(True)
-            self.update()
 
             # Matlab feature extraction
             data_txtfile = r"alexis_nonlive_testing.txt"
             bp_result, rms_result, bp_vals, rms_vals = self.m.bp_rms_extraction(data_txtfile, 0, nargout=4)
             self.lbltext.setText("Non-Live EEG classification for\narm control is complete.")
             self.lbltext.setVisible(True)
-            self.bp_result = bp_result[0]
-            self.rms_result = rms_result[0]
+            self.bp_result = list(bp_result[0])
+            self.rms_result = list(rms_result[0])
+            self.bp_result = [int(x) for x in self.bp_result]
+            self.rms_result = [int(x) for x in self.rms_result]
 
             # set the arm command to the RMS result and call the write_classification method
             self.write_classification()
@@ -113,7 +114,7 @@ class nonlive(QWidget):
         self.lbltext.setText("Classification results are being\nsent to the robotic arm.\n Please wait.")
         self.lbltext.setVisible(True)
 
-        with open('Live_data/classification.txt', 'w') as f:
+        with open(r"classification.txt", 'w') as f:
             for element in range(0, len(self.bp_result)):
                 # compare classification results
                 if self.bp_result[element] == self.rms_result[element]:

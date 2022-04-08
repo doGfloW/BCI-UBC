@@ -127,9 +127,8 @@ function [bp_class, rms_class, bp_values, rms_values] = bp_rms_extraction(input_
 
             bp_class_interim = bp_class_interim;
             rms_class_interim = rms_class_interim;
-            bp_class = [bp_class, bp_class_interim]
-            rms_class = [rms_class, rms_class_interim]
-
+            bp_class = [bp_class, bp_class_interim];
+            rms_class = [rms_class, rms_class_interim];
             segment = segment + 500;
         end
     end
