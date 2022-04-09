@@ -162,7 +162,7 @@ class kanova:
 
 
         def control():
-            with open(r"classification.txt") as filename:
+            with open(r"Live_data/classification.txt") as filename:
                 print("filename :", filename)
                 var = []
                 file = filename.readlines()

@@ -186,26 +186,24 @@ class live(QWidget):
             bp_result = str(int(bp_result))
 
             # compare classification results
-            if bp_result == rms_result:
-                self.arm_out = rms_result
-            elif rms_result == self.temp_result:
-                self.arm_out == rms_result
-            else:
-                self.arm_out = self.temp_result
+            self.arm_out = bp_result
+            # if bp_result == rms_result:
+            #     self.arm_out = rms_result
+            # elif rms_result == self.temp_result:
+            #     self.arm_out == rms_result
+            # else:
+            #     self.arm_out = self.temp_result
 
             # set the arm command to the RMS result and call the write_classification method
             # self.arm_out = rms_result
             self.write_classification()
             self.arm_run = True
+            self.show_stim = False
 
             # call the arm_control method
             self.arm_control()
             self.relax = True
             self.update()
-            self.setStyleSheet("background-color: white;")
-            self.lbltext.setText("Relax\nYour brain is not being measured right now.")
-            print("sleep statment")
-            time.sleep(5)
             self.run = True
             self.start = True
 
@@ -222,8 +220,11 @@ class live(QWidget):
     # function to sent data to arm for control
     def arm_control(self):
         kanova()
+        self.setStyleSheet("background-color: white;")
+        self.lbltext.setText("Relax\nYour brain is not being measured right now.")
+        print("sleep statment")
         loop = QEventLoop()
-        QTimer.singleShot(2000, loop.quit)
+        QTimer.singleShot(15000, loop.quit)
         loop.exec_()
         self.arm_run = False
 
