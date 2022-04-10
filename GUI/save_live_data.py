@@ -224,7 +224,7 @@ class live(QWidget):
         self.lbltext.setText("Relax\nYour brain is not being measured right now.")
         print("sleep statment")
         loop = QEventLoop()
-        QTimer.singleShot(15000, loop.quit)
+        QTimer.singleShot(12000, loop.quit)
         loop.exec_()
         self.arm_run = False
 
