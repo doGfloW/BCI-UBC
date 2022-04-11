@@ -22,6 +22,7 @@ from save_live_data import live
 from nonlive_arm_control import nonlive
 from impedance_window import impedance_win
 from baseline_window import baseline_win
+from live_graph_window import graph_win
 
 
 class MenuWindow(QMainWindow):

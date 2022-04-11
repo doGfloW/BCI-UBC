@@ -20,10 +20,16 @@ from random import randint
 
 
 class graph_win(QMainWindow):
-    def __init__(self, board_shim):
+    def __init__(self, hardware=None, model=None,
+                 data_type=None, parent=None, serial_port=None):
         super(graph_win, self).__init__()
-        self.board_id = board_shim.get_board_id()
-        self.board_shim = board_shim
+        # setting up the board
+        self.params = BrainFlowInputParams()
+        self.params.serial_port = serial_port
+        self.board_id = 0
+        self.board = BoardShim(self.board_id, self.params)
+        self.board.prepare_session()
+        self.board.start_stream()
         self.eeg_channels = BoardShim.get_eeg_channels(self.board_id)
         self.sampling_rate = BoardShim.get_sampling_rate(self.board_id)
         self.update_speed_ms = 50
@@ -137,28 +143,28 @@ class graph_win(QMainWindow):
         self.gridLayout.addWidget(self.graphWidget4, 3, 0)
 
         self.graphWidget5 = pg.PlotWidget()
-        self.graphWidget5.setTitle('Channel 4', **styles)
+        self.graphWidget5.setTitle('Channel 5', **styles)
         self.graphWidget5.setLabel('left', 'Amplitude', **styles)
         self.graphWidget5.setLabel('bottom', 'Time', **styles)
         self.graphWidget5.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget5, 4, 0)
 
         self.graphWidget6 = pg.PlotWidget()
-        self.graphWidget6.setTitle('Channel 4', **styles)
+        self.graphWidget6.setTitle('Channel 6', **styles)
         self.graphWidget6.setLabel('left', 'Amplitude', **styles)
         self.graphWidget6.setLabel('bottom', 'Time', **styles)
         self.graphWidget6.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget6, 5, 0)
 
         self.graphWidget7 = pg.PlotWidget()
-        self.graphWidget7.setTitle('Channel 4', **styles)
+        self.graphWidget7.setTitle('Channel 7', **styles)
         self.graphWidget7.setLabel('left', 'Amplitude', **styles)
         self.graphWidget7.setLabel('bottom', 'Time', **styles)
         self.graphWidget7.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget7, 6, 0)
 
         self.graphWidget8 = pg.PlotWidget()
-        self.graphWidget8.setTitle('Channel 4', **styles)
+        self.graphWidget8.setTitle('Channel 8', **styles)
         self.graphWidget8.setLabel('left', 'Amplitude', **styles)
         self.graphWidget8.setLabel('bottom', 'Time', **styles)
         self.graphWidget8.setBackground('w')
@@ -183,7 +189,7 @@ class graph_win(QMainWindow):
         self.timer.start()
 
     def update_plot_data(self):
-        data = self.board_shim.get_current_board_data(self.num_points)
+        data = self.board.get_current_board_data(self.num_points)
 
         if self.button1.isChecked():
             pass
@@ -257,56 +263,8 @@ class graph_win(QMainWindow):
         # self.app.processEvents()
 
 
-def main():
-    BoardShim.enable_dev_board_logger()
-    logging.basicConfig(level=logging.DEBUG)
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--timeout', type=int, help='timeout for device discovery or connection', required=False,
-                        default=0)
-    parser.add_argument('--ip-port', type=int, help='ip port', required=False, default=0)
-    parser.add_argument('--ip-protocol', type=int, help='ip protocol, check IpProtocolType enum', required=False,
-                        default=0)
-    parser.add_argument('--ip-address', type=str, help='ip address', required=False, default='')
-    parser.add_argument('--serial-port', type=str, help='serial port', required=False, default='COM4')
-    parser.add_argument('--mac-address', type=str, help='mac address', required=False, default='')
-    parser.add_argument('--other-info', type=str, help='other info', required=False, default='')
-    parser.add_argument('--streamer-params', type=str, help='streamer params', required=False, default='')
-    parser.add_argument('--serial-number', type=str, help='serial number', required=False, default='')
-    parser.add_argument('--board-id', type=int, help='board id, check docs to get a list of supported boards',
-                        required=False, default=BoardIds.CYTON_BOARD)
-    parser.add_argument('--file', type=str, help='file', required=False, default='')
-    args = parser.parse_args()
-
-    params = BrainFlowInputParams()
-    params.ip_port = args.ip_port
-    params.serial_port = args.serial_port
-    params.mac_address = args.mac_address
-    params.other_info = args.other_info
-    params.serial_number = args.serial_number
-    params.ip_address = args.ip_address
-    params.ip_protocol = args.ip_protocol
-    params.timeout = args.timeout
-    params.file = args.file
-
-    try:
-        board_shim = BoardShim(args.board_id, params)
-        board_shim.prepare_session()
-        board_shim.start_stream(450000, args.streamer_params)
-        app = QtWidgets.QApplication(sys.argv)
-        main = graph_win(board_shim)
-        main.show()
-        data = board_shim.get_board_data()
-        print(data)
-        sys.exit(app.exec())
-    except BaseException:
-        logging.warning('Exception', exc_info=True)
-    finally:
-        logging.info('End')
-        if board_shim.is_prepared():
-            logging.info('Releasing session')
-            board_shim.release_session()
-
-
 if __name__ == '__main__':
-    main()
+    app = QApplication(sys.argv)
+    main = graph_win()
+    main.show()
+    sys.exit(app.exec())
