@@ -1,1 +1,0 @@
-# this is the live plotting window made by Saffy
