@@ -21,6 +21,7 @@ from mi_window import mibaseline_win
 from save_live_data import live
 from nonlive_arm_control import nonlive
 from impedance_window import impedance_win
+from baseline_window import baseline_win
 
 
 class MenuWindow(QMainWindow):
