@@ -20,6 +20,8 @@ import os
 from mi_window import mibaseline_win
 from save_live_data import live
 from nonlive_arm_control import nonlive
+from impedance_window import impedance_win
+from baseline_window import baseline_win
 
 
 class MenuWindow(QMainWindow):
@@ -223,13 +225,13 @@ class MenuWindow(QMainWindow):
         # here is a button to actually start a live movement window
         self.live_window_button = QPushButton('Arm Control')
         self.live_window_button.setEnabled(False)
-        self.layout.addWidget(self.live_window_button, 7, 0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.live_window_button, 5, 1, 1, -1, QtCore.Qt.AlignHCenter)
         self.live_window_button.clicked.connect(self.open_live_control)
 
         # here is a button to actually start a live movement window
         self.nonlive_window_button = QPushButton('Non-Live Arm Control')
         self.nonlive_window_button.setEnabled(False)
-        self.layout.addWidget(self.nonlive_window_button, 8, 0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.nonlive_window_button, 6, 1, 1, -1, QtCore.Qt.AlignHCenter)
         self.nonlive_window_button.clicked.connect(self.open_nonlive_control)
 
         # # here is a button to start the arduino window
@@ -244,32 +246,32 @@ class MenuWindow(QMainWindow):
         self.layout.addWidget(self.baseline_window_button, 5, 0, 1, 1, QtCore.Qt.AlignHCenter)
         self.baseline_window_button.clicked.connect(self.open_baseline_window)
 
-        # here is a button to train the model
-        self.model_window_button = QPushButton('Train Model')
-        ##########################################################
-        self.model_window_button.setEnabled(True) # set to false for deployment
-        self.layout.addWidget(self.model_window_button, 6, 0, 1, -1, QtCore.Qt.AlignHCenter)
-        self.model_window_button.clicked.connect(self.open_model_window)
+        # # here is a button to train the model
+        # self.model_window_button = QPushButton('Train Model')
+        # ##########################################################
+        # self.model_window_button.setEnabled(True) # set to false for deployment
+        # self.layout.addWidget(self.model_window_button, 6, 0, 1, -1, QtCore.Qt.AlignHCenter)
+        # self.model_window_button.clicked.connect(self.open_model_window)
 
-        # here is a button to start the session
-        self.session_window_button = QPushButton('Start Session')
-        if self.debug == True:
-            self.session_window_button.setEnabled(True)
-        else:
-            self.session_window_button.setEnabled(False)
-        self.layout.addWidget(self.session_window_button, 5, 1, 1, -1, QtCore.Qt.AlignHCenter)
-        self.session_window_button.clicked.connect(self.open_session_window) # IMPLEMENT THIS FUNCTION
+        # # here is a button to start the session
+        # self.session_window_button = QPushButton('Start Session')
+        # if self.debug == True:
+        #     self.session_window_button.setEnabled(True)
+        # else:
+        #     self.session_window_button.setEnabled(False)
+        # self.layout.addWidget(self.session_window_button, 5, 1, 1, -1, QtCore.Qt.AlignHCenter)
+        # self.session_window_button.clicked.connect(self.open_session_window) # IMPLEMENT THIS FUNCTION
 
-        # here is a button to display results of the session
-        self.results_window_button = QPushButton('Results')
-        self.results_window_button.setEnabled(False)
-        self.layout.addWidget(self.results_window_button, 6, 1, 1, -1, QtCore.Qt.AlignHCenter)
-        self.results_window_button.clicked.connect(self.open_results_window) # IMPLEMENT THIS FUNCTION
+        # # here is a button to display results of the session
+        # self.results_window_button = QPushButton('Results')
+        # self.results_window_button.setEnabled(False)
+        # self.layout.addWidget(self.results_window_button, 6, 1, 1, -1, QtCore.Qt.AlignHCenter)
+        # self.results_window_button.clicked.connect(self.open_results_window) # IMPLEMENT THIS FUNCTION
 
         # here is a button to display graph
         self.graph_window_button = QPushButton('Graph')
         self.graph_window_button.setEnabled(True)
-        self.layout.addWidget(self.graph_window_button, 7, 0, 1, -1, QtCore.Qt.AlignHCenter)
+        self.layout.addWidget(self.graph_window_button, 6, 0, 1, -1, QtCore.Qt.AlignHCenter)
         self.graph_window_button.clicked.connect(self.open_graph_window) # IMPLEMENT THIS FUNCTION
 
         # this is a variable to show whether we have a data window open
@@ -484,20 +486,20 @@ class MenuWindow(QMainWindow):
         self.impedance_window.show()
         self.is_impedance_window_open = True
 
-    def open_session_window(self):
-        self.session_window = session_win(
-            hardware = self.hardware, 
-            model = self.model,
-            targ_limb = self.targ_limb,
-            data_type = self.data_type, 
-            csv_name = self.csv_name, 
-            parent = self,
-            serial_port = self.bci_serial_port,
-            #arduino_con = self.arduino_con,
-            #arduino_port=self.arduino_serial_port,
-            )
-        self.session_window.show()
-        self.is_session_window_open = True
+    # def open_session_window(self):
+    #     self.session_window = session_win(
+    #         hardware = self.hardware, 
+    #         model = self.model,
+    #         targ_limb = self.targ_limb,
+    #         data_type = self.data_type, 
+    #         csv_name = self.csv_name, 
+    #         parent = self,
+    #         serial_port = self.bci_serial_port,
+    #         #arduino_con = self.arduino_con,
+    #         #arduino_port=self.arduino_serial_port,
+    #         )
+    #     self.session_window.show()
+    #     self.is_session_window_open = True
 
     def open_results_window(self):
         self.session_window = session_win(
