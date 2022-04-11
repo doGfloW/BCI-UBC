@@ -44,14 +44,14 @@ class impedance_win(QWidget):
         self.chan_num = 8
 
         self.coords = {
-            "Fp1-Fp2"   :[0.16,  0.08, 0.01], #Foward Frontal Lobe
-            "C3"        :[0.12,  0.16, 0.02], #Central Motor Cortex
-            "P3"        :[0.08,  0.24, 0.03], #Posterior Motor Cortex
-            "CZ"        :[0.16,  0.16, 0.04], #Central Motor Cortex
-            "Cp1-Cp2"   :[0.16,  0.20, 0.05], #Central-Posterior Motor Cortex
-            "C4"        :[0.20,  0.16, 0.06], #Central Motor Cortex
-            "P4"        :[0.24,  0.24, 0.07], #Posterior Motor Cortex
-            "FZ"        :[0.16,  0.12, 0.08], #Central Frontal Lobe
+            "Fp1-Fp2"   :[0.00,  -0.08, 0.02], #Foward Frontal Lobe
+            "C3"        :[-0.08,  0.00, 0.02], #Central Motor Cortex
+            "P3"        :[-0.05,  0.10, 0.02], #Posterior Motor Cortex
+            "CZ"        :[0.00,  0.00, 0.02], #Central Motor Cortex
+            "Cp1-Cp2"   :[0.00,  0.05, 0.02], #Central-Posterior Motor Cortex
+            "C4"        :[0.08,  0.00, 0.02], #Central Motor Cortex
+            "P4"        :[0.05,  0.10, 0.02], #Posterior Motor Cortex
+            "FZ"        :[0.00,  -0.04, 0.02], #Central Frontal Lobe
         }
 
         ### need a tertiary window to select which channels
@@ -193,11 +193,10 @@ class impedance_win(QWidget):
             self.data = self.board.get_board_data() # will need to be a consist number of samples
             for i in range(self.chan_num):
                 # average with the prevous x number of fft data
-                # but this isn't fft - so wtf
                 self.filter_custom(i)
                 # print(len(self.data[i,:]))
                 chan_std_uV = stats.stdev(self.data[i,:])
-                self.impedances[i] = ((stats.sqrt( 2.0 ) * (chan_std_uV) * 1.0e-6) / 6.0e-9 - 2200)/1000
+                self.impedances[i] = ((stats.sqrt( 2.0 ) * (chan_std_uV) * 1.0e-6) / 6.0e-9 - 2200)/100000
             print(self.impedances)
             '''
             HERE
