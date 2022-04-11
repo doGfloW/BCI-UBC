@@ -44,14 +44,14 @@ class impedance_win(QWidget):
         self.chan_num = 8
 
         self.coords = {
-            "Fp1-Fp2"   :[-0.16,  0.04, 0],
-            "C3"        :[-0.04815716,  0.05090548,  0.04043975],
-            "P4"        :[0.04968343, 0.0520495 , 0.03911898], 
-            "CZ"        :[0.0700096 ,  0.04257685, -0.01150164], 
-            "Cp1-Cp2"   :[-0.06264376, -0.01114863,  0.06168519], 
-            "C4"        :[0.06433047, -0.01044761,  0.0609395],  
-            "P4"        :[-0.06942608, -0.07040219, -0.00238371], 
-            "FZ"        :[-0.05080589, -0.07551572,  0.05361679], 
+            "Fp1-Fp2"   :[0.16,  0.08, 0.01], #Foward Frontal Lobe
+            "C3"        :[0.12,  0.16, 0.02], #Central Motor Cortex
+            "P3"        :[0.08,  0.24, 0.03], #Posterior Motor Cortex
+            "CZ"        :[0.16,  0.16, 0.04], #Central Motor Cortex
+            "Cp1-Cp2"   :[0.16,  0.20, 0.05], #Central-Posterior Motor Cortex
+            "C4"        :[0.20,  0.16, 0.06], #Central Motor Cortex
+            "P4"        :[0.24,  0.24, 0.07], #Posterior Motor Cortex
+            "FZ"        :[0.16,  0.12, 0.08], #Central Frontal Lobe
         }
 
         ### need a tertiary window to select which channels
