@@ -227,11 +227,11 @@ class MenuWindow(QMainWindow):
         self.layout.addWidget(self.live_window_button, 7, 0, 1, 1, QtCore.Qt.AlignHCenter)
         self.live_window_button.clicked.connect(self.open_live_control)
 
-        # here is a button to actually start a live movement window
-        self.nonlive_window_button = QPushButton('Non-Live Arm Control')
-        self.nonlive_window_button.setEnabled(False)
-        self.layout.addWidget(self.nonlive_window_button, 8, 0, 1, 1, QtCore.Qt.AlignHCenter)
-        self.nonlive_window_button.clicked.connect(self.open_nonlive_control)
+        # # here is a button to actually start a live movement window
+        # self.nonlive_window_button = QPushButton('Non-Live Arm Control')
+        # self.nonlive_window_button.setEnabled(False)
+        # self.layout.addWidget(self.nonlive_window_button, 8, 0, 1, 1, QtCore.Qt.AlignHCenter)
+        # self.nonlive_window_button.clicked.connect(self.open_nonlive_control)
 
         # # here is a button to start the arduino window
         # self.arduino_window_button = QPushButton('Turn on Arduino')
@@ -245,12 +245,12 @@ class MenuWindow(QMainWindow):
         self.layout.addWidget(self.baseline_window_button, 5, 0, 1, 1, QtCore.Qt.AlignHCenter)
         self.baseline_window_button.clicked.connect(self.open_baseline_window)
 
-        # here is a button to train the model
-        self.model_window_button = QPushButton('Train Model')
-        ##########################################################
-        self.model_window_button.setEnabled(True) # set to false for deployment
-        self.layout.addWidget(self.model_window_button, 6, 0, 1, -1, QtCore.Qt.AlignHCenter)
-        self.model_window_button.clicked.connect(self.open_model_window)
+        # # here is a button to train the model
+        # self.model_window_button = QPushButton('Train Model')
+        # ##########################################################
+        # self.model_window_button.setEnabled(True) # set to false for deployment
+        # self.layout.addWidget(self.model_window_button, 6, 0, 1, -1, QtCore.Qt.AlignHCenter)
+        # self.model_window_button.clicked.connect(self.open_model_window)
 
         # here is a button to start the session
         self.session_window_button = QPushButton('Start Session')
@@ -261,11 +261,11 @@ class MenuWindow(QMainWindow):
         self.layout.addWidget(self.session_window_button, 5, 1, 1, -1, QtCore.Qt.AlignHCenter)
         self.session_window_button.clicked.connect(self.open_session_window) # IMPLEMENT THIS FUNCTION
 
-        # here is a button to display results of the session
-        self.results_window_button = QPushButton('Results')
-        self.results_window_button.setEnabled(False)
-        self.layout.addWidget(self.results_window_button, 6, 1, 1, -1, QtCore.Qt.AlignHCenter)
-        self.results_window_button.clicked.connect(self.open_results_window) # IMPLEMENT THIS FUNCTION
+        # # here is a button to display results of the session
+        # self.results_window_button = QPushButton('Results')
+        # self.results_window_button.setEnabled(False)
+        # self.layout.addWidget(self.results_window_button, 6, 1, 1, -1, QtCore.Qt.AlignHCenter)
+        # self.results_window_button.clicked.connect(self.open_results_window) # IMPLEMENT THIS FUNCTION
 
         # here is a button to display graph
         self.graph_window_button = QPushButton('Graph')
