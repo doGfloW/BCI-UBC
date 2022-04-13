@@ -1,17 +1,14 @@
-function [bp_class, rms_class, bp_values, rms_values] = bp_rms_extraction(input_data, live_yn)
-    % check if the data is character/string or 2D numerical array
-    % if ischar(input_data) | isstring(input_data)
-    %     % read data from text file
-    %     try
-    %         data = dlmread(convertCharsToStrings(input_data), '\t');
-    %     catch
-    %         data = dlmread(convertCharsToStrings(input_data), ',');
-    %     end
-    % else
-    %     % assign the data to a variable
-    %     data = input_data
-    % end
+%{
+************************************************************************************
+This function is called from a python script, to read a file containing
+EEG data. This data is filltered, and the RMS and Bandpower ratio is caluated
+for the data and pased to a classifer for classification>
+************************************************************************************
+%}
 
+
+function [bp_class, rms_class, bp_values, rms_values] = bp_rms_extraction(input_data, live_yn)
+    % Reads data from file
     try
         data = dlmread(convertCharsToStrings(input_data), '\t');
     catch
@@ -116,7 +113,7 @@ function [bp_class, rms_class, bp_values, rms_values] = bp_rms_extraction(input_
                 bp_values(end+1) = alpha_bp/beta_bp;
                 rms_values(end+1) = alpha_rms/beta_rms;
             end
-
+             % calling classifer functions
             if  last_channel == 9
                 [bp_class_interim] = BP_classification_cyton(bp_values);
                 [rms_class_interim] = RMS_classification_cyton(rms_values);
@@ -124,7 +121,7 @@ function [bp_class, rms_class, bp_values, rms_values] = bp_rms_extraction(input_
                 [bp_class_interim] = BP_classification(bp_values);
                 [rms_class_interim] = RMS_classification(rms_values);
             end
-
+           
             bp_class_interim = bp_class_interim;
             rms_class_interim = rms_class_interim;
             bp_class = [bp_class, bp_class_interim];
