@@ -37,7 +37,7 @@ class graph_win(QMainWindow):
         self.num_points = self.window_size * self.sampling_rate
 
         # region Initial layout
-        styles = {'color': 'black', 'font-size': '16px'}
+        #styles = {'color': 'black', 'font-size': '16px'}
         self.setWindowTitle('Main Window')
         self.setGeometry(0, 0, 1500, 900)
 
@@ -94,14 +94,14 @@ class graph_win(QMainWindow):
         self.button7.clicked.connect(self.update_plot_data)
         self.button8.clicked.connect(self.update_plot_data)
 
-        self.button1.setStyleSheet("background-color : lightgrey")
-        self.button2.setStyleSheet("background-color : lightgrey")
-        self.button3.setStyleSheet("background-color : lightgrey")
-        self.button4.setStyleSheet("background-color : lightgrey")
-        self.button5.setStyleSheet("background-color : lightgrey")
-        self.button6.setStyleSheet("background-color : lightgrey")
-        self.button7.setStyleSheet("background-color : lightgrey")
-        self.button8.setStyleSheet("background-color : lightgrey")
+        # self.button1.setStyleSheet("background-color : lightgrey")
+        # self.button2.setStyleSheet("background-color : lightgrey")
+        # self.button3.setStyleSheet("background-color : lightgrey")
+        # self.button4.setStyleSheet("background-color : lightgrey")
+        # self.button5.setStyleSheet("background-color : lightgrey")
+        # self.button6.setStyleSheet("background-color : lightgrey")
+        # self.button7.setStyleSheet("background-color : lightgrey")
+        # self.button8.setStyleSheet("background-color : lightgrey")
 
         self.hLayout.addWidget(self.button1)
         self.hLayout.addWidget(self.button2)
@@ -115,58 +115,58 @@ class graph_win(QMainWindow):
 
         # region Graphs
         self.graphWidget1 = pg.PlotWidget()
-        self.graphWidget1.setTitle('Channel 1', **styles)
-        self.graphWidget1.setLabel('left', 'Amplitude', **styles)
-        self.graphWidget1.setLabel('bottom', 'Time', **styles)
+        self.graphWidget1.setTitle('Channel 1')
+        self.graphWidget1.setLabel('left', 'Amplitude')
+        self.graphWidget1.setLabel('bottom', 'Time')
         self.graphWidget1.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget1, 0, 0)
 
         self.graphWidget2 = pg.PlotWidget()
-        self.graphWidget2.setTitle('Channel 2', **styles)
-        self.graphWidget2.setLabel('left', 'Amplitude', **styles)
-        self.graphWidget2.setLabel('bottom', 'Time', **styles)
+        self.graphWidget2.setTitle('Channel 2')
+        self.graphWidget2.setLabel('left', 'Amplitude')
+        self.graphWidget2.setLabel('bottom', 'Time')
         self.graphWidget2.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget2, 1, 0)
 
         self.graphWidget3 = pg.PlotWidget()
-        self.graphWidget3.setTitle('Channel 3', **styles)
-        self.graphWidget3.setLabel('left', 'Amplitude', **styles)
-        self.graphWidget3.setLabel('bottom', 'Time', **styles)
+        self.graphWidget3.setTitle('Channel 3')
+        self.graphWidget3.setLabel('left', 'Amplitude')
+        self.graphWidget3.setLabel('bottom', 'Time')
         self.graphWidget3.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget3, 2, 0)
 
         self.graphWidget4 = pg.PlotWidget()
-        self.graphWidget4.setTitle('Channel 4', **styles)
-        self.graphWidget4.setLabel('left', 'Amplitude', **styles)
-        self.graphWidget4.setLabel('bottom', 'Time', **styles)
+        self.graphWidget4.setTitle('Channel 4')
+        self.graphWidget4.setLabel('left', 'Amplitude')
+        self.graphWidget4.setLabel('bottom', 'Time')
         self.graphWidget4.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget4, 3, 0)
 
         self.graphWidget5 = pg.PlotWidget()
-        self.graphWidget5.setTitle('Channel 5', **styles)
-        self.graphWidget5.setLabel('left', 'Amplitude', **styles)
-        self.graphWidget5.setLabel('bottom', 'Time', **styles)
+        self.graphWidget5.setTitle('Channel 5')
+        self.graphWidget5.setLabel('left', 'Amplitude')
+        self.graphWidget5.setLabel('bottom', 'Time')
         self.graphWidget5.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget5, 4, 0)
 
         self.graphWidget6 = pg.PlotWidget()
-        self.graphWidget6.setTitle('Channel 6', **styles)
-        self.graphWidget6.setLabel('left', 'Amplitude', **styles)
-        self.graphWidget6.setLabel('bottom', 'Time', **styles)
+        self.graphWidget6.setTitle('Channel 6')
+        self.graphWidget6.setLabel('left', 'Amplitude')
+        self.graphWidget6.setLabel('bottom', 'Time')
         self.graphWidget6.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget6, 5, 0)
 
         self.graphWidget7 = pg.PlotWidget()
-        self.graphWidget7.setTitle('Channel 7', **styles)
-        self.graphWidget7.setLabel('left', 'Amplitude', **styles)
-        self.graphWidget7.setLabel('bottom', 'Time', **styles)
+        self.graphWidget7.setTitle('Channel 7')
+        self.graphWidget7.setLabel('left', 'Amplitude')
+        self.graphWidget7.setLabel('bottom', 'Time')
         self.graphWidget7.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget7, 6, 0)
 
         self.graphWidget8 = pg.PlotWidget()
-        self.graphWidget8.setTitle('Channel 8', **styles)
-        self.graphWidget8.setLabel('left', 'Amplitude', **styles)
-        self.graphWidget8.setLabel('bottom', 'Time', **styles)
+        self.graphWidget8.setTitle('Channel 8')
+        self.graphWidget8.setLabel('left', 'Amplitude')
+        self.graphWidget8.setLabel('bottom', 'Time')
         self.graphWidget8.setBackground('w')
         self.gridLayout.addWidget(self.graphWidget8, 7, 0)
         # endregion
@@ -261,6 +261,10 @@ class graph_win(QMainWindow):
             self.data_line8.setData(self.y)
 
         # self.app.processEvents()
+    # def closeEvent(self, event):
+    #         self.board.stop_stream()
+    #         self.board.release_session()
+    #         print('Stopped EEG stream')
 
 
 if __name__ == '__main__':
